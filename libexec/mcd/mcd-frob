@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 ### mcd-frob -- CDP management
-### Usage: mcd [<options>] frob <dink> <dart>
+### Usage: mcd frob <dink> <dart>
 set -e
-[ $# = 2 ] || mcd frob --fail
+[ $# = 2 ] || mcd --fail "frob" "Missing arguments"
 
-# TODO check & handle +- inputs
 # TODO lock | free | draw| wipe wrappers?
 
 echo "Updating CDP..."
@@ -14,4 +13,4 @@ echo "Setting art to art + $dart"
 dink=$(seth --to-hex $(seth --to-wei "$1 eth"))
 dart=$(seth --to-hex $(seth --to-wei "$2 eth"))
 
-(set -x; seth send "${MCD_PIT?}" "frob(bytes32,int,int)" "$MCD_ILK" "$dink" "$dart")
+(set -x; seth send "${MCD_PIT}" "frob(bytes32,int,int)" "$MCD_ILK" "$dink" "$dart")
