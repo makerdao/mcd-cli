@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+### mcd-exit -- Remove collateral from the system
+### Usage: mcd exit <adapter-address> <amount>
+set -e
+[ $# = 2 ] || mcd exit --fail
+
+# TODO - check inputs
+# TODO - adapter dictionary
+
+echo >&2 "Withdrawing $2 GEM"
+
+lad=$(seth --to-address $1)
+wad=$(seth --to-hex $(seth --to-wei "$2 eth"))
+
+(set -x; seth send "${lad}" "exit(uint)" "$wad")

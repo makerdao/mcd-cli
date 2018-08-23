@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+### mcd-join -- Add collateral to the system
+### Usage: mcd join <adapter-address> <amount>
+set -e
+[ $# = 2 ] || mcd join --fail
+
+# TODO - check inputs
+# TODO - adapter dictionary
+
+echo >&2 "Depositing $2 GEM"
+
+lad=$(seth --to-address $1)
+wad=$(seth --to-hex $(seth --to-wei "$2 eth"))
+
+(set -x; seth send "${lad}" "join(uint)" "$wad")

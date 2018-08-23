@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+### Usage: mcd [<options>] <command> [<args>]
+###    or: mcd <command> --help
+
+OPTS="mcd [<options>] <command> [<args>]
+mcd [<command>] --help
+--
+  Connection Options:
+  Local node(default):
+rpc-host=host        JSON-RPC host (default: localhost)
+rpc-port=port        JSON-RPC port (default: 8545)
+rpc-url=url          JSON-RPC URL (overrides host and port)
+  Remote infura.io node:
+C,chain=chain        infura chain (mainnet or kovan)
+  Transaction options:
+F,from=address       account to send from
+G,gas=number         number of gas units to provide
+  Dai options:
+V,vat=address        vat address
+I,ilk=address        ilk address
+"
+
+set -e
+
+if ! [[ $SETH_INIT ]]; then
+  export SETH_INIT=1
+  [[ -e ~/.sethrc ]] && . ~/.sethrc
+fi
+
+if [[ $2 = --help ]]; then
+  exec "${0##*/}" help -- "$1"
+elif [[ $2 = --fail ]]; then
+  "${0##*/}" help -- "$1"
+exit 1
+elif [[ $1 = -* ]] && which "${0##*/}-$1" &>/dev/null; then
+  exec "${0##*/}-$1" "${@:2}"
+fi
+
+eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
+
+while [[ $1 ]]; do
+  case $1 in
+    --)           shift; break;;
+
+    -C|--chain)   shift; export SETH_CHAIN=$1;;
+
+    -V|--vat)     shift; export MCD_VAT=$1;;
+    -I|--ilk)     shift; export MCD_ILK=$1;;
+
+    -F|--from)    shift; export ETH_FROM=$1;;
+    -G|--gas)     shift; export ETH_GAS=$1;;
+
+    *) printf "${0##*/}: argument error: %q\n" "--$1"; exit 1
+  esac; shift
+done
+
+case "$SETH_CHAIN" in
+  kovan)
+    mcd_vat=0x0000000000000000000000000000000000000000
+    mcd_pit=0x1111111111111111111111111111111111111111
+  ;;
+  *)
+    mcd_vat=0x0000000000000000000000000000000000000000
+    mcd_pit=0x1111111111111111111111111111111111111111
+  ;;
+esac
+
+export MCD_VAT=${MCD_VAT:-$mcd_vat}
+export MCD_PIT=${MCD_PIT:-$mcd_pit}
+
+"${0##*/}-${1-help}" "${@:2}"

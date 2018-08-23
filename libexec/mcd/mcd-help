@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+### mcd-help -- print help about mcd(1) or one of its subcommands
+### Usage: mcd help [<command>]
+###    or: mcd <command> --help
+
+BUGS=https://github.com/makerdao/mcd-cli
+
+name=mcd
+file=${0%-*}${1+-$1}
+header=$(perl -ne 'print "$2\n" if /^(\S)\1\1(?: (.*))?/' "$file")
+
+if ! [[ $header ]]; then
+  sed "s/^/${0##*/}: /" "$file"
+elif [[ $(wc -l <<<"$header") = 1 ]]; then
+  echo "$header"
+else
+  sed "1{/^$name\\S* -- /d;}" <<<"$header"
+fi
+
+[[ $1 ]] && exit
+
+for file in ${0%/*}/$name-*; do
+  basename=${file##*/}
+  if [[ -L $file ]]; then
+    continue
+  else
+    commands+=("$file")
+  fi
+done
+
+list-commands() {
+  cat "$@" |
+  perl -ne 'print "$2 $3\n" if /^(\S)\1\1 '"$name"'-(\S+) -- (.*)/' |
+  while read -r name label; do
+    printf "   %-14s  %s\n" "${name/-/ }" "$label"
+  done | LANG=C sort
+}
+
+cat <<.
+
+Commands:
+
+$(list-commands "${commands[@]}")
+
+Report bugs to <$BUGS>.
+.
