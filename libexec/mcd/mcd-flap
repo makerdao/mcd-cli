@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+### mcd-flap -- Trigger a Flap auction
+### Usage: mcd flap
+###
+### Trigger a Flap auction if there is sufficient
+### surplus Dai (Joy) accumulated in the liquidator.
+set -e
+
+# TODO
+# show the status of the liquidator - all balances
+
+(set -x; seth send "${MCD_VOW}" "flap()")

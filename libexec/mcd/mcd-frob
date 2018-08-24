@@ -4,7 +4,9 @@
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing arguments"
 
-# TODO lock | free | draw| wipe wrappers?
+# TODO
+# args parsing
+# lock | free | draw| wipe wrappers?
 
 echo "Updating CDP..."
 echo "Setting ink to ink + $dink"

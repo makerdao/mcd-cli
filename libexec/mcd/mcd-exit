@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 ### mcd-exit -- Remove collateral from the system
 ### Usage: mcd exit <adapter-address> <amount>
+###
+### Specify the Ilk adapter address and amount of collateral
+### to withdraw.
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
 
