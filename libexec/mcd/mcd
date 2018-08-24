@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
+### McDai - game tokens
+###
 ### Usage: mcd [<options>] <command> [<args>]
-###    or: mcd <command> --help
+###    or: mcd help [<command>]
 
 OPTS="mcd [<options>] <command> [<args>]
 mcd [<command>] --help
@@ -11,7 +13,7 @@ rpc-url=url          JSON-RPC URL (default: mainnet.infura.io)
 F,from=address       account to send from
 G,gas=number         number of gas units to provide
   Config Options:
-C,config=config      mainnet (default), kovan or a user-defined config file
+E,env=env            mainnet (default), kovan or a setup file path
   Dai options:
 ilk=address          ilk address
 guy=address          guy address

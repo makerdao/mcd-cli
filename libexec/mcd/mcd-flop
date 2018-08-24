@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-### mcd-flop -- Trigger a Flop auction
+### mcd-flop -- Trigger a flop auction
 ### Usage: mcd flop
 ###
-### Trigger a Flop auction if there is is sufficient
-### bad-debt (Woe) waiting for auction.
+### Trigger a flop auction if there is sufficient
+### bad-debt (Woe) awaiting auction.
+###
+### See also mcd-vow
 set -e
 
 (set -x; seth send "${MCD_VOW}" "flop()")

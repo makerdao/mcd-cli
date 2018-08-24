@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-help -- print help about mcd(1) or one of its subcommands
+### mcd-help -- Print help about mcd or one of its subcommands
 ### Usage: mcd help [<command>]
 ###    or: mcd <command> --help
 

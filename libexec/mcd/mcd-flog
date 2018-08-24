@@ -2,9 +2,10 @@
 ### mcd-flog -- Release queued bad-debt for auction
 ### Usage: mcd flog <timestamp>
 ###
-### Specify the timestamp of the debt in the queue to release it
-### for auction. Queued debt will only be released once the wait
-### time has elapsed.
+### Specify a sin-queue timestamp to release debt for auction.
+### Queued debt will only be released if the wait time has elapsed.
+###
+### See also mcd-vow
 set -e
 
 [ $# = 1 ] || mcd --fail "$0: A timestamp is required"
