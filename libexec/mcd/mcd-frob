@@ -2,7 +2,7 @@
 ### mcd-frob -- CDP management
 ### Usage: mcd frob <dink> <dart>
 set -e
-[ $# = 2 ] || mcd --fail "frob" "Missing arguments"
+[ $# = 2 ] || mcd --fail "$0: Missing arguments"
 
 # TODO lock | free | draw| wipe wrappers?
 
