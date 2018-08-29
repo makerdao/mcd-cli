@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 set -e
-if [[ $1 =~ ^-?[[:digit:]]+$ ]]; then
-  hexnum=$(bc <<<"obase=16; $1")
-  echo "$(tr A-F a-f <<<"$hexnum")"
-elif [[ $1 = 0x* ]]; then
-  seth --to-hexdata "$1"
-elif [[ $1 =~ ^-?[[:xdigit:]]+$ ]]; then
-  seth --fail "${0##*/}: error: missing \`0x' prefix: \`$1'"
+
+tc () {
+  flip=$(tr 01 10 <<< "$1");
+  res=$(bc <<<"ibase=2; obase=2; $(pad $flip) + 1");
+  echo $res;
+}
+
+pad () {
+  printf -v res "%08d" $1;
+  echo $res;
+}
+
+if [[ $1 =~ ^-[[:digit:]]+$ ]]; then
+  binary=$(pad $(bc <<<"ibase=10; obase=2; ${1:1:${#1}}"));
+  twos=$(tc $binary)
+  printf '%x\n' "$((2#$twos))"
 else
-  seth --fail "${0##*/}: error: bad number: \`$1'"
+  seth --to-hex $1
 fi
