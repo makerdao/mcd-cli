@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 ### mcd-join -- Add collateral to the system
-### Usage: mcd join <adapter-address> <amount>
+### Usage: mcd join <adapter> <amount>
 ###
-### Specify an Ilk adapter address and the amount of collateral
+### Specify the @adapter and the amount of collateral
 ### to deposit.
+##
+### See also mcd-ls
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
 

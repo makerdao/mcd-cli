@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+### mcd-ls -- List of collateral types (adapters)
+### Usage: mcd ls
+cat <<.
+TODO - adapter dictionary
+
+@eth  0x01 - Ether"
+@weth 0x02 - Wrapped Ether"
+
+Usage:
+
+Use adapter names as address aliases:
+
+mcd join @eth 100
+.

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+cat <<.
+mcd 0.1.0
+Copyright (C) 2018 dc <dc@dapp.org>
+License: GNU AGPL version 3 or later <https://www.gnu.org/licenses/agpl-3.0>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.
+

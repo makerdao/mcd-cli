@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### McDai - game tokens
+### McDai
 ###
 ### Usage: mcd [<options>] <command> [<args>]
 ###    or: mcd help [<command>]

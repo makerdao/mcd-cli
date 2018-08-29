@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 ### mcd-exit -- Remove collateral from the system
-### Usage: mcd exit <adapter-address> <amount>
+### Usage: mcd exit <adapter> <amount>
 ###
-### Specify the Ilk adapter address and amount of collateral
+### Specify the @adapter and amount of collateral
 ### to withdraw.
+###
+### See also mcd-ls
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
-
-# TODO - check inputs
 
 lad=$(seth --to-address $1) || mcd --fail "$0: Invalid adapter address $1"
 wad=$(seth --to-hex $(seth --to-wei "$2 eth"))
 
-# TODO - adapter dictionary
 echo >&2 "Withdrawing $2 GEM"
 
 (set -x; seth send "${lad}" "exit(uint)" "$wad")

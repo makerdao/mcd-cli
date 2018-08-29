@@ -9,6 +9,6 @@
 set -e
 
 # TODO
-# show the status of the liquidator - all balances
+# show the status of the liquidator
 
 (set -x; seth send "${MCD_VOW}" "flap()")
