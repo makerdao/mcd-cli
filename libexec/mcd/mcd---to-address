@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+### Usage: mcd --to-address <address> | <@alias>
+
+if [[ $1 = @* ]]; then
+  name="MCD_${1#@}"
+  name=$(tr "[:lower:]" "[:upper:]" <<<"$name")
+  name=${name//-/_}
+  [[ ${!name} ]] || mcd --fail "${0##*/}: error: not found: $name";
+  [[ ${!name} ]] && seth --to-address "${!name}";
+else
+  seth --to-address $1
+fi

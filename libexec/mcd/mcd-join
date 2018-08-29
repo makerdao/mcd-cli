@@ -11,7 +11,7 @@ set -e
 
 # TODO - check inputs
 
-lad=$(>&2 seth --to-address $1) || mcd --fail "$0: Invalid adapter address $1"
+lad=$(>&2 mcd --to-address $1) || mcd --fail "$0: Invalid adapter address $1"
 wad=$(seth --to-hex $(seth --to-wei "$2 eth"))
 
 # TODO - adapter dictionary

@@ -53,13 +53,13 @@ done
 if [ ! -z $MCD_CONF ]; then
   case "$MCD_CONF" in
     kovan)
-      . ${0%/*}/../../kovan.conf
+      . ${0%/*}/../../kovan.conf;
     ;;
     mainnet)
-      . ${0%/*}/../../mainnet.conf
+      . ${0%/*}/../../mainnet.conf;
     ;;
     *)
-      . $MCD_CONF
+      . $MCD_CONF;
     ;;
   esac
 else
