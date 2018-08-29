@@ -1,21 +1,8 @@
-#!/usr/bin/env bash
-set -e
+#!/usr/bin/env node
 
-tc () {
-  flip=$(tr 01 10 <<< "$1");
-  res=$(bc <<<"ibase=2; obase=2; $(pad $flip) + 1");
-  echo $res;
-}
+var BN   = require('bn.js');
+var lpad = (x, y, n) => repeat(y, n - x.length) + x;
+var repeat = (x, n) => n > 0 ? new Array(n + 1).join(x) : "";
+var toHex = x => new BN(x, 10).toTwos(8).toString(16);
 
-pad () {
-  printf -v res "%08d" $1;
-  echo $res;
-}
-
-if [[ $1 =~ ^-[[:digit:]]+$ ]]; then
-  binary=$(pad $(bc <<<"ibase=10; obase=2; ${1:1:${#1}}"));
-  twos=$(tc $binary)
-  printf '%x\n' "$((2#$twos))"
-else
-  seth --to-hex $1
-fi
+console.log(`0x${lpad(toHex(process.argv[2]), "0", 64)}`);
