@@ -1,16 +1,15 @@
 #!/usr/bin/env node
-// TODO - handle decimals
 
 var BN   = require('bn.js');
 var num  = process.argv[2], match
-var lpad = (x, y, n) => repeat(y, n - x.length) + x;
+var lpad = (x, y, n) => repeat(y, n - x.length) + x.toUpperCase();
 var repeat = (x, n) => n > 0 ? new Array(n + 1).join(x) : "";
 var toHex = x => new BN(x, 10).toTwos(8).toString(16);
 
 if (match = num.match(/^\d*$/)) {
   console.log(`0x${lpad(toHex(num), "0", 64)}`);
 }  else if (/^-\d*$/.test(num)) {
-  console.log(`0x${lpad(toHex(num), "f", 64)}`);
+  console.log(`0x${lpad(toHex(num), "F", 64)}`);
 } else {
   console.error("mcd---to-hex: TODO - better number parsing")
   process.exit(1)
