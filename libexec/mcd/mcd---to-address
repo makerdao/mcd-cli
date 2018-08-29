@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-### Usage: mcd --to-address <address> | <@alias>
-
+set -e
 if [[ $1 = @* ]]; then
   name="MCD_${1#@}"
   name=$(tr "[:lower:]" "[:upper:]" <<<"$name")

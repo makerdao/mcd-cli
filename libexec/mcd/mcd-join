@@ -4,17 +4,16 @@
 ###
 ### Specify the @adapter and the amount of collateral
 ### to deposit.
-##
-### See also mcd-ls
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
 
-# TODO - check inputs
+join=$(mcd --to-address $1) || mcd --fail "$0: Invalid adapter $1"
+urn=$(seth --to-word $ETH_FROM)
 
-lad=$(>&2 mcd --to-address $1) || mcd --fail "$0: Invalid adapter address $1"
-wad=$(seth --to-hex $(seth --to-wei "$2 eth"))
-
-# TODO - adapter dictionary
-echo >&2 "Depositing $2 GEM"
-
-(set -x; seth send "${lad}" "join(uint)" "$wad")
+if [[ $join = $(mcd --to-address @join-eth) ]]; then
+  wad=$(seth --to-wei $2 eth)
+  (set -x; seth send $join 'join(bytes32)' $urn -V $wad)
+else
+  wad=$(seth --to-hex $(seth --to-wei $2 eth))
+  (set -x; seth send $join "join(bytes32, uint)" $urn $wad)
+fi
