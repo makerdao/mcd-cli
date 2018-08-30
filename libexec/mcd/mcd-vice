@@ -2,12 +2,5 @@
 ### mcd-vice -- Show total bad debt
 ### Usage: mcd vice
 set -e
-# vice=$(seth call $MCD_VAT 'vice()')
-# seth --abi-decode 'f()(uint256)' $vice | seth --to-dec
-
-ilk=$(seth --to-bytes32 $(seth --from-ascii "ETH"))
-vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
-echo "take: $(mcd ray ${vat:0:64})"
-echo "rate: $(mcd ray ${vat:65:64})"
-echo "Ink:  $(mcd wad ${vat:130:64})"
-echo "Art:  $(mcd wad ${vat:195:64})"
+vice=$(seth call "${MCD_VAT}" 'vice()(uint256)')
+echo $(mcd rad "$vice")

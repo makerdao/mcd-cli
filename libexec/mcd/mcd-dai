@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+### mcd-dai -- Dai balances
+### Usage: mcd dai [<command>]
+set -e
+
+case $1 in
+  balance) {
+    urn=$(seth --to-bytes32 ${2:-$ETH_FROM})
+    echo $(seth call $MCD_VAT 'dai(bytes32)(uint256)' "$urn")
+  };;
+  supply) {
+    mcd debt
+  };;
+  *) {
+    echo "Options:"
+    echo "  balance [<address>]"
+    echo "  hope <address>"
+    echo "  move <src> <dst>"
+    echo "  nope <address>"
+    echo "  supply"
+  }
+esac
