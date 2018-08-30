@@ -4,14 +4,9 @@
 ###
 ### Specify the @adapter and amount of collateral
 ### to withdraw.
-###
-### See also mcd-ls
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
 
-lad=$(seth --to-address $1) || mcd --fail "$0: Invalid adapter address $1"
-wad=$(seth --to-hex $(seth --to-wei "$2 eth"))
-
-echo >&2 "Withdrawing $2 GEM"
-
-(set -x; seth send "${lad}" "exit(uint)" "$wad")
+addr=$(mcd --to-address $1) || mcd --fail "$0: Invalid adapter $1"
+wad=$(seth --to-word $(seth --to-wei $2 eth))
+(set -x; seth send $addr "exit(address, uint)" $ETH_FROM $wad)
