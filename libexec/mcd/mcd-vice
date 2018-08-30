@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+### mcd-vice -- Show total bad debt
+### Usage: mcd vice
+set -e
+vice=$(seth call $MCD_VAT 'vice()')
+seth --abi-decode 'f()(uint256)' $vice | seth --to-dec

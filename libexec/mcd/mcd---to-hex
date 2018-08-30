@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 var BN   = require('bn.js');
 var num  = process.argv[2], match
 var lpad = (x, y, n) => repeat(y, n - x.length) + x.toUpperCase();
