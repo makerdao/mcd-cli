@@ -16,7 +16,7 @@ G,gas=number         number of gas units to provide
 C,config=            chain config - mainnet (default), kovan, or a setup file path
   Dai options:
 ilk=address          ilk address
-guy=address          guy address
+urn=address          urn address
 "
 
 set -e
@@ -41,7 +41,7 @@ while [[ $1 ]]; do
     -C|--config)  shift; export MCD_CONF=$1;;
 
     --ilk)        shift; export MCD_ILK=$1;;
-    --guy)        shift; export MCD_GUY=$1;;
+    --urn)        shift; export MCD_URN=$1;;
 
     -F|--from)    shift; export ETH_FROM=$1;;
     -G|--gas)     shift; export ETH_GAS=$1;;

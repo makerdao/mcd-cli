@@ -5,8 +5,14 @@ set -e
 [ $# = 1 ] || mcd --fail "$0: Bad argument(s)"
 
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
+
 vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
-echo "take: $(mcd ray ${vat:0:64})"
-echo "rate: $(mcd ray ${vat:65:64})"
-echo "Ink:  $(mcd wad ${vat:130:64})"
-echo "Art:  $(mcd wad ${vat:195:64})"
+echo "vat.take: $(mcd ray ${vat:0:64})"
+echo "vat.rate: $(mcd ray ${vat:65:64})"
+echo "vat.Ink:  $(mcd wad ${vat:130:64})"
+echo "vat.Art:  $(mcd wad ${vat:195:64})"
+
+cat=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk)
+echo "cat.flip: 0x${cat:0:40}"
+echo "cat.chop: $(mcd ray ${cat:41:64})"
+echo "cat.lump: $(mcd wad ${cat:105:64})"

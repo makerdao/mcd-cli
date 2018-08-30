@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 ### mcd-bite -- Trigger liquidation of an unsafe urn
-### Usage: mcd bite --ilk=<id> --guy=<address> bite
+### Usage: mcd bite --ilk=<id> --urn=<address> bite
 ###
 ### Specify the Ilk identifier and owner address of
 ### the Urn to bite.
 set -e
 
-#TODO - ilk dictionary
-
 [ ! -z "$MCD_ILK" ] &&
-[ ! -z "$MCD_GUY" ] ||
+[ ! -z "$MCD_URN" ] ||
 mcd --fail "$0: Missing argument(s)"
 
-echo >&2 "Biting Urn [$MCD_ILK][$MCD_GUY]"
-(set -x; seth send "${MCD_CAT}" "bite(bytes32,bytes32)" "$MCD_ILK" "$MCD_GUY")
+ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+urn=$(seth --to-bytes32 $MCD_URN)
+
+(set -x; seth send "${MCD_CAT}" "bite(bytes32,bytes32)(uint256)" "$ilk" "$urn")
