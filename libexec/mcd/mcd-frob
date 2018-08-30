@@ -5,11 +5,12 @@ set -e
 [ ! -z "$MCD_ILK" ] &&
 [ $# = 2 ] || mcd --fail "$0: Missing arguments"
 
+ilk=$(seth --to-bytes32 $(seth --from-ascii $MCD_ILK))
+dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))
+dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
+
 echo "Updating Urn..."
 echo "dink: $1"
 echo "dart: $2"
 
-dink=$(mcd --to-hex $(seth --to-wei "$1 eth"))
-dart=$(mcd --to-hex $(seth --to-wei "$2 eth"))
-
-(set -x; seth send "${MCD_PIT}" "frob(bytes32,int,int)" "$MCD_ILK" "$dink" "$dart")
+(set -x; seth send $MCD_PIT "frob(bytes32,int256,int256)" $ilk $dink $dart)
