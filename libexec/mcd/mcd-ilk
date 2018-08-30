@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-### mcd-vice -- Show total bad debt
-### Usage: mcd vice
+### mcd-ilk -- Show ilk state
+### Usage: mcd ilk <id>
 set -e
-# vice=$(seth call $MCD_VAT 'vice()')
-# seth --abi-decode 'f()(uint256)' $vice | seth --to-dec
+[ $# = 1 ] || mcd --fail "$0: Bad argument(s)"
 
-ilk=$(seth --to-bytes32 $(seth --from-ascii "ETH"))
+ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
 vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
 echo "take: $(mcd ray ${vat:0:64})"
 echo "rate: $(mcd ray ${vat:65:64})"

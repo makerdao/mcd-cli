@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 msg=${*#*\-}
 echo $msg; echo
-if [[ $msg =~ '^\w*' ]]; then
-  mcd help "${msg%\:*}"
-fi
+mcd help "${msg%\:*}"
 exit 1
