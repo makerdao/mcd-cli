@@ -14,3 +14,5 @@ echo "dink: $1"
 echo "dart: $2"
 
 (set -x; seth send $MCD_PIT "frob(bytes32,int256,int256)" $ilk $dink $dart)
+echo
+mcd urn
