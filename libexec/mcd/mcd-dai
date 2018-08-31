@@ -5,8 +5,9 @@ set -e
 
 case $1 in
   balance) {
-    urn=$(seth --to-bytes32 ${2:-$ETH_FROM})
-    echo $(seth call $MCD_VAT 'dai(bytes32)(uint256)' "$urn")
+    urn=$(seth --to-word ${2:-$ETH_FROM})
+    bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' "$urn")
+    echo $(mcd rad $bal)
   };;
   supply) {
     mcd debt
