@@ -6,17 +6,19 @@ set -e
 
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
 
+p() { printf "%-12s %-45s %-10s\n" "$1" "$2" "$3"; }
+
 vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
-echo "vat.take: $(mcd ray ${vat:0:64})"
-echo "vat.rate: $(mcd ray ${vat:65:64})"
-echo "vat.Ink:  $(mcd wad ${vat:130:64})"
-echo "vat.Art:  $(mcd wad ${vat:195:64})"
+p "vat.take" $(mcd ray ${vat:0:64})
+p "vat.rate" $(mcd ray ${vat:65:64})
+p "vat.Ink"  $(mcd wad ${vat:130:64}) "Total ($1)"
+p "vat.Art"  $(mcd wad ${vat:195:64}) "Total (Dai)"
 
 pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
-echo "pit.spot: $(mcd ray ${pit:0:64})"
-echo "pit.line: $(mcd wad ${pit:66564})"
+p "pit.spot" $(mcd ray ${pit:0:64}) "Price feed (USD)"
+p "pit.line" $(mcd wad ${pit:65}) "Debt ceiling (Dai)"
 
 cat=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk)
-echo "cat.flip: 0x${cat:0:40}"
-echo "cat.chop: $(mcd ray ${cat:41:64})"
-echo "cat.lump: $(mcd wad ${cat:105:64})"
+p "cat.flip" "0x${cat:0:40}" "Flipper contract"
+p "cat.chop" $(mcd ray ${cat:41:64})  "Liquidation penalty"
+p "cat.lump" $(mcd wad ${cat:105:64}) "Flip auction lot size"
