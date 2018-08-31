@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### McDai
+### McDai - Multi-collateral Dai
 ###
 ### Usage: mcd [<options>] <command> [<args>]
 ###    or: mcd help [<command>]
@@ -54,17 +54,17 @@ if [ ! -z $MCD_CONF ]; then
   case "$MCD_CONF" in
     kovan)
         export ETH_RPC_URL=https://kovan.infura.io
-      . ${0%/*}/../../kovan.conf;
+      . ${0%/*}/conf/kovan;
     ;;
     mainnet)
-      . ${0%/*}/../../mainnet.conf;
+      . ${0%/*}/conf/mainnet;
     ;;
     *)
       . $MCD_CONF;
     ;;
   esac
 else
-  . ${0%/*}/../../mainnet.conf
+  . ${0%/*}/conf/mainnet
 fi
 
 export ETH_RPC_URL=${ETH_RPC_URL:-https://mainnet.infura.io}
