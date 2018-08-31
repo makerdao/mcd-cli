@@ -12,6 +12,10 @@ echo "vat.rate: $(mcd ray ${vat:65:64})"
 echo "vat.Ink:  $(mcd wad ${vat:130:64})"
 echo "vat.Art:  $(mcd wad ${vat:195:64})"
 
+pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
+echo "pit.spot: $(mcd ray ${pit:0:64})"
+echo "pit.line: $(mcd wad ${pit:65:64})"
+
 cat=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk)
 echo "cat.flip: 0x${cat:0:40}"
 echo "cat.chop: $(mcd ray ${cat:41:64})"
