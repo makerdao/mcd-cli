@@ -53,10 +53,11 @@ done
 if [ ! -z $MCD_CONF ]; then
   case "$MCD_CONF" in
     kovan)
-        export ETH_RPC_URL=https://kovan.infura.io
+        export SETH_CHAIN=kovan
       . ${0%/*}/conf/kovan;
     ;;
     mainnet)
+      export SETH_CHAIN=mainnet
       . ${0%/*}/conf/mainnet;
     ;;
     *)
@@ -64,9 +65,8 @@ if [ ! -z $MCD_CONF ]; then
     ;;
   esac
 else
+  export SETH_CHAIN=kovan
   . ${0%/*}/conf/kovan
 fi
-
-export ETH_RPC_URL=${ETH_RPC_URL:-https://kovan.infura.io}
 
 "${0##*/}-${1-help}" "${@:2}"
