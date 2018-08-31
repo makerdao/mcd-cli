@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-debt -- Show total dai issuance
+### mcd-debt -- Get total dai issuance
 ### Usage: mcd debt
 set -e
 debt=$(seth call "${MCD_VAT}" 'debt()(uint256)')

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-urn -- Show urn state
+### mcd-urn -- Get urn state
 ### Usage: mcd urn --ilk=<id> [--urn=<address>]
 ###
 ### Display the status of the urn at ETH_FROM or
