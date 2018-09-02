@@ -22,3 +22,7 @@ cat=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk)
 p "cat.flip" "0x${cat:0:40}" "Flipper contract"
 p "cat.chop" $(mcd ray ${cat:41:64})  "Liquidation penalty"
 p "cat.lump" $(mcd wad ${cat:105:64}) "Flip auction lot size"
+
+drip=$(seth call $MCD_DRIP 'ilks(bytes32)(bytes32, uint256, uint48)' $ilk)
+p "drip.tax" $(mcd ray ${drip:65:64})
+p "drip.rho" $(seth --to-dec ${drip:130:64})
