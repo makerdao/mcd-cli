@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+### mcd-gem -- Gem balances
+### Usage: mcd gem --ilk=<id> [<command>]
+set -e
+
+ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+
+case $1 in
+  balance) {
+    lad=$(seth --to-word ${2:-$ETH_FROM})
+    urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
+    ink=$(mcd wad ${urn:0:64})
+    echo "locked: $ink"
+    gem=$(seth call $MCD_VAT 'gem(bytes32,bytes32)(uint256)' "$ilk" "$lad")
+    echo "free: $(mcd rad $gem)"
+    echo "total: $(bc <<< "$(mcd rad $gem) + $ink")"
+  };;
+  move) {
+    echo "Not implemented"
+  };;
+  hope) {
+    echo "Not implemented"
+  };;
+  nope) {
+    echo "Not implemented"
+  };;
+  *) {
+    echo "Options:"
+    echo "  balance [<address>]"
+    echo "  hope <address>"
+    echo "  move <src> <dst>"
+    echo "  nope <address>"
+  }
+esac

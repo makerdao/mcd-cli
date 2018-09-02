@@ -12,6 +12,15 @@ case $1 in
   supply) {
     mcd debt
   };;
+  move) {
+    echo "Not implemented"
+  };;
+  hope) {
+    echo "Not implemented"
+  };;
+  nope) {
+    echo "Not implemented"
+  };;
   *) {
     echo "Options:"
     echo "  balance [<address>]"
