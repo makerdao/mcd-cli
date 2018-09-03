@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+### mcd-vow -- Liquidator balances
+### Usage: mcd vow [<command>]
+set -e
+
+case $1 in
+  sin) {
+    sin=$(seth call "${MCD_VOW}" 'Sin()(uint256)')
+    echo $(mcd wad "$sin")
+  };;
+  woe) {
+    woe=$(seth call "${MCD_VOW}" 'Woe()(uint256)')
+    echo $(mcd wad "$woe")
+  };;
+  ash) {
+    ash=$(seth call "${MCD_VOW}" 'Ash()(uint256)')
+    echo $(mcd wad "$ash")
+  };;
+  awe) {
+    awe=$(seth call "${MCD_VOW}" 'Awe()(uint256)')
+    echo $(mcd wad "$awe")
+  };;
+  joy) {
+    joy=$(seth call "${MCD_VOW}" 'Joy()(uint256)')
+    echo $(mcd wad "$joy")
+  };;
+  wait) {
+    wait=$(seth call "${MCD_VOW}" 'wait()(uint256)')
+    echo $(mcd wad "$wait")
+  };;
+  lump) {
+    wait=$(seth call "${MCD_VOW}" 'lump()(uint256)')
+    echo $(mcd wad "$lump")
+  };;
+  pad) {
+    wait=$(seth call "${MCD_VOW}" 'pad()(uint256)')
+    echo $(mcd wad "$pad")
+  };;
+  *) {
+    echo "Options:"
+    echo "  sin"
+    echo "  woe"
+    echo "  ash"
+    echo "  awe"
+    echo "  joy"
+    echo "  wait"
+    echo "  lump"
+    echo "  pad"
+  }
+esac
