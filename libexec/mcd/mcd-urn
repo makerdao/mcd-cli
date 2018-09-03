@@ -7,16 +7,23 @@
 set -e
 
 [ ! -z "$MCD_ILK" ] || mcd --fail "$0: An ilk identifier is required"
-
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
-lad=$(seth --to-checksum-address ${MCD_URN:-$ETH_FROM})
-echo "ilk: $MCD_ILK";
-echo "lad: $lad";
-lad=$(seth --to-word $lad)
+lad=$(seth --to-address ${MCD_URN:-$ETH_FROM})
 
-gem=$(seth call "${MCD_VAT}" 'gem(bytes32,bytes32)(uint256)' "$ilk" "$lad")
-echo "gem: $(mcd rad ${gem})"
+echo "ilk: $MCD_ILK"
+echo "lad: $lad"
 
-urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
-echo "ink: $(mcd wad ${urn:0:64})"
-echo "art: $(mcd wad ${urn:65:129})"
+urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$(seth --to-word $lad)")
+ink=$(mcd wad ${urn:0:64})
+art=$(mcd wad ${urn:65:129})
+pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
+spot=$(mcd ray ${pit:0:64})
+
+echo "ink: $ink @ $spot"
+
+vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
+rate=$(mcd ray ${vat:65:64})
+
+echo "art: $art @ $rate"
+
+echo -e "rat: $(bc <<< "scale=1; (($ink*$spot)/($art*$rate) * 100)")%"
