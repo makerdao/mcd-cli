@@ -6,7 +6,8 @@
 ### at a given urn address if provided.
 set -e
 
-[ ! -z "$MCD_ILK" ] || mcd --fail "$0: An ilk identifier is required"
+[ ! -z "$MCD_ILK" ] || mcd --fail "$0: An ilk identifier is required";
+[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM"] || mcd --fail "$0: ETH_FROM or --urn=<address> is required"
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 lad=$(seth --to-address ${MCD_URN:-$ETH_FROM})
 
