@@ -9,8 +9,8 @@ ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
 p() { printf "%-12s %-45s %-10s\n" "$1" "$2" "$3"; }
 
 vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
-p "take" $(mcd ray ${vat:0:64})
-p "rate" $(mcd ray ${vat:65:64}) "Debt price"
+p "take" $(mcd ray ${vat:0:64}) "Rate scaling factor"
+p "rate" $(mcd ray ${vat:65:64}) "Debt scaling factor"
 p "Ink"  $(mcd wad ${vat:130:64}) "Total ($1)"
 p "Art"  $(mcd wad ${vat:195:64}) "Total (Dai)"
 
