@@ -7,7 +7,7 @@
 set -e
 
 [ ! -z "$MCD_ILK" ] || mcd --fail "$0: An ilk identifier is required";
-[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM"] || mcd --fail "$0: ETH_FROM or --urn=<address> is required"
+[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM" ] || mcd --fail "$0: ETH_FROM or --urn=<address> is required"
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 lad=$(seth --to-address ${MCD_URN:-$ETH_FROM})
 
@@ -27,4 +27,7 @@ rate=$(mcd ray ${vat:65:64})
 
 echo "art: $art @ $rate"
 
-echo -e "rat: $(bc <<< "scale=1; (($ink*$spot)/($art*$rate) * 100)")%"
+if [ ${art:0:1} -gt 0 ]; then
+  echo -e "rat: $(bc <<< "scale=1; (($ink*$spot)/($art*$rate) * 100)")%"
+fi
+
