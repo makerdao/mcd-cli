@@ -1,19 +1,33 @@
 #!/usr/bin/env bash
 ### mcd-join -- Add collateral to the system
-### Usage: mcd join <adapter> <amount>
+### Usage: mcd join <ilk> <wad>
+###    or: mcd join <address> <wad>
 ###
-### Specify the @adapter and the amount of collateral
-### to deposit.
+### Specify either an ilk identifier or an adapter address
+### and the amount of collateral to deposit.
+###
+### Example: mcd join ETH 42
 set -e
 [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
-
-join=$(mcd --to-address $1) || mcd --fail "$0: Invalid adapter $1"
 urn=$(seth --to-word $ETH_FROM)
 
-if [[ $join = $(mcd --to-address @join-eth) ]]; then
+joinEth() {
   wad=$(seth --to-wei $2 eth)
   (set -x; seth send $join 'join(bytes32)' $urn -V $wad)
-else
+}
+
+joinGem() {
   wad=$(seth --to-word $(seth --to-wei $2 eth))
   (set -x; seth send $join "join(bytes32, uint)" $urn $wad)
-fi
+}
+
+case $1 in
+  "ETH") {
+    join=$MCD_JOIN_ETH
+    joinEth
+  };;
+  *) {
+    join=$(mcd --to-address $1) || mcd --fail "$0: Unrecognised adapter $1"
+    joinGem
+  }
+esac
