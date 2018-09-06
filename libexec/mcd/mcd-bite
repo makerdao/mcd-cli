@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-bite -- Trigger liquidation of an unsafe urn
-### Usage: mcd bite --ilk=<id> --urn=<address> bite
+### Usage: mcd bite --ilk=<id> --urn=<address>
 ###
 ### Specify the Ilk identifier and owner address of
 ### the Urn to bite.
