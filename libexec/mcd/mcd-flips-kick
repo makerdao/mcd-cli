@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-$(set -x; seth send "${MCD_CAT}" 'flip(uint,uint)(uint)' "$1" "$2")
+$(set -x; seth send "${MCD_CAT}" 'flip(uint256,uint256)(uint256)' "$1" "$2")
 
 # echo >&2 -n "Waiting for transaction receipt..."
 # blk=$(SETH_TICK=true seth receipt "$tx" blockNumber)

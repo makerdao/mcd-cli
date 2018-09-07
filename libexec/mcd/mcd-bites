@@ -1,21 +1,14 @@
 #!/usr/bin/env bash
-### mcd-bites -- View bites and trigger flip auctions
-### Usage: mcd bites <id>
-###    or: mcd bites flip <id> <wad>
+### mcd-bites -- View recent bites
+### Usage: mcd bites [<options>]
 set -e
 
-shopt -s extglob
-case "$1" in
-  +([[:digit:]])) {
-    mcd bites-get "$1"
-  };;
-  flip) {
-    [ $# = 3 ] || mcd --fail "$0: Incorrect arguments"
-    n=$(seth --to-word $(seth --to-hex $2))
-    w=$(seth --to-word $(seth --to-hex $(seth --to-wei "$3 eth")))
-    mcd bites-flip "$n" "$w"
-  };;
-  *) {
-    mcd bites-ls "$@"
-  }
-esac
+sig="Bite(bytes32,bytes32,uint256,uint256,uint256,uint256,uint256)"
+sig=$(seth keccak $(seth --from-ascii "$sig"))
+logs=$(seth rpc eth_getLogs -- \
+    -n {} -s "${MCD_CAT?}" -i address \
+    -s earliest -i fromBlock \
+    -n [] -s "$sig"  -i append -i topics -i append
+    )
+echo $(jshon -e data <<<$logs)
+echo "TODO - filtering & formatting"
