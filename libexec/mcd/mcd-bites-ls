@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+sig="Bite(bytes32,bytes32,uint256,uint256,uint256,uint256,uint256)"
+sig=$(seth keccak $(seth --from-ascii "$sig"))
+logs=$(seth rpc eth_getLogs -- \
+    -n {} -s "${MCD_CAT?}" -i address \
+    -s earliest -i fromBlock \
+    -n [] -s "$sig"  -i append -i topics -i append
+    )
+echo $(jshon -e data <<<$logs)
+echo "TODO - formatting"

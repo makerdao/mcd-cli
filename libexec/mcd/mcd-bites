@@ -1,34 +1,21 @@
 #!/usr/bin/env bash
 ### mcd-bites -- View bites and trigger flip auctions
-### Usage: mcd bites get <id>
-### Usage: mcd bites ls --ilk=[<id>] --urn=[<address>]
+### Usage: mcd bites <id>
 ###    or: mcd bites flip <id> <wad>
-###
-### With `get', get a bite from the flips queue
-### With `ls', view recent bites
 set -e
 
-case $1 in
-  get) {
-    [ $# = 2 ] || mcd --fail "$0: Missing argument(s)"
-    id=$(seth --to-word $(seth --to-hex $2))
-    flip=$(seth call "${MCD_CAT}" 'flips(uint256)(bytes32,bytes32,uint256,uint256)' "$id")
-    ilk=${flip:0:64}
-    echo "ilk: $(seth --to-ascii 0x${ilk//0})"
-    echo "urn: 0x$(seth --abi-decode 'f()(address)' "${flip:65:64}")"
-    echo "ink: $(mcd wad ${flip:130:64})"
-    echo "tab: $(mcd wad ${flip:195:64})"
-  };;
-  ls) {
-    echo "Not implemented"
+shopt -s extglob
+case "$1" in
+  +([[:digit:]])) {
+    mcd bites-get "$1"
   };;
   flip) {
-    echo "Not implemented"
+    [ $# = 3 ] || mcd --fail "$0: Incorrect arguments"
+    n=$(seth --to-word $(seth --to-hex $2))
+    w=$(seth --to-word $(seth --to-hex $(seth --to-wei "$3 eth")))
+    mcd bites-flip "$n" "$w"
   };;
   *) {
-    echo "Options:"
-    echo "  get <id>"
-    echo "  ls"
-    echo "  flip <id> <wad>"
+    mcd bites-ls "$@"
   }
 esac

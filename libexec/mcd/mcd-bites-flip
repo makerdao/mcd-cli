@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+$(set -x; seth send "${MCD_CAT}" 'flip(uint,uint)(uint)' "$1" "$2")
+
+# echo >&2 -n "Waiting for transaction receipt..."
+# blk=$(SETH_TICK=true seth receipt "$tx" blockNumber)
+# blk=$(seth --to-hex "$blk")
+# echo >&2
+# sig="Kick(uint256,uint256,uint256,address,uint48,bytes32,uint256)"
+# sig=$(seth keccak $(seth --from-ascii "$sig"))
+# kick=$(seth rpc eth_getLogs -- \
+#  -n {} -s "${MCD_FLIP_ETH?}" -i address \
+#        -s "$blk" -i fromBlock \
+#        -s "$blk" -i toBlock \
+#  -n [] -s "$sig" -i append \
+#        -i topics \
+#        -i append | echo "[$(paste -sd , -)]")
+# echo $kick

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+id=$(seth --to-word $(seth --to-hex $1))
+flip=$(seth call "${MCD_CAT}" 'flips(uint256)(bytes32,bytes32,uint256,uint256)' "$id")
+ilk=${flip:0:64}
+echo "ilk: $(seth --to-ascii 0x$(sed -e "s/[0]*$//g" <<<$ilk))"
+echo "urn: 0x$(seth --abi-decode 'f()(address)' "${flip:65:64}")"
+echo "ink: $(mcd wad ${flip:130:64})"
+echo "tab: $(mcd wad ${flip:195:64})"
+echo "tab: ${flip:195:64}"
