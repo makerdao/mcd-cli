@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+### mcd-poke -- Poke a spot price feed
+### Usage: mcd poke <ilk>
+###    or: mcd poke <address>
+###
+### Specify either an ilk identifier or a feed address
+###
+### Example: mcd poke ETH
+set -e
+[ $# = 1 ] || mcd --fail "$0: Incorrect argument(s)"
+
+case $1 in
+  "ETH") {
+    spot=$MCD_SPOT_ETH
+  };;
+  *) {
+    SPOT_ADDR=true
+    spot=$(mcd --to-address $1) || mcd --fail "$0: Unrecognised address $1"
+  }
+esac
+
+tx=$(seth send --async $spot "poke()")
+echo >&2 -n "Waiting for transaction receipt..."
+hash=$(SETH_TICK=true seth receipt "$tx" transactionHash)
+echo "$hash"
+
+if [[ ! $SPOT_ADDR ]]; then
+  mcd ilk $1
+fi
