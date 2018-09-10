@@ -9,16 +9,16 @@ set -e
 exec 3< <(mcd vow Woe)
 exec 4< <(mcd vow Joy)
 exec 5< <(mcd vow Awe)
-exec 6< <(mcd vow pad)
-exec 7< <(mcd vow lump)
+exec 6< <(mcd vow bump)
+exec 7< <(mcd vow hump)
 
 woe=$(cat <&3)
 joy=$(cat <&4)
 awe=$(cat <&5)
-pad=$(cat <&6)
-lump=$(cat <&7)
+bump=$(cat <&6)
+hump=$(cat <&7)
 
-req=$(bc <<< "($awe + $lump) + $pad")
+req=$(bc <<< "($awe + $bump) + $hump")
 
 if (( $(echo "$woe > 0" | bc -l) )); then
   echo "Fail: Woe ($woe) is not zero"

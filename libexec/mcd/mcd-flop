@@ -8,18 +8,18 @@ set -e
 
 exec 3< <(mcd vow Woe)
 exec 4< <(mcd vow Joy)
-exec 5< <(mcd vow lump)
+exec 5< <(mcd vow sump)
 
 woe=$(cat <&3)
 joy=$(cat <&4)
-lump=$(cat <&5)
+sump=$(cat <&5)
 
 if (( $(echo "$joy > 0" | bc -l) )); then
   echo "Fail: Joy ($joy) is not zero"
   exit 1
 fi
 
-if (( $(echo "$woe >= $lump" | bc -l) )); then
+if (( $(echo "$woe < $sump" | bc -l) )); then
   echo "Fail: Insufficient Woe ($woe)"
   exit 1
 fi
