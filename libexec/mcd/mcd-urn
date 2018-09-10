@@ -14,20 +14,21 @@ lad=$(seth --to-address ${MCD_URN:-$ETH_FROM})
 echo "ilk: $MCD_ILK"
 echo "lad: $lad"
 
-urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$(seth --to-word $lad)")
+exec 3< <(seth call "${MCD_VAT?}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$(seth --to-word $lad)")
+exec 4< <(seth call "${MCD_PIT?}" 'ilks(bytes32)(address, uint256)' $ilk)
+exec 5< <(seth call "${MCD_VAT?}" 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
+
+urn=$(cat <&3)
+pit=$(cat <&4)
+vat=$(cat <&5)
 ink=$(mcd --to-wad ${urn:0:64})
 art=$(mcd --to-wad ${urn:65:129})
-pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
 spot=$(mcd ray ${pit:0:64})
-
-echo "ink: $ink @ $spot"
-
-vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
 rate=$(mcd ray ${vat:65:64})
 
+echo "ink: $ink @ $spot"
 echo "art: $art @ $rate"
 
 if [ ${art:0:1} -gt 0 ]; then
   echo -e "rat: $(bc <<< "scale=1; (($ink*$spot)/($art*$rate) * 100)")%"
 fi
-

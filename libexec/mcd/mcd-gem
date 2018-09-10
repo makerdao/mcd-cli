@@ -3,6 +3,7 @@
 ### Usage: mcd gem --ilk=<id> [<command>]
 set -e
 
+[ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing argument(s)"
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 
 case $1 in
