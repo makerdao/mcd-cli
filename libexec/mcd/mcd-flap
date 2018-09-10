@@ -8,7 +8,27 @@
 ### See also mcd-vow
 set -e
 
-# TODO
-# show the status of the liquidator
+exec 3< <(mcd vow woe)
+exec 4< <(mcd vow joy)
+exec 5< <(mcd vow awe)
+exec 6< <(mcd vow pad)
+exec 7< <(mcd vow lump)
+
+woe=$(cat <&3)
+joy=$(cat <&4)
+awe=$(cat <&5)
+pad=$(cat <&6)
+lump=$(cat <&7)
+req=$(bc <<< "($awe + $lump) + $pad")
+
+if (( $(echo "$woe > 0" | bc -l) )); then
+  echo "Fail: Woe ($woe) is not zero"
+  exit 1
+fi
+
+if (( $(echo "$joy < $req" | bc -l) )); then
+  echo "Fail: Insufficient Joy ($joy)"
+  exit 1
+fi
 
 (set -x; seth send "${MCD_VOW}" "flap()")

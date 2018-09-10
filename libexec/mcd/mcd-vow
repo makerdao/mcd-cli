@@ -29,11 +29,11 @@ case $1 in
     echo $(mcd --to-wad "$wait")
   };;
   lump) {
-    wait=$(seth call "${MCD_VOW}" 'lump()(uint256)')
+    lump=$(seth call "${MCD_VOW}" 'lump()(uint256)')
     echo $(mcd --to-wad "$lump")
   };;
   pad) {
-    wait=$(seth call "${MCD_VOW}" 'pad()(uint256)')
+    pad=$(seth call "${MCD_VOW}" 'pad()(uint256)')
     echo $(mcd --to-wad "$pad")
   };;
   *) {
