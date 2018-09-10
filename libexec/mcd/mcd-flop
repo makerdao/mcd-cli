@@ -4,8 +4,24 @@
 ###
 ### Trigger a flop auction if there is sufficient
 ### bad-debt (Woe) awaiting auction.
-###
-### See also mcd-vow
 set -e
+
+exec 3< <(mcd vow woe)
+exec 4< <(mcd vow joy)
+exec 5< <(mcd vow lump)
+
+woe=$(cat <&3)
+joy=$(cat <&4)
+lump=$(cat <&5)
+
+if (( $(echo "$joy > 0" | bc -l) )); then
+  echo "Fail: Joy ($joy) is not zero"
+  exit 1
+fi
+
+if (( $(echo "$woe >= $lump" | bc -l) )); then
+  echo "Fail: Insufficient Woe ($woe)"
+  exit 1
+fi
 
 (set -x; seth send "${MCD_VOW}" "flop()")

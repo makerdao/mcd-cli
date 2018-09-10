@@ -4,8 +4,6 @@
 ###
 ### Trigger a flap auction if sufficient surplus Dai (Joy)
 ### has accumulated in the liquidator.
-###
-### See also mcd-vow
 set -e
 
 exec 3< <(mcd vow woe)
@@ -19,6 +17,7 @@ joy=$(cat <&4)
 awe=$(cat <&5)
 pad=$(cat <&6)
 lump=$(cat <&7)
+
 req=$(bc <<< "($awe + $lump) + $pad")
 
 if (( $(echo "$woe > 0" | bc -l) )); then
