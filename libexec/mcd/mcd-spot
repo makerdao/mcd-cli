@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+### mcd-spot -- Get the spot price for a given Ilk
+### Usage: mcd spot <ilk>
+###
+### Specify an ilk identifier
+###
+### Example: mcd spot ETH
+set -e
+[ $# = 1 ] || mcd --fail "$0: Incorrect argument(s)"
+
+ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
+pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
+echo $(mcd ray ${pit:0:64})

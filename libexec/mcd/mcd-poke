@@ -25,5 +25,5 @@ hash=$(SETH_TICK=true seth receipt "$tx" transactionHash)
 echo "$hash"
 
 if [[ ! $SPOT_ADDR ]]; then
-  mcd ilk $1
+  echo "spot: $(mcd spot $1)"
 fi
