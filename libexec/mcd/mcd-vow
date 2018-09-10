@@ -6,35 +6,35 @@ set -e
 case $1 in
   sin) {
     sin=$(seth call "${MCD_VOW}" 'Sin()(uint256)')
-    echo $(mcd wad "$sin")
+    echo $(mcd --to-wad "$sin")
   };;
   woe) {
     woe=$(seth call "${MCD_VOW}" 'Woe()(uint256)')
-    echo $(mcd wad "$woe")
+    echo $(mcd --to-wad "$woe")
   };;
   ash) {
     ash=$(seth call "${MCD_VOW}" 'Ash()(uint256)')
-    echo $(mcd wad "$ash")
+    echo $(mcd --to-wad "$ash")
   };;
   awe) {
     awe=$(seth call "${MCD_VOW}" 'Awe()(uint256)')
-    echo $(mcd wad "$awe")
+    echo $(mcd --to-wad "$awe")
   };;
   joy) {
     joy=$(seth call "${MCD_VOW}" 'Joy()(uint256)')
-    echo $(mcd wad "$joy")
+    echo $(mcd --to-wad "$joy")
   };;
   wait) {
     wait=$(seth call "${MCD_VOW}" 'wait()(uint256)')
-    echo $(mcd wad "$wait")
+    echo $(mcd --to-wad "$wait")
   };;
   lump) {
     wait=$(seth call "${MCD_VOW}" 'lump()(uint256)')
-    echo $(mcd wad "$lump")
+    echo $(mcd --to-wad "$lump")
   };;
   pad) {
     wait=$(seth call "${MCD_VOW}" 'pad()(uint256)')
-    echo $(mcd wad "$pad")
+    echo $(mcd --to-wad "$pad")
   };;
   *) {
     echo "Options:"

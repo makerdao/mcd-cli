@@ -14,9 +14,11 @@ F,from=address       account to send from
 G,gas=number         number of gas units to provide
   Config Options:
 C,config=            chain config - mainnet (default), kovan, or a setup file path
-  Dai options:
-ilk=address          ilk address
-urn=address          urn address
+  MCD options:
+I,ilk=address        ilk address
+U,urn=address        urn address
+  Filter options:
+B,block=number       from block
 "
 
 set -e
@@ -40,8 +42,10 @@ while [[ $1 ]]; do
 
     -C|--config)  shift; export MCD_CONF=$1;;
 
-    --ilk)        shift; export MCD_ILK=$1;;
-    --urn)        shift; export MCD_URN=$1;;
+    -I|--ilk)      shift; export MCD_ILK=$1;;
+    -U|--urn)      shift; export MCD_URN=$1;;
+
+    -B|--block)    shift; export ETH_BLOCK=$1;;
 
     -F|--from)    shift; export ETH_FROM=$1;;
     -G|--gas)     shift; export ETH_GAS=$1;;

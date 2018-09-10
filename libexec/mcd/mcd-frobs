@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-wad -- Hex to wad
+### mcd-frobs -- View frob events
 ### Usage: mcd frobs [-B <block>] [--ilk=<id>]
 set -e
 

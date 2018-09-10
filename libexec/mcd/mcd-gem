@@ -9,7 +9,7 @@ case $1 in
   balance) {
     lad=$(seth --to-word ${2:-$ETH_FROM})
     urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
-    ink=$(mcd wad ${urn:0:64})
+    ink=$(mcd --to-wad ${urn:0:64})
     echo "locked: $ink"
     gem=$(seth call $MCD_VAT 'gem(bytes32,bytes32)(uint256)' "$ilk" "$lad")
     echo "free: $(mcd rad $gem)"

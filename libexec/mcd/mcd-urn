@@ -15,8 +15,8 @@ echo "ilk: $MCD_ILK"
 echo "lad: $lad"
 
 urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$(seth --to-word $lad)")
-ink=$(mcd wad ${urn:0:64})
-art=$(mcd wad ${urn:65:129})
+ink=$(mcd --to-wad ${urn:0:64})
+art=$(mcd --to-wad ${urn:65:129})
 pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
 spot=$(mcd ray ${pit:0:64})
 

@@ -32,9 +32,9 @@ hash=$(echo "$logs" | jshon -a -e transactionHash -u)
 
 if [ "$hash" == "$tx" ]; then
   echo "flip: $(seth --to-dec 0x${data:196:64})"
-  echo "ink: $(mcd wad ${data:2:64})"
-  echo "art: $(mcd wad ${data:66:64})"
-  echo "tab: $(mcd wad ${data:130:64})"
+  echo "ink: $(mcd --to-wad ${data:2:64})"
+  echo "art: $(mcd --to-wad ${data:66:64})"
+  echo "tab: $(mcd --to-wad ${data:130:64})"
 else
   echo "Bite - failed trasaction: $tx"
   mcd urn

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+[[ $1 ]] || exec xargs -n1 "$0"
+hexdata=$(seth --to-hexdata "$1")
+hexnum=${hexdata#0x}
+hexnum=$(tr a-f A-F <<<"$hexnum")
+
+if [[ $hexnum =~ ^F+ ]]; then
+  top=$(bc <<< "obase=16; (2^256)")
+  num=-$(bc <<< "scale=16; ibase=16; $top - $hexnum")
+else
+  num=$(bc <<<"ibase=16; $hexnum")
+fi
+
+tr -d '\n\\' <<<"$num"
+echo

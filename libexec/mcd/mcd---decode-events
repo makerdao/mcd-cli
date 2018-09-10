@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+while read -r event;
+do
+  mcd --decode-event "$event"
+done

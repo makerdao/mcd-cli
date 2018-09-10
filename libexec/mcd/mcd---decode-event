@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -e
+topics=($(jshon -e topics -a -u <<<"$1"))
+tx=$(jshon -e transactionHash -u <<<"$1")
+block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$1"))
+data=$(jshon -e data -u <<<"$1")
+event=$(seth --event-name "${topics[0]}")
+
+if [[ $event ]]; then
+  for x in "${topics[@]}"; do ethabi+=(-l "${x#0x}"); done
+  ethabi decode log <(echo "${SETH_ABI?}") \
+  "$event" "${ethabi[@]}" "${data#0x}" | {
+    while read -r param value; do
+      case $param in
+        ilk)
+          v=$(seth --to-ascii 0x$(sed -e "s/[0]*$//g" <<<$value))
+          ;;
+        urn)
+          v=0x$(seth --abi-decode 'f()(address)' $value)
+          ;;
+        ink|art|dink|dart)
+          v=$(mcd --to-wad $value)
+          ;;
+        iArt)
+          v=$(mcd --to-wad $value)
+          param="Art"
+          ;;
+        *) {
+          v=$value
+        }
+      esac
+      jshon+=(-s "$v" -i "$param")
+    done
+    jshon <<<{} -s "$event" -i event -s "$tx" -i tx -s "$block" -i block \
+    -n {} "${jshon[@]}" -i data -j
+  }
+fi
