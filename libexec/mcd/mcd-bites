@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 ### mcd-bites -- View recent bites
-### Usage: mcd bites [<options>]
+### Usage: mcd bites [-B <block>] [--ilk=<id>]
 set -e
 
-sig="Bite(bytes32,bytes32,uint256,uint256,uint256,uint256,uint256)"
-sig=$(seth keccak $(seth --from-ascii "$sig"))
-logs=$(seth rpc eth_getLogs -- \
-    -n {} -s "${MCD_CAT?}" -i address \
-    -s earliest -i fromBlock \
-    -n [] -s "$sig"  -i append -i topics -i append
-    )
-echo $(jshon -e data <<<$logs)
-echo "TODO - filtering & formatting"
+sig="0x99b5620489b6ef926d4518936cfec15d305452712b88bd59da2d9c10fb0953e8"
+abi="event Bite(bytes32 indexed ilk,bytes32 indexed urn,uint256 ink,uint256 art,uint256 tab,uint256 flip,uint256 iArt);"
+SETH_ABI=$(seth abi "$abi")
+
+mcd --events $MCD_CAT $sig | mcd --decode-events

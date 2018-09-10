@@ -18,12 +18,15 @@ if [[ $event ]]; then
         urn)
           v=0x$(seth --abi-decode 'f()(address)' $value)
           ;;
-        ink|art|dink|dart)
+        ink|art|dink|dart|tab)
           v=$(mcd --to-wad $value)
           ;;
         iArt)
           v=$(mcd --to-wad $value)
           param="Art"
+          ;;
+        flip)
+          v=$(seth --to-dec $value)
           ;;
         *) {
           v=$value
