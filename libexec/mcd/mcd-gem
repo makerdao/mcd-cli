@@ -13,8 +13,8 @@ case $1 in
     ink=$(mcd --to-wad ${urn:0:64})
     echo "locked: $ink"
     gem=$(seth call $MCD_VAT 'gem(bytes32,bytes32)(uint256)' "$ilk" "$lad")
-    echo "free: $(mcd rad $gem)"
-    echo "total: $(bc <<< "$(mcd rad $gem) + $ink")"
+    echo "free: $(mcd --to-rad $gem)"
+    echo "total: $(bc <<< "$(mcd --to-rad $gem) + $ink")"
   };;
   move) {
     echo "Not implemented"

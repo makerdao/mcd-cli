@@ -23,8 +23,8 @@ pit=$(cat <&4)
 vat=$(cat <&5)
 ink=$(mcd --to-wad ${urn:0:64})
 art=$(mcd --to-wad ${urn:65:129})
-spot=$(mcd ray ${pit:0:64})
-rate=$(mcd ray ${vat:65:64})
+spot=$(mcd --to-ray ${pit:0:64})
+rate=$(mcd --to-ray ${vat:65:64})
 
 echo "ink: $ink @ $spot"
 echo "art: $art @ $rate"

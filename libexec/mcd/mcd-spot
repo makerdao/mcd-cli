@@ -10,4 +10,4 @@ set -e
 
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
 pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
-echo $(mcd ray ${pit:0:64})
+echo $(mcd --to-ray ${pit:0:64})

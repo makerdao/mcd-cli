@@ -1,9 +1,0 @@
-#!/usr/bin/env node
-var BN   = require('bn.js');
-var hex  = process.argv[2], match
-var lpad = (x, y, n) => repeat(y, n - x.length) + x.toUpperCase();
-var repeat = (x, n) => n > 0 ? new Array(n + 1).join(x) : "";
-
-wad = lpad(new BN(hex, 16).toString(10), "0", 27)
-wad = wad.replace(/.{27}$/, ".$&").replace(/^\./, "0.")
-console.log(wad);

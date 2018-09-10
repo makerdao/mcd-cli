@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-vow-sin -- Get queued sin amount at a given era
+### vow sin -- Get queued sin amount at a given era
 ### Usage: mcd vow sin <era>
 ###
 ### Where <era> is the block timestamp of a bite.

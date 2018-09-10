@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
+# hex to decimal wad
 set -e
-seth --from-wei $(mcd --to-dec $1)
+mcd --to-float $(mcd --to-dec $1) 18

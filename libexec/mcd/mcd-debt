@@ -3,5 +3,5 @@
 ### Usage: mcd debt
 set -e
 debt=$(seth call "${MCD_VAT}" 'debt()(uint256)')
-echo $(mcd rad "$debt")
+echo $(mcd --to-rad "$debt")
 

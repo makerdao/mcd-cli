@@ -7,7 +7,7 @@ case $1 in
   balance) {
     urn=$(seth --to-word ${2:-$ETH_FROM})
     bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' "$urn")
-    echo $(mcd rad $bal)
+    echo $(mcd --to-rad $bal)
   };;
   supply) {
     mcd debt

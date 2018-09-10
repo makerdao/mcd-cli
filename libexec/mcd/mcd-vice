@@ -3,4 +3,4 @@
 ### Usage: mcd vice
 set -e
 vice=$(seth call "${MCD_VAT}" 'vice()(uint256)')
-echo $(mcd rad "$vice")
+echo $(mcd --to-rad "$vice")

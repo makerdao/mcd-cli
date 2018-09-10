@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -e
+mcd --to-float $(mcd --to-dec $1) 27
