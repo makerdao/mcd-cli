@@ -2,6 +2,7 @@
 set -e
 topics=($(jshon -e topics -a -u <<<"$1"))
 tx=$(jshon -e transactionHash -u <<<"$1")
+ts=$(seth --to-dec $(jshon -e timeStamp -u <<<"$1"))
 block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$1"))
 data=$(jshon -e data -u <<<"$1")
 event=$(seth --event-name "${topics[0]}")
@@ -34,7 +35,7 @@ if [[ $event ]]; then
       esac
       jshon+=(-s "$v" -i "$param")
     done
-    jshon <<<{} -s "$event" -i event -s "$tx" -i tx -s "$block" -i block \
+    jshon <<<{} -s "$event" -i event -s "$ts" -i timestamp -s "$tx" -i tx -s "$block" -i block \
     -n {} "${jshon[@]}" -i data -j
   }
 fi
