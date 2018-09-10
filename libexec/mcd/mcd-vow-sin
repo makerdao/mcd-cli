@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+### mcd-vow-sin -- Get queued sin amount at a given era
+### Usage: mcd vow sin <era>
+###
+### Where <era> is the block timestamp of a bite.
+### Returns zero if queued debt has been released for auction.
+set -e
+[ $# = 1 ] || mcd --fail "$0: Bad argument(s)"
+
+era=$(seth --to-word $(seth --to-hex "$1"))
+sin=$(seth call $MCD_VOW 'sin(uint48)(uint256)' 0x$era)
+echo $(mcd --to-wad $sin)

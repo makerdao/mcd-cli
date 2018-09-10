@@ -6,8 +6,8 @@
 ### bad-debt (Woe) awaiting auction.
 set -e
 
-exec 3< <(mcd vow woe)
-exec 4< <(mcd vow joy)
+exec 3< <(mcd vow Woe)
+exec 4< <(mcd vow Joy)
 exec 5< <(mcd vow lump)
 
 woe=$(cat <&3)

@@ -4,23 +4,26 @@
 set -e
 
 case $1 in
-  sin) {
+  Sin) {
     sin=$(seth call "${MCD_VOW}" 'Sin()(uint256)')
     echo $(mcd --to-wad "$sin")
   };;
-  woe) {
+  sin) {
+    mcd vow-sin $2
+  };;
+  Woe) {
     woe=$(seth call "${MCD_VOW}" 'Woe()(uint256)')
     echo $(mcd --to-wad "$woe")
   };;
-  ash) {
+  Ash) {
     ash=$(seth call "${MCD_VOW}" 'Ash()(uint256)')
     echo $(mcd --to-wad "$ash")
   };;
-  awe) {
+  Awe) {
     awe=$(seth call "${MCD_VOW}" 'Awe()(uint256)')
     echo $(mcd --to-wad "$awe")
   };;
-  joy) {
+  Joy) {
     joy=$(seth call "${MCD_VOW}" 'Joy()(uint256)')
     echo $(mcd --to-wad "$joy")
   };;
@@ -38,11 +41,12 @@ case $1 in
   };;
   *) {
     echo "Options:"
-    echo "  sin"
-    echo "  woe"
-    echo "  ash"
-    echo "  awe"
-    echo "  joy"
+    echo "  sin <era>"
+    echo "  Sin"
+    echo "  Woe"
+    echo "  Ash"
+    echo "  Awe"
+    echo "  Joy"
     echo "  wait"
     echo "  lump"
     echo "  pad"
