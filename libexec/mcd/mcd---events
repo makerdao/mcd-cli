@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-### mcd-events -- print the transaction logs of some contract
-### Usage: mcd events [-B <block>] <address> <sig>
 set -e
 
 if [ ! -z "$MCD_ILK" ]; then

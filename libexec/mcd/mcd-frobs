@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-frobs -- View frob events
+### mcd-frobs -- View recent frobs
 ### Usage: mcd frobs [-B <block>] [--ilk=<id>]
 set -e
 
