@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 ### McDai - Multi-collateral Dai
-###
-### Usage: mcd [<options>] <command> [<args>]
-###    or: mcd help [<command>]
 
 OPTS="mcd [<options>] <command> [<args>]
 mcd [<command>] --help
@@ -13,7 +10,7 @@ rpc-url=url          JSON-RPC URL (default: mainnet.infura.io)
 F,from=address       account to send from
 G,gas=number         number of gas units to provide
   Config Options:
-C,config=            chain config - mainnet (default), kovan, or a setup file path
+C,config=            chain config - kovan (default), mainnet, or a setup file path
   MCD options:
 I,ilk=address        ilk address
 U,urn=address        urn address

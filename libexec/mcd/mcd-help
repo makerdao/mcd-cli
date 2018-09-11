@@ -28,6 +28,7 @@ for file in ${0%/*}/$name-*; do
   fi
 done
 
+
 list-commands() {
   cat "$@" |
   perl -ne 'print "$2 $3\n" if /^(\S)\1\1 '"$name"'-(\S+) -- (.*)/' |
@@ -37,6 +38,8 @@ list-commands() {
 }
 
 cat <<.
+
+$(mcd --help)
 
 Commands:
 
