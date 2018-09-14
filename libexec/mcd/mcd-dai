@@ -12,21 +12,21 @@ case $1 in
   supply) {
     mcd debt
   };;
-  move) {
-    echo "Not implemented"
+  join) {
+    urn=$(seth --to-word $ETH_FROM)
+    wad=$(seth --to-word $(seth --to-wei $2 eth))
+    (set -x; seth send $MCD_JOIN_DAI "join(bytes32, uint256)" $urn $wad)
   };;
-  hope) {
-    echo "Not implemented"
-  };;
-  nope) {
-    echo "Not implemented"
+  exit) {
+    guy=$(seth --to-addres $ETH_FROM)
+    wad=$(seth --to-word $(seth --to-wei $2 eth))
+    (set -x; seth send $MCD_JOIN_DAI "exit(address, uint256)" $guy $wad)
   };;
   *) {
     echo "Options:"
     echo "  balance [<address>]"
-    echo "  hope <address>"
-    echo "  move <src> <dst>"
-    echo "  nope <address>"
+    echo "  join <wad>"
+    echo "  exit <wad>"
     echo "  supply"
   }
 esac
