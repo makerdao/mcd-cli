@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
-### mcd-dai -- Dai balances
+### mcd-dai -- Vat Dai balances
 ### Usage: mcd dai [<command>]
+###
+### Commands: balance [<address>]
+###           supply
+###           join <wad>
+###           exit <wad>
+###
+### With `balance' get the vat balance for a given address (default: ETH_FROM).
+### With `supply' get the total dai supply (vat.debt).
+### With `join' exchange DSToken Dai for Vat Dai.
+### With `exit' exchange Vat Dai for DSToken Dai.
+###
+### Example: mcd dai balance
+###          mcd dai join 72.50
 set -e
 
 case $1 in
@@ -23,10 +36,6 @@ case $1 in
     (set -x; seth send $MCD_JOIN_DAI "exit(address, uint256)" $guy $wad)
   };;
   *) {
-    echo "Options:"
-    echo "  balance [<address>]"
-    echo "  join <wad>"
-    echo "  exit <wad>"
-    echo "  supply"
+    mcd help dai
   }
 esac
