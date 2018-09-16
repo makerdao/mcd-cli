@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+urn=$(seth --to-word $ETH_FROM)
+
+joinEth() {
+  wad=$(seth --to-wei $1 eth)
+  (set -x; seth send $join 'join(bytes32)' $urn -V $wad)
+}
+
+joinGem() {
+  wad=$(seth --to-word $(seth --to-wei $1 eth))
+  (set -x; seth send $join "join(bytes32, uint)" $urn $wad)
+}
+
+case $MCD_ILK in
+  "ETH") {
+    join=$MCD_JOIN_ETH
+    joinEth $1
+  };;
+  *) {
+    mcd --fail "gem: Unrecognised adapter $MCD_ILK"
+  }
+esac
