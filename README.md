@@ -29,17 +29,7 @@ Commands:
    vow             Liquidator balances
 ```
 
-## Development Install
-
-Clone the repo and use make to link/unlink the executables:
-
-```
-$ git clone git@github.com:makerdao/mcd-cli.git
-$ cd mcd-cli
-$ make install | uninstall
-```
-
-## Package Install
+## Install
 
 First install dapp tools:
 
