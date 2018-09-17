@@ -13,7 +13,6 @@ Commands:
    dai             Dai balances
    debt            Get total dai issuance
    drip            Trigger stability fee collection
-   exit            Remove collateral from the system
    flap            Trigger a flap auction
    flips           View flips and kick-off auctions
    flog            Release queued bad-debt for auction
@@ -23,7 +22,6 @@ Commands:
    gem             Gem balances
    help            Print help about mcd or one of its subcommands
    ilk             Get ilk state
-   join            Add collateral to the system
    poke            Poke a spot price feed
    spot            Get the spot price for a given Ilk
    urn             Get urn state
