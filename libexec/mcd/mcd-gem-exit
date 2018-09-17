@@ -5,6 +5,9 @@ case $MCD_ILK in
   "ETH") {
     adapter=$MCD_JOIN_ETH
   };;
+  "REP") {
+    adapter=$MCD_JOIN_REP
+  };;
   *) {
     mcd --fail "gem: Unrecognised adapter $MCD_ILK"
   }

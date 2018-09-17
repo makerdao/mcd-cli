@@ -17,6 +17,10 @@ case $MCD_ILK in
     join=$MCD_JOIN_ETH
     joinEth $1
   };;
+  "REP") {
+    join=$MCD_JOIN_REP
+    joinGem $1
+  };;
   *) {
     mcd --fail "gem: Unrecognised adapter $MCD_ILK"
   }
