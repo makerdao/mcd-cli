@@ -13,6 +13,9 @@ case $1 in
   "ETH") {
     spot=$MCD_SPOT_ETH
   };;
+  "REP") {
+    spot=$MCD_SPOT_REP
+  };;
   *) {
     SPOT_ADDR=true
     spot=$(mcd --to-address $1) || mcd --fail "$0: Unrecognised address $1"
