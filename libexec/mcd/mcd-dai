@@ -31,7 +31,7 @@ case $1 in
     (set -x; seth send $MCD_JOIN_DAI "join(bytes32, uint256)" $urn $wad)
   };;
   exit) {
-    guy=$(seth --to-addres $ETH_FROM)
+    guy=$(seth --to-address $ETH_FROM)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     (set -x; seth send $MCD_JOIN_DAI "exit(address, uint256)" $guy $wad)
   };;
