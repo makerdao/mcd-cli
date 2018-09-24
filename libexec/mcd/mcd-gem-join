@@ -2,6 +2,18 @@
 set -e
 urn=$(seth --to-word $ETH_FROM)
 
+checkAllowance() {
+  gem=$(seth call $join 'gem()')
+  gem="0x$(seth --abi-decode 'f()(address)' $gem)"
+  allowance=$(seth call $gem 'allowance(address,address)(uint)' $ETH_FROM $join)
+  allowance=$(mcd --to-wad $allowance)
+  if (( $(echo "$1 > $allowance" | bc -l) )); then
+    echo "Insufficient Gem allowance ($allowance). Approval required:"
+    echo "seth send $gem 'approve(address,uint)(bool)' $join $wad"
+    exit 1
+  fi
+}
+
 joinEth() {
   wad=$(seth --to-wei $1 eth)
   (set -x; seth send $join 'join(bytes32)' $urn -V $wad)
@@ -9,6 +21,7 @@ joinEth() {
 
 joinGem() {
   wad=$(seth --to-word $(seth --to-wei $1 eth))
+  checkAllowance $1
   (set -x; seth send $join "join(bytes32, uint)" $urn $wad)
 }
 

@@ -17,8 +17,12 @@ set -e
 [ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing Ilk identifier"
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 
+require_from() { [[ $ETH_FROM ]] || mcd --fail "$0: ETH_FROM not set; transact from which account?"; }
+
 case $1 in
   balance) {
+    lad=${2:-$ETH_FROM}
+    [[ $lad ]] || require_from
     lad=$(seth --to-word ${2:-$ETH_FROM})
     urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
     ink=$(mcd --to-wad ${urn:0:64})
@@ -28,9 +32,11 @@ case $1 in
     echo "total: $(bc <<< "$(mcd --to-rad $gem) + $ink")"
   };;
   join) {
+    require_from
     mcd gem-join $2
   };;
   exit) {
+    require_from
     mcd gem-exit $2
   };;
   *) {
