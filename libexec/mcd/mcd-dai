@@ -16,21 +16,46 @@
 ###          mcd dai join 72.50
 set -e
 
+require_from() { [[ $ETH_FROM ]] || mcd --fail "$0: ETH_FROM not set; transact from which account?"; }
+
 case $1 in
+  address) {
+    dai=$(seth call "${MCD_JOIN_DAI?}" 'dai()')
+    echo "0x$(seth --abi-decode 'f()(address)' $dai)"
+  };;
+  allowance) {
+    require_from
+    sig="allowance(address,address)(uint)"
+    allowance=$(seth call "$(mcd dai address)" $sig $ETH_FROM $MCD_JOIN_DAI)
+    echo $(mcd --to-wad $allowance)
+  };;
+  approve) {
+    wad=$(seth --to-word $(seth --to-wei $2 eth))
+    sig="approve(address,uint)(bool)"
+    (set -x; seth send "$(mcd dai address)" $sig $MCD_JOIN_DAI $wad)
+  };;
   balance) {
-    urn=$(seth --to-word ${2:-$ETH_FROM})
-    bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' "$urn")
+    urn=${2:-$ETH_FROM}
+    [[ $urn ]] || require_from
+    bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' $(seth --to-word $urn))
     echo $(mcd --to-rad $bal)
   };;
   supply) {
     mcd debt
   };;
   join) {
+    require_from
+    allowance=$(mcd dai allowance)
+    if (( $(echo "$2 > $allowance" | bc -l) )); then
+      echo "Insufficient Dai token allowance ($allowance). Approval required: mcd dai approve $2"
+      exit 1
+    fi
     urn=$(seth --to-word $ETH_FROM)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     (set -x; seth send $MCD_JOIN_DAI "join(bytes32, uint256)" $urn $wad)
   };;
   exit) {
+    require_from
     guy=$(seth --to-address $ETH_FROM)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     (set -x; seth send $MCD_JOIN_DAI "exit(address, uint256)" $guy $wad)

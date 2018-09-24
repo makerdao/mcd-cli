@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 msg=${*#*\-}
-echo $msg; echo
+echo "Error:${msg#*\:}"; echo
 mcd help "${msg%\:*}"
 exit 1
