@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-msg=${*#*\-}
-echo "Error:${msg#*\:}"; echo
-mcd help "${msg%\:*}"
+err=${1##*/}
+act=${err%\:*}
+echo "Error: ${err#*\:}"; echo
+mcd >&2 ${act#*-} --help
 exit 1
