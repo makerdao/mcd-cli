@@ -5,28 +5,6 @@ set -e
 [ ! -z "$MCD_ILK" ] &&
 [ $# = 2 ] || mcd --fail "$0: Incorrect arguments"
 
-# echo -e "Retrieving current CDP state...\n"
-# mcd urn
-# echo
-# echo "dink: $1"
-# echo "dart: $2"
-
-# read -p "Continue (y/n)? " choice
-# case "$choice" in
-#   y|Y )
-#     echo "Updating Urn..."
-#     ilk=$(seth --to-bytes32 $(seth --from-ascii $MCD_ILK))
-#     dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))
-#     dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
-#     (set -x; seth send $MCD_PIT "frob(bytes32,int256,int256)" $ilk $dink $dart)
-#     echo
-#     mcd urn
-#   ;;
-#   * )
-#     exit
-#   ;;
-# esac
-
 echo "Updating Urn..."
 ilk=$(seth --to-bytes32 $(seth --from-ascii $MCD_ILK))
 dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))

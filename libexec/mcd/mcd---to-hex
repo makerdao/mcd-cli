@@ -1,8 +1,16 @@
-#!/usr/bin/env bash
-set -e
-if [[ $1 =~ ^-[[:digit:]]+$ ]]; then
-  hex=$(printf "%64x" $1  | tr ' ' f)
-  echo 0x$(tr a-f A-F <<<"$hex")
-else
-  seth --to-hex $1
-fi
+#!/usr/bin/env node
+// int to hex conversion
+var BN   = require('bn.js');
+var int  = process.argv[2], match
+var pad = (x, y, n) => rpt(y, n - x.length) + x.toUpperCase();
+var rpt = (x, n) => n > 0 ? new Array(n + 1).join(x) : "";
+var toHex = x => new BN(x).toTwos(256).toString(16);
+
+if (match = int.match(/^\d*$/)) {
+  console.log(`0x${pad(toHex(int), "0", 64)}`);
+}  else if (/^-\d*$/.test(int)) {
+  console.log(`0x${pad(toHex(int), "F", 64)}`);
+} else {
+  console.error(`mcd---to-hex: bad number ${int}`)
+  process.exit(1)
+}
