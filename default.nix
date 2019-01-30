@@ -1,5 +1,5 @@
 { lib, stdenv, fetchFromGitHub, makeWrapper, glibcLocales
-, bc, coreutils, curl, ethabi, ethsign, git, gnused, jshon, nodejs, perl, solc }:
+, bc, coreutils, curl, ethabi, ethsign, git, gnused, jshon, jq, nodejs, perl, solc }:
 
 stdenv.mkDerivation rec {
   name = "mcd-${version}";

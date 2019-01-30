@@ -7,4 +7,4 @@ sig="0x99b5620489b6ef926d4518936cfec15d305452712b88bd59da2d9c10fb0953e8"
 abi="event Bite(bytes32 indexed ilk,bytes32 indexed urn,uint256 ink,uint256 art,uint256 tab,uint256 flip,uint256 iArt);"
 export SETH_ABI=$(seth abi "$abi")
 
-mcd --events $MCD_CAT $sig | mcd --decode-events
+mcd --events $MCD_CAT $sig #| mcd --decode-events
