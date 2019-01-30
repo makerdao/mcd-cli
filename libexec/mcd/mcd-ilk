@@ -1,28 +1,77 @@
 #!/usr/bin/env bash
 ### mcd-ilk -- Get ilk state
-### Usage: mcd ilk <id>
+### Usage: mcd --ilk=<id> ilk [<arg>]
+###
+### With no arguments, return all parameters
+### With `<arg>` get a specified Ilk parameter
+###
+### Example: mcd --ilk=ETH ilk
+###          mcd --ilk=ETH ilk spot
+###          mcd --ilk=ETH ilk Art
 set -e
-[ $# = 1 ] || mcd --fail "$0: Bad argument(s)"
 
-ilk=$(seth --to-bytes32 $(seth --from-ascii "$1"))
+[ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing Ilk identifier"
+ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+
+vat_ilk() { [[ $MCD_VAT_ILK ]] || export MCD_VAT_ILK=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk); }
+pit_ilk() { [[ $MCD_PIT_ILK ]] || export MCD_PIT_ILK=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk); }
+cat_ilk() { [[ $MCD_CAT_ILK ]] || export MCD_CAT_ILK=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk); }
+drp_ilk() { [[ $MCD_DRP_ILK ]] || export MCD_DRP_ILK=$(seth call $MCD_DRIP 'ilks(bytes32)(uint256, uint48)' $ilk); }
 
 p() { printf "%-12s %-45s %-10s\n" "$1" "$2" "$3"; }
 
-vat=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
-p "take" $(mcd --to-ray ${vat:0:64}) "Rate scaling factor"
-p "rate" $(mcd --to-ray ${vat:65:64}) "Debt scaling factor"
-p "Ink"  $(mcd --to-wad ${vat:130:64}) "Total ($1)"
-p "Art"  $(mcd --to-wad ${vat:195:64}) "Total (Dai)"
-
-pit=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk)
-p "spot" $(mcd --to-ray ${pit:0:64}) "Price feed (USD)"
-p "line" $(mcd --to-wad ${pit:65}) "Debt ceiling (Dai)"
-
-cat=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk)
-p "flip" "0x${cat:0:40}" "Flipper contract"
-p "chop" $(mcd --to-ray ${cat:41:64})  "Liquidation penalty"
-p "lump" $(mcd --to-wad ${cat:105:64}) "Flip auction lot size"
-
-drip=$(seth call $MCD_DRIP 'ilks(bytes32)(uint256, uint48)' $ilk)
-p "tax" $(mcd --to-ray ${drip:0:64})
-p "rho" $(seth --to-dec ${drip:65:64}) "Last drip timestamp"
+case $1 in
+  spot) {
+    pit_ilk && mcd --to-ray ${MCD_PIT_ILK:0:64}
+  };;
+  line) {
+    pit_ilk && mcd --to-wad ${MCD_PIT_ILK:65}
+  };;
+  take) {
+    vat_ilk && mcd --to-ray ${MCD_VAT_ILK:0:64}
+  };;
+  rate) {
+    vat_ilk && mcd --to-ray ${MCD_VAT_ILK:65:64}
+  };;
+  Ink) {
+    vat_ilk && mcd --to-wad ${MCD_VAT_ILK:130:64}
+  };;
+  Art) {
+    vat_ilk && mcd --to-wad ${MCD_VAT_ILK:195:64}
+  };;
+  flip) {
+    cat_ilk && echo 0x${MCD_CAT_ILK:0:40}
+  };;
+  chop) {
+    cat_ilk && mcd --to-ray ${MCD_CAT_ILK:41:64}
+  };;
+  lump) {
+    cat_ilk && mcd --to-wad ${MCD_CAT_ILK:105:64}
+  };;
+  tax) {
+    drp_ilk && mcd --to-ray ${MCD_DRP_ILK:0:64}
+  };;
+  rho) {
+    drp_ilk && mcd --to-dec ${MCD_DRP_ILK:65:64}
+  };;
+  "") {
+    pit_ilk
+    p "spot" $(mcd --ilk=$MCD_ILK ilk spot) "Price feed (USD)"
+    p "line" $(mcd --ilk=$MCD_ILK ilk line) "Debt ceiling (Dai)"
+    vat_ilk
+    p "take" $(mcd --ilk=$MCD_ILK ilk take) "Rate scaling factor"
+    p "rate" $(mcd --ilk=$MCD_ILK ilk rate) "Debt scaling factor"
+    p "Ink"  $(mcd --ilk=$MCD_ILK ilk Ink)  "Total ($MCD_ILK)"
+    p "Art"  $(mcd --ilk=$MCD_ILK ilk Art)  "Total (Dai)"
+    cat_ilk
+    p "flip" $(mcd --ilk=$MCD_ILK ilk flip) "Flipper contract"
+    p "chop" $(mcd --ilk=$MCD_ILK ilk chop) "Liquidation penalty"
+    p "lump" $(mcd --ilk=$MCD_ILK ilk lump) "Flip auction lot size"
+    drp_ilk
+    p "tax" $(mcd --ilk=$MCD_ILK ilk tax)
+    p "rho" $(mcd --ilk=$MCD_ILK ilk rho) "Last drip timestamp"
+  };;
+  *) {
+    mcd help ilk
+  }
+esac
