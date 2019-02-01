@@ -74,6 +74,7 @@ case "$MCD_CHAIN" in
     export ETH_RPC_URL=http://127.0.0.1:8545
     export ETH_LOGS_API=rpc
     export ETH_KEYSTORE=~/.dapp/testnet/8545/keystore
+    export ETH_PASSWORD=${0%/*}/conf/testnet.pw
     export ETH_FROM=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
     export_config ~/.dapp/testnet/8545/config/addresses.json;
     ;;
