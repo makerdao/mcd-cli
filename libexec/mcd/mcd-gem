@@ -23,7 +23,7 @@ case $1 in
   balance) {
     lad=${2:-$ETH_FROM}
     [[ $lad ]] || require_from
-    lad=$(seth --to-word ${2:-$ETH_FROM})
+    lad=$(seth --to-bytes32 ${2:-$ETH_FROM})
     urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
     ink=$(mcd --to-wad ${urn:0:64})
     echo "locked: $ink"

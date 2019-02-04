@@ -7,14 +7,14 @@
 set -e
 
 [ ! -z "$MCD_ILK" ] || mcd --fail "$0: An ilk identifier is required";
-[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM" ] || mcd --fail "$0: ETH_FROM or --urn=<address> is required"
+[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM" ] || mcd --fail "$0: ETH_FROM or --urn=<bytes32> is required"
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
-lad=$(seth --to-address ${MCD_URN:-$ETH_FROM})
+lad=$(seth --to-bytes32 ${MCD_URN:-$ETH_FROM})
 
 echo "ilk: $MCD_ILK"
-echo "lad: $lad"
+echo "urn: $lad"
 
-exec 3< <(seth call "${MCD_VAT?}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$(seth --to-word $lad)")
+exec 3< <(seth call "${MCD_VAT?}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
 exec 4< <(seth call "${MCD_PIT?}" 'ilks(bytes32)(address, uint256)' $ilk)
 exec 5< <(seth call "${MCD_VAT?}" 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
 
