@@ -26,9 +26,12 @@ art=$(mcd --to-wad ${urn:65:129})
 spot=$(mcd --to-ray ${pit:0:64})
 rate=$(mcd --to-ray ${vat:65:64})
 
-echo "ink: $ink @ $spot"
-echo "art: $art @ $rate"
+echo "ink: $ink"
+echo "art: $art"
+echo "spot: $spot"
+echo "rate: $rate"
 
 if [ ${art:0:1} -gt 0 ]; then
-  echo -e "rat: $(bc <<< "scale=1; (($ink*$spot)/($art*$rate) * 100)")%"
+  cover=$(bc <<< "scale=2; (($ink*$spot)/($art*$rate)) * 100")
+  echo "cover: $(bc <<< "$cover / 1")%"
 fi

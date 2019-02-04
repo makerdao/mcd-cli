@@ -37,7 +37,7 @@ case $1 in
   balance) {
     urn=${2:-$ETH_FROM}
     [[ $urn ]] || require_from
-    bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' $(seth --to-word $urn))
+    bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' $(seth --to-bytes32 $urn))
     echo $(mcd --to-rad $bal)
   };;
   supply) {
