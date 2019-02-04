@@ -16,7 +16,8 @@ ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 vat_ilk() { [[ $MCD_VAT_ILK ]] || export MCD_VAT_ILK=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk); }
 pit_ilk() { [[ $MCD_PIT_ILK ]] || export MCD_PIT_ILK=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk); }
 cat_ilk() { [[ $MCD_CAT_ILK ]] || export MCD_CAT_ILK=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk); }
-drp_ilk() { [[ $MCD_DRP_ILK ]] || export MCD_DRP_ILK=$(seth call $MCD_DRIP 'ilks(bytes32)(uint256, uint48)' $ilk); }
+drip_ilk() { [[ $MCD_DRIP_ILK ]] || export MCD_DRIP_ILK=$(seth call $MCD_DRIP 'ilks(bytes32)(uint256, uint48)' $ilk); }
+spot_ilk() { [[ $MCD_SPOT_ILK ]] || export MCD_SPOT_ILK=$(seth call $MCD_SPOT 'ilks(bytes32)(address, uint256)' $ilk); }
 
 p() { printf "%-12s %-45s %-10s\n" "$1" "$2" "$3"; }
 
@@ -49,27 +50,36 @@ case $1 in
     cat_ilk && mcd --to-wad ${MCD_CAT_ILK:105:64}
   };;
   tax) {
-    drp_ilk && mcd --to-ray ${MCD_DRP_ILK:0:64}
+    drip_ilk && mcd --to-ray ${MCD_DRIP_ILK:0:64}
   };;
   rho) {
-    drp_ilk && mcd --to-dec ${MCD_DRP_ILK:65:64}
+    drip_ilk && mcd --to-dec ${MCD_DRIP_ILK:65:64}
+  };;
+  pip) {
+    spot_ilk && echo 0x${MCD_SPOT_ILK:0:40}
+  };;
+  mat) {
+    spot_ilk && mcd --to-ray ${MCD_SPOT_ILK:41:64}
   };;
   "") {
-    pit_ilk
+    pit_ilk && p "Pit:" "------------------------------------------"
     p "spot" $(mcd --ilk=$MCD_ILK ilk spot) "Price feed (USD)"
     p "line" $(mcd --ilk=$MCD_ILK ilk line) "Debt ceiling (Dai)"
-    vat_ilk
+    vat_ilk && p "Vat:" "------------------------------------------"
     p "take" $(mcd --ilk=$MCD_ILK ilk take) "Rate scaling factor"
     p "rate" $(mcd --ilk=$MCD_ILK ilk rate) "Debt scaling factor"
     p "Ink"  $(mcd --ilk=$MCD_ILK ilk Ink)  "Total ($MCD_ILK)"
     p "Art"  $(mcd --ilk=$MCD_ILK ilk Art)  "Total (Dai)"
-    cat_ilk
+    cat_ilk && p "Cat:" "------------------------------------------"
     p "flip" $(mcd --ilk=$MCD_ILK ilk flip) "Flipper contract"
     p "chop" $(mcd --ilk=$MCD_ILK ilk chop) "Liquidation penalty"
     p "lump" $(mcd --ilk=$MCD_ILK ilk lump) "Flip auction lot size"
-    drp_ilk
+    drip_ilk && p "Drip:" "------------------------------------------"
     p "tax" $(mcd --ilk=$MCD_ILK ilk tax)
     p "rho" $(mcd --ilk=$MCD_ILK ilk rho) "Last drip timestamp"
+    drip_ilk && p "Spot:" "------------------------------------------"
+    p "pip" $(mcd --ilk=$MCD_ILK ilk pip) "Price feed contract"
+    p "mat" $(mcd --ilk=$MCD_ILK ilk mat) "Liquidation ratio"
   };;
   *) {
     mcd help ilk
