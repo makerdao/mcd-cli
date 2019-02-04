@@ -1,32 +1,20 @@
 #!/usr/bin/env bash
-### mcd-poke -- Poke a spot price feed
-### Usage: mcd poke <ilk>
-###    or: mcd poke <address>
+### mcd-poke -- Update the price feed for a given Ilk
+### Usage: mcd --ilk=<id> poke
 ###
 ### Specify either an ilk identifier or a feed address
 ###
 ### Example: mcd poke ETH
 set -e
-[ $# = 1 ] || mcd --fail "$0: Incorrect argument(s)"
 
-case $1 in
-  "ETH") {
-    spot=$MCD_SPOT_ETH
-  };;
-  "REP") {
-    spot=$MCD_SPOT_REP
-  };;
-  *) {
-    SPOT_ADDR=true
-    spot=$(mcd --to-address $1) || mcd --fail "$0: Unrecognised address $1"
-  }
-esac
+[ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing Ilk identifier"
+ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+pip=$(eval echo "\$PIP_${MCD_ILK}")
 
-tx=$(seth send --async $spot "poke()")
-echo >&2 -n "Waiting for transaction receipt..."
-hash=$(SETH_TICK=true seth receipt "$tx" transactionHash)
-echo "$hash"
+echo "Poke the pip:"
+tx=$(set -x; seth send --async $pip "poke()")
 
-if [[ ! $SPOT_ADDR ]]; then
-  echo "spot: $(mcd spot $1)"
-fi
+echo "Poke the spotter:"
+(set -x; seth send $MCD_SPOT "poke()")
+
+echo "$MCD_ILK spot: $(mcd --ilk=$MCD_ILK ilk spot)"
