@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+[[ $MCD_DRIP_ILK ]] ||
+  export MCD_DRIP_ILK=$(seth call $MCD_DRIP 'ilks(bytes32)(uint256, uint48)' $1);
+echo $MCD_DRIP_ILK

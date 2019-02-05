@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+[[ $MCD_CAT_ILK ]] ||
+  export MCD_CAT_ILK=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $1);
+echo $MCD_CAT_ILK

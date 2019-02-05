@@ -2,7 +2,7 @@
 ### mcd-ilk -- Get ilk state
 ### Usage: mcd --ilk=<id> ilk [<arg>]
 ###
-### With no arguments, return all parameters
+### With no arguments, list all parameters
 ### With `<arg>` get a specified Ilk parameter
 ###
 ### Example: mcd --ilk=ETH ilk
@@ -10,78 +10,46 @@
 ###          mcd --ilk=ETH ilk Art
 set -e
 
-[ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing Ilk identifier"
-ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+id=$(mcd --require-ilk $0)
 
-vat_ilk() { [[ $MCD_VAT_ILK ]] || export MCD_VAT_ILK=$(seth call $MCD_VAT 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk); }
-pit_ilk() { [[ $MCD_PIT_ILK ]] || export MCD_PIT_ILK=$(seth call $MCD_PIT 'ilks(bytes32)(address, uint256)' $ilk); }
-cat_ilk() { [[ $MCD_CAT_ILK ]] || export MCD_CAT_ILK=$(seth call $MCD_CAT 'ilks(bytes32)(address, uint256, uint256)' $ilk); }
-drip_ilk() { [[ $MCD_DRIP_ILK ]] || export MCD_DRIP_ILK=$(seth call $MCD_DRIP 'ilks(bytes32)(uint256, uint48)' $ilk); }
-spot_ilk() { [[ $MCD_SPOT_ILK ]] || export MCD_SPOT_ILK=$(seth call $MCD_SPOT 'ilks(bytes32)(address, uint256)' $ilk); }
+pit()  { mcd --pit-ilk $id;  }
+vat()  { mcd --vat-ilk $id;  }
+cat()  { mcd --cat-ilk $id;  }
+drip() { mcd --drip-ilk $id; }
+spot() { mcd --spot-ilk $id; }
 
-p() { printf "%-12s %-45s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-5s %-43s %-10s\n" "$1" "$2" "$3"; }
+
+mcd-ilk() {
+  p "spot" $(mcd ilk spot) "Price feed (USD)"
+  p "line" $(mcd ilk line) "Debt ceiling (Dai)"
+  p "take" $(mcd ilk take) "Rate scaling factor"
+  p "rate" $(mcd ilk rate) "Debt scaling factor"
+  p "Ink"  $(mcd ilk Ink)  "Total ($MCD_ILK)"
+  p "Art"  $(mcd ilk Art)  "Total (Dai)"
+  p "flip" $(mcd ilk flip) "Flipper contract"
+  p "chop" $(mcd ilk chop) "Liquidation penalty"
+  p "lump" $(mcd ilk lump) "Flip auction lot size"
+  p "tax"  $(mcd ilk tax)
+  p "rho"  $(mcd ilk rho)  "Last drip timestamp"
+  p "pip"  $(mcd ilk pip)  "Price feed contract"
+  p "mat"  $(mcd ilk mat)  "Liquidation ratio"
+}
 
 case $1 in
-  spot) {
-    pit_ilk && mcd --to-ray ${MCD_PIT_ILK:0:64}
-  };;
-  line) {
-    pit_ilk && mcd --to-wad ${MCD_PIT_ILK:65}
-  };;
-  take) {
-    vat_ilk && mcd --to-ray ${MCD_VAT_ILK:0:64}
-  };;
-  rate) {
-    vat_ilk && mcd --to-ray ${MCD_VAT_ILK:65:64}
-  };;
-  Ink) {
-    vat_ilk && mcd --to-wad ${MCD_VAT_ILK:130:64}
-  };;
-  Art) {
-    vat_ilk && mcd --to-wad ${MCD_VAT_ILK:195:64}
-  };;
-  flip) {
-    cat_ilk && echo 0x${MCD_CAT_ILK:0:40}
-  };;
-  chop) {
-    cat_ilk && mcd --to-ray ${MCD_CAT_ILK:41:64}
-  };;
-  lump) {
-    cat_ilk && mcd --to-wad ${MCD_CAT_ILK:105:64}
-  };;
-  tax) {
-    drip_ilk && mcd --to-ray ${MCD_DRIP_ILK:0:64}
-  };;
-  rho) {
-    drip_ilk && mcd --to-dec ${MCD_DRIP_ILK:65:64}
-  };;
-  pip) {
-    spot_ilk && echo 0x${MCD_SPOT_ILK:0:40}
-  };;
-  mat) {
-    spot_ilk && mcd --to-ray ${MCD_SPOT_ILK:41:64}
-  };;
-  "") {
-    pit_ilk && p "Pit:" "------------------------------------------"
-    p "spot" $(mcd --ilk=$MCD_ILK ilk spot) "Price feed (USD)"
-    p "line" $(mcd --ilk=$MCD_ILK ilk line) "Debt ceiling (Dai)"
-    vat_ilk && p "Vat:" "------------------------------------------"
-    p "take" $(mcd --ilk=$MCD_ILK ilk take) "Rate scaling factor"
-    p "rate" $(mcd --ilk=$MCD_ILK ilk rate) "Debt scaling factor"
-    p "Ink"  $(mcd --ilk=$MCD_ILK ilk Ink)  "Total ($MCD_ILK)"
-    p "Art"  $(mcd --ilk=$MCD_ILK ilk Art)  "Total (Dai)"
-    cat_ilk && p "Cat:" "------------------------------------------"
-    p "flip" $(mcd --ilk=$MCD_ILK ilk flip) "Flipper contract"
-    p "chop" $(mcd --ilk=$MCD_ILK ilk chop) "Liquidation penalty"
-    p "lump" $(mcd --ilk=$MCD_ILK ilk lump) "Flip auction lot size"
-    drip_ilk && p "Drip:" "------------------------------------------"
-    p "tax" $(mcd --ilk=$MCD_ILK ilk tax)
-    p "rho" $(mcd --ilk=$MCD_ILK ilk rho) "Last drip timestamp"
-    drip_ilk && p "Spot:" "------------------------------------------"
-    p "pip" $(mcd --ilk=$MCD_ILK ilk pip) "Price feed contract"
-    p "mat" $(mcd --ilk=$MCD_ILK ilk mat) "Liquidation ratio"
-  };;
-  *) {
-    mcd help ilk
-  }
+  spot)    { pit  | mcd --to-ray $(mcd --slice 0 64);   };;
+  line)    { pit  | mcd --to-wad $(mcd --slice 65 64);  };;
+  take)    { vat  | mcd --to-ray $(mcd --slice 0 64);   };;
+  rate)    { vat  | mcd --to-ray $(mcd --slice 65 64);  };;
+  Ink|ink) { vat  | mcd --to-wad $(mcd --slice 130 64); };;
+  Art|art) { vat  | mcd --to-wad $(mcd --slice 195 64); };;
+  flip)    { cat  | echo 0x$(mcd --slice 0 40);         };;
+  chop)    { cat  | mcd --to-ray $(mcd --slice 41 64);  };;
+  lump)    { vat  | mcd --to-wad $(mcd --slice 105 64); };;
+  tax)     { drip | mcd --to-ray $(mcd --slice 0 64);   };;
+  rho)     { drip | mcd --to-dec $(mcd --slice 65 64);  };;
+  pip)     { spot | echo 0x$(mcd --slice 0 40);         };;
+  mat)     { spot | mcd --to-ray $(mcd --slice 41 64);  };;
+  "")      { mcd-ilk;                                   };;
+  *)       { mcd help ilk;                              }
 esac
