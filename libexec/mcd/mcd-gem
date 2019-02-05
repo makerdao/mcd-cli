@@ -3,6 +3,8 @@
 ### Usage: mcd gem --ilk=<id> [<command>]
 ###
 ### Commands: balance [<address>]
+###           locked [<address>]
+###           free [<address>]
 ###           join <wad>
 ###           exit <wad>
 ###
@@ -17,26 +19,30 @@ set -e
 [ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing Ilk identifier"
 ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 
-require_from() { [[ $ETH_FROM ]] || mcd --fail "$0: ETH_FROM not set; transact from which account?"; }
-
 case $1 in
   balance) {
-    lad=${2:-$ETH_FROM}
-    [[ $lad ]] || require_from
-    lad=$(seth --to-bytes32 ${2:-$ETH_FROM})
-    urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
+    locked=$(mcd gem locked $2); free=$(mcd gem free $2)
+    echo "locked: $locked"
+    echo "free: $free"
+    echo "total: $(bc <<< "$locked + $free")"
+  };;
+  locked) {
+    urn=$(seth --to-bytes32 ${2:-$ETH_FROM})
+    urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$urn")
     ink=$(mcd --to-wad ${urn:0:64})
-    echo "locked: $ink"
-    gem=$(seth call $MCD_VAT 'gem(bytes32,bytes32)(uint256)' "$ilk" "$lad")
-    echo "free: $(mcd --to-rad $gem)"
-    echo "total: $(bc <<< "$(mcd --to-rad $gem) + $ink")"
+    echo "$ink"
+  };;
+  free) {
+    urn=$(seth --to-bytes32 ${2:-$ETH_FROM})
+    gem=$(seth call $MCD_VAT 'gem(bytes32,bytes32)(uint256)' "$ilk" "$urn")
+    echo $(mcd --to-rad $gem)
   };;
   join) {
-    require_from
+    [[ $ETH_FROM ]] || mcd --fail "$0: You must set ETH_FROM or specify an urn address";
     mcd gem-join $2
   };;
   exit) {
-    require_from
+    [[ $ETH_FROM ]] || mcd --fail "$0: You must set ETH_FROM or specify an urn address";
     mcd gem-exit $2
   };;
   *) {
