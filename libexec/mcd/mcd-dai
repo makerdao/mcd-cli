@@ -8,7 +8,7 @@
 ###           exit <wad>
 ###
 ### With `balance' get the vat balance for a given address (default: ETH_FROM).
-### With `supply' get the total dai supply (vat.debt).
+### With `supply' get the total dai supply (`mcd debt').
 ### With `join' exchange DSToken Dai for Vat Dai.
 ### With `exit' exchange Vat Dai for DSToken Dai.
 ###
@@ -18,10 +18,66 @@ set -e
 
 require_from() { [[ $ETH_FROM ]] || mcd --fail "$0: ETH_FROM not set; transact from which account?"; }
 
+p() { printf "%-8s %-50s %-48s %-10s\n" "$1" "$2" "$3" "$4"; }
+
+mcd-dai() {
+  p "" "Vat" "ERC20" ""
+  p "address" $(mcd dai address vat) $(mcd dai address erc20) "Contract address"
+  p "balance" $(mcd dai balance vat) $(mcd dai balance erc20) "Account balance"
+  p "supply"  $(mcd dai supply vat)  $(mcd dai supply erc20)  "Total supply"
+  echo
+  echo "approve Give the join adapter ERC20 account access"
+  echo "join    Move ERC20 Dai to the Vat"
+  echo "exit    Move Vat Dai to the ERC20 account"
+}
+
+#TODO use --urn=<bytes32|address>
+
 case $1 in
   address) {
-    dai=$(seth call "${MCD_JOIN_DAI?}" 'dai()')
-    echo "0x$(seth --abi-decode 'f()(address)' $dai)"
+    case $2 in
+      vat)   { echo ${MCD_VAT?}; };;
+      erc20) { echo ${MCD_DAI?}; };;
+      "")    {
+               echo "vat $(mcd dai address vat)"
+               echo "erc20 $(mcd dai address erc20)"
+      };;
+      *)     { mcd dai address; };;
+    esac
+  };;
+  balance) {
+    urn=${3:-$ETH_FROM}
+    [[ $urn ]] || require_from
+    case $2 in
+      vat)   {
+        sig="dai(bytes32)(uint256)"
+        bal=$(seth call ${MCD_VAT?} $sig $(seth --to-bytes32 $urn))
+        mcd --to-rad $bal
+      };;
+      erc20) {
+        bal=$(seth call ${MCD_DAI?} 'balanceOf(address)(uint)' $urn)
+        seth --to-fix 18 $(seth --to-dec $bal)
+      };;
+      "") {
+        echo "vat $(mcd dai balance vat)"
+        echo "erc20 $(mcd dai balance erc20)"
+      };;
+      *)     { mcd dai balance; };;
+    esac
+  };;
+  supply) {
+    case $2 in
+      vat)   { echo $(mcd debt); };;
+      erc20) {
+        supply=$(seth call "$MCD_DAI" "totalSupply()(uint)")
+        seth --to-fix 18 $(seth --to-dec $supply)
+      };;
+      "") {
+        echo "vat $(mcd dai supply vat)"
+        echo "erc20 $(mcd dai supply erc20)"
+      };;
+      *)     { mcd dai supply; };;
+    esac
   };;
   allowance) {
     require_from
@@ -33,15 +89,6 @@ case $1 in
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     sig="approve(address,uint)(bool)"
     (set -x; seth send "$(mcd dai address)" $sig $MCD_JOIN_DAI $wad)
-  };;
-  balance) {
-    urn=${2:-$ETH_FROM}
-    [[ $urn ]] || require_from
-    bal=$(seth call $MCD_VAT 'dai(bytes32)(uint256)' $(seth --to-bytes32 $urn))
-    echo $(mcd --to-rad $bal)
-  };;
-  supply) {
-    mcd debt
   };;
   join) {
     require_from
@@ -60,6 +107,7 @@ case $1 in
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     (set -x; seth send $MCD_JOIN_DAI "exit(address, uint256)" $guy $wad)
   };;
+  "") { mcd-dai;                                   };;
   *) {
     mcd help dai
   }
