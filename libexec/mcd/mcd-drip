@@ -8,8 +8,8 @@ ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 
 echo "debt: $(mcd debt)"
 
-(set -x; seth send "${MCD_DRIP}" "drip(bytes32)" "$ilk")
+(set -x; seth send "${MCD_JUG}" "drip(bytes32)" "$ilk")
 
-drip=$(seth call $MCD_DRIP 'ilks(bytes32)(bytes32, uint256, uint48)' $ilk)
+drip=$(seth call $MCD_JUG 'ilks(bytes32)(bytes32, uint256, uint48)' $ilk)
 echo "rho: $(seth --to-dec ${drip:130:64})"
 echo "debt: $(mcd debt)"
