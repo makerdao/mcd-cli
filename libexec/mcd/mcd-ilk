@@ -18,16 +18,16 @@ cat()  { mcd --cat-ilk $id;  }
 drip() { mcd --drip-ilk $id; }
 spot() { mcd --spot-ilk $id; }
 
-p() { printf "%-5s %-43s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-ilk() {
   p "spot" $(mcd ilk spot) "Price feed (USD)"
-  p "line" $(mcd ilk line) "Debt ceiling (Dai)"
+  p "line" $(mcd ilk line) "Debt ceiling (DAI)"
   p "take" $(mcd ilk take) "Rate scaling factor"
   p "rate" $(mcd ilk rate) "Debt scaling factor"
   p "Ink"  $(mcd ilk Ink)  "Total ($MCD_ILK)"
-  p "Art"  $(mcd ilk Art)  "Total (Dai)"
-  p "flip" $(mcd ilk flip) "Flipper contract"
+  p "Art"  $(mcd ilk Art)  "Total (DAI)"
+  p "flip" $(mcd ilk flip) "Flip auction contract"
   p "chop" $(mcd ilk chop) "Liquidation penalty"
   p "lump" $(mcd ilk lump) "Flip auction lot size"
   p "tax"  $(mcd ilk tax)

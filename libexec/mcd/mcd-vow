@@ -1,59 +1,39 @@
 #!/usr/bin/env bash
 ### mcd-vow -- Liquidator balances
-### Usage: mcd vow [<command>]
+### Usage: mcd vow [<arg>]
+###
+### With no arguments, list all parameters
+### With `<arg>` get a specified Vow parameter
+###
+### Example: mcd vow
+###          mcd vow Sin
 set -e
 
+p() { printf "%-4s %-22s %-10s\n" "$1" "$2" "$3"; }
+
+mcd-vow() {
+  p "Sin"  $(mcd vow Sin)  "Queued debt"
+  p "Ash"  $(mcd vow Ash)  "On-auction debt"
+  p "wait" $(mcd vow wait) "Flop delay"
+  p "sump" $(mcd vow sump) "Flop lot size"
+  p "bump" $(mcd vow bump) "Flap lot size"
+  p "hump" $(mcd vow hump) "Surplus buffer size"
+  p "Awe"  $(mcd vow Awe)  "Total defecit"
+  p "Joy"  $(mcd vow Joy)  "Total surplus"
+  p "Woe"  $(mcd vow Woe)  "Un-queued pre-auction debt"
+}
+
 case $1 in
-  Sin) {
-    sin=$(seth call "${MCD_VOW}" 'Sin()(uint256)')
-    echo $(mcd --to-wad "$sin")
-  };;
-  sin) {
-    mcd vow-sin $2
-  };;
-  Woe) {
-    woe=$(seth call "${MCD_VOW}" 'Woe()(uint256)')
-    echo $(mcd --to-wad "$woe")
-  };;
-  Ash) {
-    ash=$(seth call "${MCD_VOW}" 'Ash()(uint256)')
-    echo $(mcd --to-wad "$ash")
-  };;
-  Awe) {
-    awe=$(seth call "${MCD_VOW}" 'Awe()(uint256)')
-    echo $(mcd --to-wad "$awe")
-  };;
-  Joy) {
-    joy=$(seth call "${MCD_VOW}" 'Joy()(uint256)')
-    echo $(mcd --to-wad "$joy")
-  };;
-  wait) {
-    wait=$(seth call "${MCD_VOW}" 'wait()(uint256)')
-    echo $(mcd --to-wad "$wait")
-  };;
-  sump) {
-    sump=$(seth call "${MCD_VOW}" 'sump()(uint256)')
-    echo $(mcd --to-wad "$sump")
-  };;
-  bump) {
-    bump=$(seth call "${MCD_VOW}" 'bump()(uint256)')
-    echo $(mcd --to-wad "$bump")
-  };;
-  hump) {
-    hump=$(seth call "${MCD_VOW}" 'hump()(uint256)')
-    echo $(mcd --to-wad "$hump")
-  };;
-  *) {
-    echo "Options:"
-    echo "  sin <era>"
-    echo "  Sin"
-    echo "  Woe"
-    echo "  Ash"
-    echo "  Awe"
-    echo "  Joy"
-    echo "  wait"
-    echo "  sump"
-    echo "  bump"
-    echo "  hump"
-  }
+  Sin)  { mcd --to-wad $(seth call "${MCD_VOW}" 'Sin()(uint256)');  };;
+  Ash)  { mcd --to-wad $(seth call "${MCD_VOW}" 'Ash()(uint256)');  };;
+  wait) { mcd --to-wad $(seth call "${MCD_VOW}" 'wait()(uint256)'); };;
+  sump) { mcd --to-wad $(seth call "${MCD_VOW}" 'sump()(uint256)'); };;
+  bump) { mcd --to-wad $(seth call "${MCD_VOW}" 'bump()(uint256)'); };;
+  hump) { mcd --to-wad $(seth call "${MCD_VOW}" 'hump()(uint256)'); };;
+  Awe)  { mcd --to-wad $(seth call "${MCD_VOW}" 'Awe()(uint256)');  };;
+  Joy)  { mcd --to-wad $(seth call "${MCD_VOW}" 'Joy()(uint256)');  };;
+  Woe)  { mcd --to-wad $(seth call "${MCD_VOW}" 'Woe()(uint256)');  };;
+  sin)  { mcd vow-sin $2;                                           };;
+  "")   { mcd-vow;                                                  };;
+  *)    { mcd help vow;                                             }
 esac
