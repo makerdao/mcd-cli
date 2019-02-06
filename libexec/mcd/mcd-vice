@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-vice -- Get total bad debt
+### mcd-vice -- Total bad debt
 ### Usage: mcd vice
 set -e
 vice=$(seth call "${MCD_VAT}" 'vice()(uint256)')

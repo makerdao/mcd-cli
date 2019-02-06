@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-ilk -- Get ilk state
+### mcd-ilk -- Ilk state
 ### Usage: mcd --ilk=<id> ilk [<arg>]
 ###
 ### With no arguments, list all parameters

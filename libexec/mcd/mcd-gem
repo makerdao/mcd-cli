@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-gem -- Gem balances
+### mcd-gem -- Collateral balances
 ### Usage: mcd gem --ilk=<id> [<command>]
 ###
 ### Commands: balance [<address>]

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-dai -- Vat Dai balances
+### mcd-dai -- Vat dai balances
 ### Usage: mcd dai [<command>]
 ###
 ### Commands: balance [<address>]

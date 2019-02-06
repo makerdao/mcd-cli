@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-bites -- View recent bites
+### mcd-bites -- Recent bites
 ### Usage: mcd bites [-B <block>] [--ilk=<id>]
 set -e
 
