@@ -12,15 +12,24 @@ set -e
 p() { printf "%-4s %-22s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-vow() {
-  p "Sin"  $(mcd vow Sin)  "Queued debt"
-  p "Ash"  $(mcd vow Ash)  "On-auction debt"
-  p "wait" $(mcd vow wait) "Flop delay"
-  p "sump" $(mcd vow sump) "Flop lot size"
-  p "bump" $(mcd vow bump) "Flap lot size"
-  p "hump" $(mcd vow hump) "Surplus buffer size"
-  p "Awe"  $(mcd vow Awe)  "Total defecit"
-  p "Joy"  $(mcd vow Joy)  "Total surplus"
-  p "Woe"  $(mcd vow Woe)  "Un-queued pre-auction debt"
+  exec 3< <(mcd vow Sin)
+  exec 4< <(mcd vow Ash)
+  exec 5< <(mcd vow wait)
+  exec 6< <(mcd vow sump)
+  exec 7< <(mcd vow bump)
+  exec 8< <(mcd vow hump)
+  exec 9< <(mcd vow Awe)
+  exec 10< <(mcd vow Joy)
+  exec 11< <(mcd vow Woe)
+  p "Sin"  $(cat <&3) "Queued debt"
+  p "Ash"  $(cat <&4) "On-auction debt"
+  p "wait" $(cat <&5) "Flop delay"
+  p "sump" $(cat <&6) "Flop lot size"
+  p "bump" $(cat <&7) "Flap lot size"
+  p "hump" $(cat <&8) "Surplus buffer size"
+  p "Awe"  $(cat <&9) "Total defecit"
+  p "Joy"  $(cat <&10) "Total surplus"
+  p "Woe"  $(cat <&11) "Un-queued pre-auction debt"
 }
 
 case $1 in
