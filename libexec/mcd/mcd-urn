@@ -1,37 +1,54 @@
 #!/usr/bin/env bash
 ### mcd-urn -- Get urn state
-### Usage: mcd urn --ilk=<id> [--urn=<address>]
+### Usage: mcd urn --ilk=<id> [--urn=<address>] [<arg>]
 ###
 ### Display the status of the urn at ETH_FROM or
 ### at a given urn address if provided.
+###
+### With no arguments, list all parameters
+### With `<arg>` get a specified Urn parameter
 set -e
 
-[ ! -z "$MCD_ILK" ] || mcd --fail "$0: An ilk identifier is required";
-[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM" ] || mcd --fail "$0: ETH_FROM or --urn=<bytes32> is required"
-ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
-lad=$(seth --to-bytes32 ${MCD_URN:-$ETH_FROM})
+[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM" ] ||
+  mcd --fail "$0: ETH_FROM or --urn=<bytes32> is required"
 
-echo "ilk: $MCD_ILK"
-echo "urn: $lad"
+ilk=$(mcd --require-ilk $0)
+urn=$(seth --to-bytes32 ${MCD_URN:-$ETH_FROM})
 
-exec 3< <(seth call "${MCD_VAT?}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$lad")
-exec 4< <(seth call "${MCD_PIT?}" 'ilks(bytes32)(address, uint256)' $ilk)
-exec 5< <(seth call "${MCD_VAT?}" 'ilks(bytes32)(uint256, uint256, uint256, uint256)' $ilk)
+vat()  { mcd --vat-urn $ilk $urn; }
 
-urn=$(cat <&3)
-pit=$(cat <&4)
-vat=$(cat <&5)
-ink=$(mcd --to-wad ${urn:0:64})
-art=$(mcd --to-wad ${urn:65:129})
-spot=$(mcd --to-ray ${pit:0:64})
-rate=$(mcd --to-ray ${vat:65:64})
+p() { printf "%-4s %-64s %-10s\n" "$1" "$2" "$3"; }
 
-echo "ink: $ink"
-echo "art: $art"
-echo "spot: $spot"
-echo "rate: $rate"
+calc() {
+  spot=$(cat <&3); ink=$(cat <&5)
+  rate=$(cat <&4); art=$(cat <&6)
+  fill=0
+  if [ ${art:0:1} -gt 0 ]; then
+    fill=$(bc <<< "scale=2; (($ink*$spot)/($art*$rate)) * 100")
+    fill=$(bc <<< "$fill / 1")
+  fi
+}
 
-if [ ${art:0:1} -gt 0 ]; then
-  cover=$(bc <<< "scale=2; (($ink*$spot)/($art*$rate)) * 100")
-  echo "cover: $(bc <<< "$cover / 1")%"
-fi
+mcd-urn() {
+  exec 3< <(mcd ilk spot)
+  exec 4< <(mcd ilk rate)
+  exec 5< <(mcd urn ink)
+  exec 6< <(mcd ilk art)
+  calc
+  p "ilk"  $MCD_ILK "CDP type identifier"
+  p "urn"  $urn     "CDP identifier"
+  p "ink"  $ink     "Locked collateral ($MCD_ILK)"
+  p "art"  $art     "Outstanding debt (DAI)"
+  p "spot" $spot    "Price with safety margin (USD)"
+  p "rate" $rate    "Debt scaling factor"
+  p "fill" $fill    "Collateralization Ratio (%)"
+}
+
+case $1 in
+  ink)  { vat | mcd --to-wad $(mcd --slice 0 64);   };;
+  art)  { vat | mcd --to-wad $(mcd --slice 65 129); };;
+  spot) { mcd urn spot;                             };; # alias for consistency
+  rate) { mcd urn rate;                             };; # alias for consistency
+  "")   { mcd-urn;                                  };;
+  *)    { mcd help urn;                             }
+esac
