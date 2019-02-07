@@ -84,14 +84,16 @@ case $1 in
     lad=$(mcd --to-address $urn)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     sig="join(bytes32, uint256)"
-    (set -x; seth send $MCD_JOIN_DAI $sig $urn $wad)
+    (set -x; seth send $MCD_JOIN_DAI "$sig" $urn $wad)
+    mcd dai balance
   };;
   exit) {
     urn=$(mcd --require-urn $0)
     lad=$(mcd --to-address $urn)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
     sig="exit(bytes32, address, uint256)"
-    (set -x; seth send $MCD_JOIN_DAI $sig $urn $lad $wad)
+    (set -x; seth send $MCD_JOIN_DAI "$sig" $urn $lad $wad)
+    mcd dai balance
   };;
   "") { mcd-dai;      };;
   *)  { mcd help dai; }
