@@ -9,11 +9,8 @@
 ### With `<arg>` get a specified Urn parameter
 set -e
 
-[ ! -z "$MCD_URN" ] || [ ! -z "$ETH_FROM" ] ||
-  mcd --fail "$0: ETH_FROM or --urn=<bytes32> is required"
-
 ilk=$(mcd --require-ilk $0)
-urn=$(seth --to-bytes32 ${MCD_URN:-$ETH_FROM})
+urn=$(mcd --require-urn $0)
 
 vat()  { mcd --vat-urn $ilk $urn; }
 
