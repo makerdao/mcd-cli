@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$ETH_FROM" ] || mcd --fail "$1: ETH_FROM not set; transact from which account?"
+echo $(seth --to-address $ETH_FROM)

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
-[ ! -z "$MCD_ILK" ] || mcd --fail "$1: Missing Ilk identifier"
+[ -n "$MCD_ILK" ] || mcd --fail "$1: Missing Ilk identifier"
 echo $(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))

@@ -68,7 +68,7 @@ $ mcd dai balance
 vat   7.00000000000000000000 Vat balance
 ext   0.00000000000000000000 ERC20 account balance
 
-$ mcd dai exit 50
+$ mcd dai exit 7
 
 $ mcd dai balance
 vat   0.00000000000000000000 Vat balance
