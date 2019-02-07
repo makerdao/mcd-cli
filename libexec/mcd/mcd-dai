@@ -17,13 +17,14 @@
 set -e
 
 mcd-dai() {
+lad=$(mcd --require-from $0)
 exec 3< <(mcd dai balance)
 exec 4< <(mcd dai supply)
 cat <<.
 address
 $(mcd dai address)
 
-balance
+balance ($lad)
 $(cat <&3)
 
 supply
@@ -31,9 +32,8 @@ $(cat <&4)
 
 Dai Actions:
 
-approve - Grant the join adapter ERC20 account access
-join    - Move ERC20 Dai to the Vat
-exit    - Move Vat Dai to the ERC20 account
+join - Move ERC20 Dai to the Vat
+exit - Move Vat Dai to the ERC20 account
 .
 }
 
@@ -79,32 +79,19 @@ case $1 in
       *)   { mcd dai supply;     };;
     esac
   };;
-  allowance) {
-    lad=$(mcd --require-from $0)
-    sig="allowance(address,address)(uint)"
-    allowance=$(seth call "$(mcd dai address)" $sig $lad $MCD_JOIN_DAI)
-    echo $(mcd --to-wad $allowance)
-  };;
-  approve) {
-    wad=$(seth --to-word $(seth --to-wei $2 eth))
-    sig="approve(address,uint)(bool)"
-    (set -x; seth send "$(mcd dai address)" $sig $MCD_JOIN_DAI $wad)
-  };;
   join) {
-    lad=$(mcd --require-from $0)
-    allowance=$(mcd dai allowance)
-    if (( $(echo "$2 > $allowance" | bc -l) )); then
-      echo "Insufficient Dai token allowance ($allowance). Approval required: mcd dai approve $2"
-      exit 1
-    fi
-    urn=$(seth --to-bytes32 $lad)
+    urn=$(mcd --require-urn $0)
+    lad=$(mcd --to-address $urn)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
-    (set -x; seth send $MCD_JOIN_DAI "join(bytes32, uint256)" $urn $wad)
+    sig="join(bytes32, uint256)"
+    (set -x; seth send $MCD_JOIN_DAI $sig $urn $wad)
   };;
   exit) {
-    lad=$(mcd --require-from $0)
+    urn=$(mcd --require-urn $0)
+    lad=$(mcd --to-address $urn)
     wad=$(seth --to-word $(seth --to-wei $2 eth))
-    (set -x; seth send $MCD_JOIN_DAI "exit(address, uint256)" $lad $wad)
+    sig="exit(bytes32, address, uint256)"
+    (set -x; seth send $MCD_JOIN_DAI $sig $urn $lad $wad)
   };;
   "") { mcd-dai;      };;
   *)  { mcd help dai; }
