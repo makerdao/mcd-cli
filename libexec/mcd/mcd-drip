@@ -2,14 +2,5 @@
 ### mcd-drip -- Trigger stability fee collection
 ### Usage: mcd drip --ilk=<id>
 set -e
-
-[ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing ilk identifier"
-ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
-
-echo "debt: $(mcd debt)"
-
+ilk=$(mcd --require-ilk $0)
 (set -x; seth send "${MCD_DRIP}" "drip(bytes32)" "$ilk")
-
-drip=$(seth call $MCD_DRIP 'ilks(bytes32)(bytes32, uint256, uint48)' $ilk)
-echo "rho: $(seth --to-dec ${drip:130:64})"
-echo "debt: $(mcd debt)"
