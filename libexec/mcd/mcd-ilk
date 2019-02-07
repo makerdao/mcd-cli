@@ -23,14 +23,14 @@ p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
 mcd-ilk() {
   p "spot" $(mcd ilk spot) "Price with safety margin (USD)"
   p "line" $(mcd ilk line) "Debt ceiling (DAI)"
-  p "take" $(mcd ilk take) "Rate scaling factor"
-  p "rate" $(mcd ilk rate) "Debt scaling factor"
+  p "take" $(mcd ilk take) "$MCD_ILK exchange rate"
+  p "rate" $(mcd ilk rate) "DAI exchange rate"
   p "Ink"  $(mcd ilk Ink)  "Total ($MCD_ILK)"
   p "Art"  $(mcd ilk Art)  "Total (DAI)"
   p "flip" $(mcd ilk flip) "Flip auction contract"
   p "chop" $(mcd ilk chop) "Liquidation penalty"
   p "lump" $(mcd ilk lump) "Flip auction lot size"
-  p "tax"  $(mcd ilk tax)
+  p "tax"  $(mcd ilk tax)  "Stability fee"
   p "rho"  $(mcd ilk rho)  "Last drip timestamp"
   p "pip"  $(mcd ilk pip)  "Price feed contract"
   p "mat"  $(mcd ilk mat)  "Liquidation ratio"
