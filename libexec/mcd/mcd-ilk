@@ -15,7 +15,7 @@ id=$(mcd --require-ilk $0)
 pit()  { mcd --pit-ilk $id;  }
 vat()  { mcd --vat-ilk $id;  }
 cat()  { mcd --cat-ilk $id;  }
-drip() { mcd --drip-ilk $id; }
+jug()  { mcd --jug-ilk $id;  }
 spot() { mcd --spot-ilk $id; }
 
 p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
@@ -46,8 +46,8 @@ case $1 in
   flip)    { cat  | echo 0x$(mcd --slice 0 40);         };;
   chop)    { cat  | mcd --to-ray $(mcd --slice 41 64);  };;
   lump)    { vat  | mcd --to-wad $(mcd --slice 105 64); };;
-  tax)     { drip | mcd --to-ray $(mcd --slice 0 64);   };;
-  rho)     { drip | mcd --to-dec $(mcd --slice 65 64);  };;
+  tax)     { jug  | mcd --to-ray $(mcd --slice 0 64);   };;
+  rho)     { jug  | mcd --to-dec $(mcd --slice 65 64);  };;
   pip)     { spot | echo 0x$(mcd --slice 0 40);         };;
   mat)     { spot | mcd --to-ray $(mcd --slice 41 64);  };;
   "")      { mcd-ilk;                                   };;
