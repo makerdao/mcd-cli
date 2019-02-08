@@ -42,7 +42,7 @@ Then install the `mcd` package:
 $ dapp pkg install mcd
 ```
 
-## Open a CDP and withdraw Dai
+### Example - open a CDP and withdraw Dai
 
 ```bash
 $ mcd --ilk=ETH join 100
@@ -73,4 +73,23 @@ $ mcd dai exit 7
 $ mcd dai balance
 vat   0.00000000000000000000 Vat balance
 ext   7.00000000000000000000 ERC20 account balance
+```
+
+### Example - query Ilk state
+
+```bash
+$ mcd --chain kovan --ilk=ETH ilk
+spot 99.333333333333333333333333333             ETH price with safety margin (USD)
+line 10000.000000000000000000                   Debt ceiling (DAI)
+take 1.000000000000000000000000000              ETH exchange rate
+rate 1.000000000000000000000000000              DAI exchange rate
+Ink  300.000000000000000000                     Total (ETH)
+Art  800.000000000000000000                     Total (DAI)
+flip 0x4a4a09a0085d954db878337094d3387ab9001f03 Flip auction contract
+chop 1.000000000000000000000000000              Liquidation penalty
+lump 1000000000.000000000000000000              Flip auction lot size
+tax  1.000000000000000000000000000              Stability fee
+rho  1549580478                                 Last drip timestamp
+pip  0xa40daac0caac0c4fc4a97b7f50876252f8a08253 Price feed contract
+mat  1.500000000000000000000000000              Liquidation ratio
 ```

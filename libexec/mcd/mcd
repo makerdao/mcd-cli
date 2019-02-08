@@ -12,7 +12,7 @@ F,from=address        account to send from
 G,gas=number          number of gas units to provide
 
   Config Options:
-J,config=json         deployment addresses
+J,config=file         custom deployment address file (json)
 
   MCD options:
 I,ilk=address         ilk address
