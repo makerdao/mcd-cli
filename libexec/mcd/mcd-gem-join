@@ -1,40 +1,17 @@
 #!/usr/bin/env bash
 set -e
-urn=$(seth --to-bytes32 $ETH_FROM)
-
-checkAllowance() {
-  gem=$(seth call $join 'gem()')
-  gem="0x$(seth --abi-decode 'f()(address)' $gem)"
-  allowance=$(seth call $gem 'allowance(address,address)(uint)' $ETH_FROM $join)
-  allowance=$(mcd --to-wad $allowance)
-  if (( $(echo "$1 > $allowance" | bc -l) )); then
-    echo "Insufficient Gem allowance ($allowance). Approval required:"
-    echo "seth send $gem 'approve(address,uint)(bool)' $join $wad"
-    exit 1
-  fi
-}
-
-joinEth() {
-  wad=$(seth --to-wei $1 eth)
-  (set -x; seth send $join 'join(bytes32)' $urn -V $wad)
-}
-
-joinGem() {
-  wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-  checkAllowance $1
-  (set -x; seth send $join "join(bytes32, uint)" $urn $wad)
-}
+urn=$(mcd --require-urn $0)
+[ -n "$1" ] || mcd --fail "gem: Please specify a join amount"
 
 case $MCD_ILK in
   "ETH") {
-    join=$MCD_JOIN_ETH
-    joinEth $1
-  };;
-  "REP") {
-    join=$MCD_JOIN_REP
-    joinGem $1
+    wei=$(seth --to-wei $1 eth)
+    sig="join(bytes32)"
+    (set -x; seth send ${MCD_JOIN_ETH?} "$sig" $urn -V $wei)
   };;
   *) {
-    mcd --fail "gem: Unrecognised adapter $MCD_ILK"
-  }
+    mcd gem-join-erc20 $1;
+  };;
 esac
+
+mcd gem balance

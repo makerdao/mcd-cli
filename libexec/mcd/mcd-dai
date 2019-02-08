@@ -7,8 +7,8 @@
 ###           join <wad>
 ###           exit <wad>
 ###
-### With `balance' get the vat balance for a given address (default: ETH_FROM).
-### With `supply' get the total dai supply (`mcd debt').
+### With `balance' get the balance for a given address (default: ETH_FROM).
+### With `supply' get the total supply.
 ### With `join' exchange DSToken Dai for Vat Dai.
 ### With `exit' exchange Vat Dai for DSToken Dai.
 ###

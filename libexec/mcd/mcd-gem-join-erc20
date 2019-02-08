@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -e
+urn=$(mcd --require-urn $0)
+join=$(eval echo "\$MCD_JOIN_${MCD_ILK}")
+gem=$(seth call $join 'gem()')
+gem="0x$(seth --abi-decode 'f()(address)' $gem)"
+
+approve() {
+  max="0x$(printf "f"'%.0s' {1..64})"
+  sig="approve(address,uint)(bool)"
+  (set -x; seth send "$gem" $sig $join $max)
+}
+
+# Check allowance
+sig="allowance(address,address)(uint)"
+amt=$(seth call "$gem" "$sig" $(mcd --to-address $urn) $join)
+amt=$(mcd --to-wad $(seth --to-dec $amt))
+if (( $(echo "$1 > $amt" | bc -l) )); then
+  echo "Insufficient allowance ($(mcd --to-address $urn))"
+  read -r -p "Grant approval to move ${MCD_ILK} to the vat? [Y/n]: " response
+  case $response in
+    [yY]) { approve; };;
+    *)    { exit 1; };;
+  esac
+fi
+
+wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
+(set -x; seth send "$join" "join(bytes32, uint)" $urn $wad)

@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 ### mcd-gem -- Collateral balances
-### Usage: mcd gem --ilk=<id> [<command>]
+### Usage: mcd --ilk=<id> [--urn=<id>] gem [<arg>]
 ###
-### Commands: balance [<address>]
-###           locked [<address>]
-###           free [<address>]
+### Commands: balance
 ###           join <wad>
 ###           exit <wad>
 ###
@@ -15,37 +13,32 @@
 ### Example: mcd --ilk=ETH gem balance
 ###          mcd --ilk=ETH gem join 42
 set -e
+ilk=$(mcd --require-ilk $0)
 
-[ ! -z "$MCD_ILK" ] || mcd --fail "$0: Missing Ilk identifier"
-ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+p() { printf "%-4s %-48s %-10s\n" "$1" "$2" "$3"; }
 
 case $1 in
   balance) {
-    locked=$(mcd gem locked $2); free=$(mcd gem free $2)
-    echo "locked: $locked"
-    echo "free: $free"
-    echo "total: $(bc <<< "$locked + $free")"
+    urn=$(mcd --require-urn $0)
+    case $2 in
+      vat) {
+        sig="gem(bytes32,bytes32)(uint256)"
+        mcd --to-rad $(seth call ${MCD_VAT?} "$sig" "$ilk" "$urn")
+      };;
+      ink) { mcd --ilk=${MCD_ILK} urn ink; };;
+      ext) { mcd gem-balance-ext $urn; };;
+      "")   {
+        exec 3< <(mcd gem balance vat)
+        exec 4< <(mcd gem balance ink)
+        exec 5< <(mcd gem balance ext)
+        p "vat" $(cat <&3) "Free collateral ($MCD_ILK)"
+        p "ink" $(cat <&4) "Locked collateral ($MCD_ILK)"
+        p "ext" $(cat <&5) "External account balance ($MCD_ILK)"
+      };;
+      *)   { mcd gem balance; };;
+    esac
   };;
-  locked) {
-    urn=$(seth --to-bytes32 ${2:-$ETH_FROM})
-    urn=$(seth call "${MCD_VAT}" 'urns(bytes32,bytes32)(uint256,uint256)' "$ilk" "$urn")
-    ink=$(mcd --to-wad ${urn:0:64})
-    echo "$ink"
-  };;
-  free) {
-    urn=$(seth --to-bytes32 ${2:-$ETH_FROM})
-    gem=$(seth call $MCD_VAT 'gem(bytes32,bytes32)(uint256)' "$ilk" "$urn")
-    echo $(mcd --to-rad $gem)
-  };;
-  join) {
-    [[ $ETH_FROM ]] || mcd --fail "$0: You must set ETH_FROM or specify an urn address";
-    mcd gem-join $2
-  };;
-  exit) {
-    [[ $ETH_FROM ]] || mcd --fail "$0: You must set ETH_FROM or specify an urn address";
-    mcd gem-exit $2
-  };;
-  *) {
-    mcd help gem
-  }
+  join) { mcd gem-join $2; };;
+  exit) { mcd gem-exit $2; };;
+  *)    { mcd help gem; }
 esac
