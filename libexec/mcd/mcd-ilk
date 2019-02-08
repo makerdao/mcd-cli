@@ -21,7 +21,7 @@ spot() { mcd --spot-ilk $id; }
 p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-ilk() {
-  p "spot" $(mcd ilk spot) "Price with safety margin (USD)"
+  p "spot" $(mcd ilk spot) "$MCD_ILK price with safety margin (USD)"
   p "line" $(mcd ilk line) "Debt ceiling (DAI)"
   p "take" $(mcd ilk take) "$MCD_ILK exchange rate"
   p "rate" $(mcd ilk rate) "DAI exchange rate"

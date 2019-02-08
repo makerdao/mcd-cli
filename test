@@ -1,50 +1,64 @@
 #!/usr/bin/env bash
 export MCD_CHAIN=testnet
-export MCD_ILK=ETH
 source lib/test
 
 testJoin() {
-  b1=$(./bin/mcd gem free)
+  echo "Test: join $1 --------------"
+  lt=$(./bin/mcd gem balance vat)
   ./bin/mcd gem join $1
-  b2=$(./bin/mcd gem free)
-  assertBalanceChanged $b2 $b1 $1
+  gt=$(./bin/mcd gem balance vat)
+  assertBalanceChanged $gt $lt $1
 }
 
 testExit() {
-  b1=$(./bin/mcd gem free)
+  echo "Test: exit $1 --------------"
+  gt=$(./bin/mcd gem balance vat)
   ./bin/mcd gem exit $1
-  b2=$(./bin/mcd gem free)
-  assertBalanceChanged $b1 $b2 $1
+  lt=$(./bin/mcd gem balance vat)
+  assertBalanceChanged $gt $lt $1
 }
 
 testLock() {
-  b1=$(./bin/mcd gem locked)
+  echo "Test: lock $1 --------------"
+  lt=$(./bin/mcd gem balance ink)
   ./bin/mcd frob $1 0
-  b2=$(./bin/mcd gem locked)
-  assertBalanceChanged $b2 $b1 $1
+  gt=$(./bin/mcd gem balance ink)
+  assertBalanceChanged $gt $lt $1
 }
 
 testFree() {
-  b1=$(./bin/mcd gem locked)
+  echo "Test: free $1 --------------"
+  lt=$(./bin/mcd gem balance vat)
   ./bin/mcd frob -- -$1 0
-  b2=$(./bin/mcd gem locked)
-  assertBalanceChanged $b1 $b2 $1
+  gt=$(./bin/mcd gem balance vat)
+  assertBalanceChanged $gt $lt $1
 }
 
 testDraw() {
-  b1=$(./bin/mcd dai balance)
+  echo "Test: draw $1 --------------"
+  lt=$(./bin/mcd dai balance vat)
   ./bin/mcd frob 0 $1
-  b2=$(./bin/mcd dai balance)
-  assertBalanceChanged $b2 $b1 $1
+  gt=$(./bin/mcd dai balance vat)
+  assertBalanceChanged $gt $lt $1
 }
 
 testWipe() {
-  b1=$(./bin/mcd dai balance)
+  echo "Test: wipe $1 --------------"
+  gt=$(./bin/mcd dai balance vat)
   ./bin/mcd frob -- 0 -$1
-  b2=$(./bin/mcd dai balance)
-  assertBalanceChanged $b1 $b2 $1
+  lt=$(./bin/mcd dai balance vat)
+  assertBalanceChanged $gt $lt $1
 }
 
+export MCD_ILK=ETH
+testJoin 1000
+testLock 100
+testDraw 400
+testWipe 400
+testFree 100
+testExit 1000
+
+export MCD_ILK=REP
 testJoin 1000
 testLock 100
 testDraw 400
