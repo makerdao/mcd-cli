@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-frob -- CDP management
+### mcd-frob -- Urn (CDP) management
 ### Usage: mcd frob --ilk=<id> -- [-]<dink> [-]<dart>
 set -e
 [ ! -z "$MCD_ILK" ] &&

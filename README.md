@@ -8,20 +8,19 @@ Usage: mcd [<options>] <command> [<args>]
 
 Commands:
 
-   bite            Trigger liquidation of an unsafe CDP
+   bite            Trigger liquidation of an unsafe urn (CDP)
    bites           Recent bites
-   dai             Vat dai balances
-   debt            Total dai issuance
+   dai             Dai management
    drip            Trigger stability fee collection
    flap            Trigger a flap auction
    flips           View flips and kick-off auctions
    flog            Release queued bad-debt for auction
    flop            Trigger a flop auction
-   frob            CDP management
+   frob            Urn (CDP) management
    frobs           Recent frobs
-   gem             Collateral balances
+   gem             Collateral management
    help            Print help about mcd or one of its subcommands
-   ilk             Ilk state
+   ilk             Ilk (collateral type) parameters
    poke            Update the price feed for a given Ilk
    urn             CDP state
    vice            Total bad debt

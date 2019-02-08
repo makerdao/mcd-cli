@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-### mcd-ilk -- Ilk state
-### Usage: mcd --ilk=<id> ilk [<arg>]
+### mcd-ilk -- Ilk (collateral type) parameters
+### Usage: mcd --ilk=<id> ilk [<param>]
 ###
 ### With no arguments, list all parameters
-### With `<arg>` get a specified Ilk parameter
+### With `<param>` get a specified Ilk parameter
 ###
 ### Example: mcd --ilk=ETH ilk
 ###          mcd --ilk=ETH ilk spot

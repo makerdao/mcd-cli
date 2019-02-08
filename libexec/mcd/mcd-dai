@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-dai -- Vat dai balances
+### mcd-dai -- Dai management
 ### Usage: mcd dai [<command>]
 ###
 ### Commands: balance [<address>]
@@ -21,10 +21,7 @@ lad=$(mcd --require-from $0)
 exec 3< <(mcd dai balance)
 exec 4< <(mcd dai supply)
 cat <<.
-address
-$(mcd dai address)
-
-balance ($lad)
+balance
 $(cat <&3)
 
 supply
