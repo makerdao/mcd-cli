@@ -2,13 +2,13 @@
 ### mcd-frob -- Urn (CDP) management
 ### Usage: mcd frob --ilk=<id> -- [-]<dink> [-]<dart>
 set -e
-[ ! -z "$MCD_ILK" ] &&
 [ $# = 2 ] || mcd --fail "$0: Incorrect arguments"
 
-echo "Updating Urn..."
-ilk=$(seth --to-bytes32 $(seth --from-ascii $MCD_ILK))
+ilk=$(mcd --require-ilk $0)
+urn=$(mcd --require-urn $0)
 dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))
 dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
-(set -x; seth send --status $MCD_PIT "frob(bytes32,int256,int256)" $ilk $dink $dart)
+sig="frob(bytes32, bytes32, bytes32, bytes32 dai, int dink, int dart)"
+(set -x; seth send --status $MCD_PIT "$sig" "$ilk" "$urn" "$urn" "$urn" "$dink" "$dart")
 echo
 mcd urn
