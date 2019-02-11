@@ -15,8 +15,8 @@ G,gas=number          number of gas units to provide
 J,config=file         custom deployment address file (json)
 
   MCD options:
-I,ilk=address         ilk address
-U,urn=address         urn address
+I,ilk=string          ilk identifier
+U,urn=string          urn identifier
 
   Filter options:
 B,block=number        from block

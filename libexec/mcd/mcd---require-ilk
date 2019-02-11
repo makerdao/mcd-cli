@@ -1,14 +1,36 @@
 #!/usr/bin/env bash
 set -e
 
-[ -n "$MCD_ILK" ] || mcd --fail "$1: Missing Ilk identifier"
+missing-ilk() {
+cat >&2 <<.
+Error: missing Ilk identifier
+
+You must specify an Ilk (collateral type)
+using the --ilk=<id> option.
+
+Ilk identifiers:
+
+$(mcd ilks | cut -d ' ' -f 1)
+.
+exit 1
+}
 
 invalid-ilk() {
-  echo "Error: invalid Ilk identifier - $MCD_ILK" >&2
-  echo "Valid Ilks:" >&2
-  mcd ilks >&2
-  exit 1
+cat >&2 <<.
+Error: invalid Ilk identifier
+
+The Ilk identifier $MCD_ILK is not a
+recognised collateral type.
+
+Valid Ilk identifiers:
+
+$(mcd ilks | cut -d ' ' -f 1)
+.
+exit 1
 }
+
+[ -n "$MCD_ILK" ] || missing-ilk
+
 
 for id in $(mcd ilks | cut -d ' ' -f 1); do
   if [ "$MCD_ILK" == "$id" ]; then

@@ -1,20 +1,26 @@
 #!/usr/bin/env bash
 ### mcd-gem -- Collateral management
-### Usage: mcd --ilk=<id> [--urn=<id>] gem [<arg>]
+### Usage: mcd --ilk=<id> [--urn=<id>] gem [<command>]
 ###
-### Commands: balance
-###           join <wad>
-###           exit <wad>
+### Commands: gem balance [<urn>] Print balances for a given urn (default: ETH_FROM)
+###           gem join     <wad>  Add collateral to the system
+###           gem exit     <wad>  Remove collateral from the system
 ###
-### With `balance' get gem balances for a given address (default: ETH_FROM).
-### With `join' add collateral to the system.
-### With `exit' remove collateral from the system.
-###
-### Example: mcd --ilk=ETH gem balance
-###          mcd --ilk=ETH gem join 42
+### Example:  mcd --ilk=ETH gem balance
+###           mcd --ilk=ETH gem join 42
 set -e
 
-p() { printf "%-4s %-48s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-3s %-48s %-10s\n" "$1" "$2" "$3"; }
+
+mcd-gem() {
+cat <<.
+Gem: Collateral tokens approved by system governance
+
+$(mcd ilks | tr -s ' ' | cut -d ' ' -f 1,3)
+
+$(mcd gem help)
+.
+}
 
 case $1 in
   balance) {
@@ -40,5 +46,6 @@ case $1 in
   };;
   join) { mcd gem-join $2; };;
   exit) { mcd gem-exit $2; };;
+  "")   { mcd-gem; };;
   *)    { mcd help gem; }
 esac

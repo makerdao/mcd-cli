@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-mcd --require-ilk $0;
+ilk=$(mcd --require-ilk $0)
 [ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
 urn=$(mcd --require-urn $0)
 guy=$(mcd --to-address $urn)
