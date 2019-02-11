@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
 set -e
+
 [ -n "$MCD_ILK" ] || mcd --fail "$1: Missing Ilk identifier"
+
+invalid-ilk() {
+  echo "Error: invalid Ilk identifier - $MCD_ILK" >&2
+  echo "Valid Ilks:" >&2
+  mcd ilks >&2
+  exit 1
+}
+
+for id in $(mcd ilks | cut -d ' ' -f 1); do
+  if [ "$MCD_ILK" == "$id" ]; then
+    valid=true
+  fi
+done
+
+[ "$valid" = true ] || invalid-ilk
+
 echo $(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))

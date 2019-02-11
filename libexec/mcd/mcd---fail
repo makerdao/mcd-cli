@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 err=${1##*/}
 act=${err%\:*}
-echo "Error: ${err#*\:}"; echo
+echo "Error:${err#*\:}" >&2; echo >&2
 mcd >&2 ${act#*-} --help
 exit 1

@@ -13,12 +13,12 @@
 ### Example: mcd --ilk=ETH gem balance
 ###          mcd --ilk=ETH gem join 42
 set -e
-ilk=$(mcd --require-ilk $0)
 
 p() { printf "%-4s %-48s %-10s\n" "$1" "$2" "$3"; }
 
 case $1 in
   balance) {
+    ilk=$(mcd --require-ilk $0)
     urn=$(mcd --require-urn $0)
     case $2 in
       vat) {
