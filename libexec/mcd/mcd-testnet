@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+
+testnet() {
+  api="https://testchain-backendgatway.makerfoundation.com:4001"
+  curl -sS "$api/$1"
+}
+
+case $1 in
+  chains)
+    testnet "chains" | jq '.data[] | {id, desc: .config.description, status}'
+  ;;
+  chain)
+    testnet "chain/$2" | jq '.details'
+  ;;
+esac
+

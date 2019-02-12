@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 [[ $MCD_SPOT_ILK ]] ||
-  export MCD_SPOT_ILK=$(seth call $MCD_SPOT 'ilks(bytes32)(address, uint256)' $1);
+  export MCD_SPOT_ILK=$(seth call ${MCD_SPOT?} 'ilks(bytes32)(address, uint256)' $1);
 echo $MCD_SPOT_ILK
