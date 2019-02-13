@@ -57,47 +57,59 @@ while [[ $1 ]]; do
   esac; shift
 done
 
-require-chain() {
-  chain=${MCD_CONFIG:-$1}
-  path=${0%/*}/conf/$chain.json;
+testnet-config() {
+  dir=${0%/*}/conf/tmp/$1;
+  conf=$dir/conf.json;
 
-  if [[ ! -e "$path" ]]; then
-    id=${chain%-testnet}
-    conf=$(mcd -C skip testnet chain ${id} | jq '.')
-    if [[ "$conf" == "null" ]]; then
-      echo "Error: chain config not found for $id"
+  if [[ ! -d "$dir" ]]; then
+    json=$(mcd -C none testnet chain ${1} | jq '.')
+    if [[ "$json" == "null" ]]; then
+      echo "Error: chain config not found for $1"
       exit 1
     else
-      echo $conf > $path
+      mkdir $dir; echo $json > $conf
+      pk=$(cat $conf | jq -r .chain_details.accounts[0].priv_key)
+      geth --datadir=$dir --password=${0%/*}/conf/empty.pw \
+           account import <(echo $pk)
     fi
   fi
+  load-addresses $conf;
+}
 
-  exports=$(cat $path | jq -rc ".deploy_data // . | \
+load-addresses() {
+  path=${MCD_CONFIG:-$1}
+  exports=$(cat $path | jq -r ".deploy_data // . | \
     to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]")
   for e in $exports; do export "$e"; done
 }
 
 case "$MCD_CHAIN" in
   mainnet)
-    require-chain mainnet
+    load-addresses ${0%/*}/conf/mainnet.json;
     export SETH_CHAIN=mainnet
     ;;
-  testnet) # local testnet
-    require-chain "$MCD_CONFIG"
+  kovan)
+    load-addresses ${0%/*}/conf/kovan.json;
+    export SETH_CHAIN=kovan
+    ;;
+  testnet) # local dapp testnet
+    load-addresses "$MCD_CONFIG"
     export ETH_RPC_URL=http://127.0.0.1:8545
     export ETH_LOGS_API=rpc
     export ETH_KEYSTORE=~/.dapp/testnet/8545/keystore
-    export ETH_PASSWORD=${0%/*}/conf/testnet.pw
+    export ETH_PASSWORD=${0%/*}/conf/empty.pw
     export ETH_FROM=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
     ;;
-  skip) { echo; };;
   +([0-9])) # remote testnet id
-    require-chain "$MCD_CHAIN-testnet"
-    [[ -e $path ]] && export ETH_RPC_URL=$(cat $path | jq -r .chain_details.rpc_url)
+    testnet-config "$MCD_CHAIN"
+    export ETH_RPC_URL=$(cat $path | jq -r .chain_details.rpc_url)
+    export ETH_LOGS_API=rpc
+    export ETH_KEYSTORE=${0%/*}/conf/tmp/$MCD_CHAIN/keystore
+    export ETH_PASSWORD=${0%/*}/conf/empty.pw
+    export ETH_FROM=$(cat $path | jq -r .chain_details.coinbase)
     ;;
-  *)
-    require-chain kovan
-    export SETH_CHAIN=kovan
+  none)
+    :;
     ;;
 esac
 

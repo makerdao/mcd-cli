@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export MCD_CHAIN=testnet
+export MCD_CHAIN=${MCD_CHAIN:-testnet}
 source lib/test
 
 testJoin() {
