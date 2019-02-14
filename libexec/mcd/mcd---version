@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cat <<.
-mcd 0.2.0
+mcd 0.2.1
 Copyright (C) 2018 dc <dc@dapp.org>
 
 License: GNU AGPL version 3 or later <https://www.gnu.org/licenses/agpl-3.0>.

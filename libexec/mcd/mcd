@@ -57,8 +57,10 @@ while [[ $1 ]]; do
   esac; shift
 done
 
+export TESTNET_HOME=${TESTNET_HOME:-~/.dapp/testnet}
+
 testnet-config() {
-  dir=${0%/*}/conf/tmp/$1;
+  dir=$TESTNET_HOME/tmp/$1
   conf=$dir/conf.json;
 
   if [[ ! -d "$dir" ]]; then
@@ -67,10 +69,10 @@ testnet-config() {
       echo "Error: chain config not found for $1"
       exit 1
     else
-      mkdir $dir; echo $json > $conf
+      mkdir -p $dir; echo $json > $conf
       pk=$(cat $conf | jq -r .chain_details.accounts[0].priv_key)
       geth --datadir=$dir --password=${0%/*}/conf/empty.pw \
-           account import <(echo $pk)
+           account import <(echo $pk) &>/dev/null
     fi
   fi
   load-addresses $conf;
@@ -96,7 +98,7 @@ case "$MCD_CHAIN" in
     load-addresses "$MCD_CONFIG"
     export ETH_RPC_URL=http://127.0.0.1:8545
     export ETH_LOGS_API=rpc
-    export ETH_KEYSTORE=~/.dapp/testnet/8545/keystore
+    export ETH_KEYSTORE=$TESTNET_HOME/8545/keystore
     export ETH_PASSWORD=${0%/*}/conf/empty.pw
     export ETH_FROM=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
     ;;
@@ -104,7 +106,7 @@ case "$MCD_CHAIN" in
     testnet-config "$MCD_CHAIN"
     export ETH_RPC_URL=$(cat $path | jq -r .chain_details.rpc_url)
     export ETH_LOGS_API=rpc
-    export ETH_KEYSTORE=${0%/*}/conf/tmp/$MCD_CHAIN/keystore
+    export ETH_KEYSTORE=$TESTNET_HOME/tmp/$MCD_CHAIN/keystore
     export ETH_PASSWORD=${0%/*}/conf/empty.pw
     export ETH_FROM=$(cat $path | jq -r .chain_details.coinbase)
     ;;

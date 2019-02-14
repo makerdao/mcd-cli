@@ -1,16 +1,16 @@
-{ lib, stdenv, fetchFromGitHub, makeWrapper, glibcLocales
-, bc, coreutils, curl, ethabi, ethsign, git, gnused, jshon, jq, nodejs, perl, solc }:
+{ lib, stdenv, fetchFromGitHub, makeWrapper, glibcLocales, bc, coreutils
+, curl, ethabi, ethsign, git, go-ethereum, gnused, jshon, jq, nodejs, perl, solc }:
 
 stdenv.mkDerivation rec {
   name = "mcd-${version}";
-  version = "0.2.0";
+  version = "0.2.1";
   src = ./.;
 
   nativeBuildInputs = [makeWrapper];
   buildPhase = "true";
   makeFlags = ["prefix=$(out)"];
   postInstall = let path = lib.makeBinPath [
-    bc coreutils curl ethabi ethsign git gnused jshon nodejs perl solc
+    bc coreutils curl ethabi ethsign git go-ethereum gnused jshon jq nodejs perl solc
   ]; in ''
     wrapProgram "$out/bin/mcd" --prefix PATH : "${path}" \
       ${if glibcLocales != null then
