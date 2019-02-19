@@ -80,6 +80,10 @@ testnet-config() {
 
 load-addresses() {
   path=${MCD_CONFIG:-$1}
+  if [[ ! -e "$path" ]]; then
+    echo "Config file not found: $path not found"
+    exit 1
+  fi
   exports=$(cat $path | jq -r ".deploy_data // . | \
     to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]")
   for e in $exports; do export "$e"; done
@@ -95,7 +99,7 @@ case "$MCD_CHAIN" in
     export SETH_CHAIN=kovan
     ;;
   testnet) # local dapp testnet
-    load-addresses "$MCD_CONFIG"
+    load-addresses "${MCD_CONFIG:-$TESTNET_HOME/8545/config/addresses.json}"
     export ETH_RPC_URL=http://127.0.0.1:8545
     export ETH_LOGS_API=rpc
     export ETH_KEYSTORE=$TESTNET_HOME/8545/keystore
