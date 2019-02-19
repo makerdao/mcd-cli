@@ -2,37 +2,14 @@
 ### mcd-dai -- Dai management
 ### Usage: mcd [--urn=<id>] dai [<command>]
 ###
-### Commands: balance
-###           supply
-###           join <wad>
-###           exit <wad>
+### Commands: dai balance    Print balances for a given urn (default: ETH_FROM)
+###           dai supply     Get the total supply
+###           dai join <wad> Exchange DSToken Dai for Vat Dai
+###           dai exit <wad> Exchange Vat Dai for DSToken Dai
 ###
-### With `balance' get the balance for a given urn (default: ETH_FROM).
-### With `supply' get the total supply.
-### With `join' exchange DSToken Dai for Vat Dai.
-### With `exit' exchange Vat Dai for DSToken Dai.
-###
-### Example: mcd dai balance
-###          mcd dai join 72.50
+### Example:  mcd dai balance
+###           mcd dai join 72.50
 set -e
-
-mcd-dai() {
-lad=$(mcd --require-from $0)
-exec 3< <(mcd dai balance)
-exec 4< <(mcd dai supply)
-cat <<.
-balance
-$(cat <&3)
-
-supply
-$(cat <&4)
-
-Dai Actions:
-
-join - Move ERC20 Dai to the Vat
-exit - Move Vat Dai to the ERC20 account
-.
-}
 
 mcd-dai-cmd() {
   exec 5< <(mcd dai $1 vat)
@@ -92,6 +69,5 @@ case $1 in
     (set -x; seth send $MCD_JOIN_DAI "$sig" $urn $lad $wad)
     mcd dai balance
   };;
-  "") { mcd-dai;      };;
   *)  { mcd help dai; }
 esac

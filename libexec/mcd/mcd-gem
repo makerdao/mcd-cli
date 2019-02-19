@@ -2,7 +2,7 @@
 ### mcd-gem -- Collateral management
 ### Usage: mcd --ilk=<id> [--urn=<id>] gem [<command>]
 ###
-### Commands: gem balance [<urn>] Print balances for a given urn (default: ETH_FROM)
+### Commands: gem balance         Print balances for a given urn (default: ETH_FROM)
 ###           gem join     <wad>  Add collateral to the system
 ###           gem exit     <wad>  Remove collateral from the system
 ###
