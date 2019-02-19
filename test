@@ -59,6 +59,7 @@ testFree 100
 testExit 1000
 
 export MCD_ILK=REP
+export MCD_URN=$(seth --to-bytes32 $ETH_FROM)
 testJoin 1000
 testLock 100
 testDraw 400

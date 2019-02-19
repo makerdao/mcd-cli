@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 ### mcd-dai -- Dai management
-### Usage: mcd dai [<command>]
+### Usage: mcd [--urn=<id>] dai [<command>]
 ###
-### Commands: balance [<address>]
+### Commands: balance
 ###           supply
 ###           join <wad>
 ###           exit <wad>
 ###
-### With `balance' get the balance for a given address (default: ETH_FROM).
+### With `balance' get the balance for a given urn (default: ETH_FROM).
 ### With `supply' get the total supply.
 ### With `join' exchange DSToken Dai for Vat Dai.
 ### With `exit' exchange Vat Dai for DSToken Dai.

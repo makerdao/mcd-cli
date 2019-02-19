@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-frob -- Urn (CDP) management
-### Usage: mcd frob --ilk=<id> -- [-]<dink> [-]<dart>
+### Usage: mcd frob --ilk=<id> [--urn=<id>] -- [-]<dink> [-]<dart>
 set -e
 [ $# = 2 ] || mcd --fail "$0: Incorrect arguments"
 
