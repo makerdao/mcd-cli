@@ -121,7 +121,7 @@ case "$MCD_CHAIN" in
     ;;
   *)
     echo >&2 "${0##*/}: warning: \`MCD_CHAIN' not set; using default (kovan)"
-    export MCD_CHAIN=kovan && mcd "$@"
+    export MCD_CHAIN=kovan
     ;;
 esac
 
