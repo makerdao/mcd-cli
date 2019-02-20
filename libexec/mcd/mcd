@@ -33,6 +33,8 @@ fi
 
 if [[ $2 = --help ]]; then
   exec "${0##*/}" help -- "$1"
+elif [[ $1 == testnet ]]; then
+  exec "${0##*/}-testnet" $2
 elif [[ $1 = -* ]] && command -v "${0##*/}-$1" &>/dev/null; then
   exec "${0##*/}-$1" "${@:2}"
 fi
@@ -67,7 +69,7 @@ testnet-config() {
   conf=$dir/conf.json;
 
   if [[ ! -d "$dir" ]]; then
-    json=$(mcd -C none testnet chain ${1} | jq '.')
+    json=$(mcd testnet chain ${1} | jq '.')
     if [[ "$json" == "null" ]]; then
       echo "Error: chain config not found for $1"
       exit 1
@@ -117,8 +119,9 @@ case "$MCD_CHAIN" in
     export ETH_PASSWORD=${0%/*}/conf/empty.pw
     export ETH_FROM=$(cat $path | jq -r .chain_details.coinbase)
     ;;
-  none)
-    :;
+  *)
+    echo >&2 "${0##*/}: warning: \`MCD_CHAIN' not set; using default (kovan)"
+    export MCD_CHAIN=kovan && mcd "$@"
     ;;
 esac
 
