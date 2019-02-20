@@ -10,10 +10,10 @@ set -e
 ilk=$(mcd --require-ilk $0)
 pip=$(eval echo "\${PIP_$MCD_ILK?}")
 
-echo "Spotter ${MCD_SPOT?} poke(${MCD_ILK})"
-seth send ${MCD_SPOT?} 'poke(bytes32)' "$ilk"
-
 echo "Pip $pip poke()"
 seth send $pip 'poke()'
+
+echo "Spotter ${MCD_SPOT?} poke(${MCD_ILK})"
+seth send ${MCD_SPOT?} 'poke(bytes32)' "$ilk"
 
 [[ $SETH_ASYNC != yes ]] && mcd --ilk=$MCD_ILK ilk spot

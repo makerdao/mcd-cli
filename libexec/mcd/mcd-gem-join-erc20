@@ -8,7 +8,7 @@ gem="0x$(seth --abi-decode 'f()(address)' $gem)"
 approve() {
   max="0x$(printf "f"'%.0s' {1..64})"
   sig="approve(address,uint)(bool)"
-  (set -x; seth send "$gem" $sig $join $max)
+  seth send "$gem" $sig $join $max
 }
 
 # Check allowance
@@ -25,4 +25,6 @@ if (( $(echo "$1 > $amt" | bc -l) )); then
 fi
 
 wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-(set -x; seth send "$join" "join(bytes32, uint)" $urn $wad)
+seth send "$join" "join(bytes32, uint)" $urn $wad
+
+[[ $SETH_ASYNC != yes ]] && mcd gem balance

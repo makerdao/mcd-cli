@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 export MCD_CHAIN=${MCD_CHAIN:-testnet}
+export ETH_FROM=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
+export SETH_ASYNC=yes
+export ETH_GAS=700000
 source lib/test
 
 testJoin() {
-  echo "Test: join $1 --------------"
+  echo "Test: $MCD_ILK join $1"
   lt=$(./bin/mcd gem balance vat)
   ./bin/mcd gem join $1
   gt=$(./bin/mcd gem balance vat)
@@ -11,7 +14,7 @@ testJoin() {
 }
 
 testExit() {
-  echo "Test: exit $1 --------------"
+  echo "Test: $MCD_ILK exit $1"
   gt=$(./bin/mcd gem balance vat)
   ./bin/mcd gem exit $1
   lt=$(./bin/mcd gem balance vat)
@@ -19,7 +22,7 @@ testExit() {
 }
 
 testLock() {
-  echo "Test: lock $1 --------------"
+  echo "Test: $MCD_ILK lock $1"
   lt=$(./bin/mcd gem balance ink)
   ./bin/mcd frob $1 0
   gt=$(./bin/mcd gem balance ink)
@@ -27,7 +30,7 @@ testLock() {
 }
 
 testFree() {
-  echo "Test: free $1 --------------"
+  echo "Test: $MCD_ILK free $1"
   lt=$(./bin/mcd gem balance vat)
   ./bin/mcd frob -- -$1 0
   gt=$(./bin/mcd gem balance vat)
@@ -35,7 +38,7 @@ testFree() {
 }
 
 testDraw() {
-  echo "Test: draw $1 --------------"
+  echo "Test: $MCD_ILK draw $1"
   lt=$(./bin/mcd dai balance vat)
   ./bin/mcd frob 0 $1
   gt=$(./bin/mcd dai balance vat)
@@ -43,7 +46,7 @@ testDraw() {
 }
 
 testWipe() {
-  echo "Test: wipe $1 --------------"
+  echo "Test: $MCD_ILK wipe $1"
   gt=$(./bin/mcd dai balance vat)
   ./bin/mcd frob -- 0 -$1
   lt=$(./bin/mcd dai balance vat)
@@ -59,7 +62,7 @@ testFree 100
 testExit 1000
 
 export MCD_ILK=REP
-export MCD_URN=$(seth --to-bytes32 $ETH_FROM)
+urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)
 testJoin 1000
 testLock 100
 testDraw 400
