@@ -3,4 +3,4 @@
 ### Usage: mcd drip --ilk=<id>
 set -e
 ilk=$(mcd --require-ilk $0)
-(set -x; seth send "${MCD_DRIP}" "drip(bytes32)" "$ilk")
+seth send "${MCD_JUG?}" "drip(bytes32)" "$ilk"

@@ -8,11 +8,11 @@ case $MCD_ILK in
   "ETH") {
     wei=$(seth --to-wei $1 eth)
     sig="join(bytes32)"
-    (set -x; seth send ${MCD_JOIN_ETH?} "$sig" $urn -V $wei)
+    seth send ${MCD_JOIN_ETH?} "$sig" $urn -V $wei
   };;
   *) {
     mcd gem-join-erc20 $1;
   };;
 esac
 
-mcd gem balance
+[[ $SETH_ASYNC != yes ]] && mcd gem balance

@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 set -e
 ilk=$(mcd --require-ilk $0)
-[ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
 urn=$(mcd --require-urn $0)
+[ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
+
 guy=$(mcd --to-address $urn)
 join=$(eval echo "\$MCD_JOIN_${MCD_ILK}")
 wad=$(seth --to-word $(seth --to-wei $1 eth))
 sig="exit(bytes32, address, uint)"
-(set -x; seth send $join "$sig" "$urn" "$guy" "$wad")
-mcd gem balance
+seth send $join "$sig" "$urn" "$guy" "$wad"
+
+[[ $SETH_ASYNC != yes ]] && mcd gem balance

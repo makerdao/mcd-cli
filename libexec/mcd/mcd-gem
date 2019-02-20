@@ -10,8 +10,6 @@
 ###           mcd --ilk=ETH gem join 42
 set -e
 
-p() { printf "%-3s %-48s %-10s\n" "$1" "$2" "$3"; }
-
 mcd-gem() {
 cat <<.
 Gem: Collateral tokens approved by system governance
@@ -37,9 +35,9 @@ case $1 in
         exec 3< <(mcd gem balance vat)
         exec 4< <(mcd gem balance ink)
         exec 5< <(mcd gem balance ext)
-        p "vat" $(cat <&3) "Free collateral ($MCD_ILK)"
-        p "ink" $(cat <&4) "Locked collateral ($MCD_ILK)"
-        p "ext" $(cat <&5) "External account balance ($MCD_ILK)"
+        echo "vat $(cat <&3) Free collateral ($MCD_ILK)"
+        echo "ink $(cat <&4) Locked collateral ($MCD_ILK)"
+        echo "ext $(cat <&5) External account balance ($MCD_ILK)"
       };;
       *)   { mcd gem balance; };;
     esac
