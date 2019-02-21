@@ -6,36 +6,42 @@
 ### the Urn to bite.
 set -e
 
-[ ! -z "$MCD_ILK" ] &&
-[ ! -z "$MCD_URN" ] ||
-mcd --fail "$0: Missing argument(s)"
+ilk=$(mcd --require-ilk $0)
+urn=$(mcd --require-urn $0)
 
-ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
-urn=$(seth --to-word $(seth --to-address $MCD_URN))
+p() { printf "%-3s %-30s %-10s\n" "$1" "$2" "$3"; }
 
-echo >&2 "Biting urn..."
-
-tx=$(seth send --async "${MCD_CAT}" "bite(bytes32,bytes32)(uint256)" "$ilk" "$urn")
-echo >&2 -n "Waiting for transaction receipt..."
-number=$(SETH_TICK=true seth receipt "$tx" blockNumber)
-number=$(seth --to-hex "$number")
+sig="bite(bytes32,bytes32)(uint256)"
+tx=$(seth send --async "${MCD_CAT?}" "$sig" "$ilk" "$urn")
+echo >&2 -n "${0##*/}: Waiting for transaction receipt..."
+block=$(SETH_TICK=true seth receipt "$tx" blockNumber)
+block=$(seth --to-hex "$block")
 echo >&2
-sig=$(seth keccak "$(seth --from-ascii 'Bite(bytes32,bytes32,uint256,uint256,uint256,uint256,uint256)')")
-logs=$(seth rpc eth_getLogs -- -n {} -s "${MCD_CAT?}" -i address \
-                                     -s "$number"  -i fromBlock \
-                                     -s "$number"  -i toBlock \
-                               -n [] -s "$sig"     -i append \
-                                     -i topics \
-                                     -i append | echo "[$(paste -sd , -)]")
+
+sig="Bite(bytes32,bytes32,uint256,uint256,uint256,uint256)"
+keccak=$(seth keccak "$(seth --from-ascii $sig)")
+logs=$(seth rpc eth_getLogs -- \
+  -n {} \
+    -s "${MCD_CAT?}" -i address \
+    -s "$block"      -i fromBlock \
+    -s "$block"      -i toBlock \
+  -n [] \
+    -s "$keccak" -i append \
+    -s "0x$ilk"  -i append \
+    -s "0x$urn"  -i append \
+  -i topics \
+  -i append | echo "[$(paste -sd , -)]")
 data=$(echo "$logs" | jshon -a -e data -u)
 hash=$(echo "$logs" | jshon -a -e transactionHash -u)
 
 if [ "$hash" == "$tx" ]; then
-  echo "flip: $(seth --to-dec 0x${data:196:64})"
-  echo "ink: $(mcd --to-wad ${data:2:64})"
-  echo "art: $(mcd --to-wad ${data:66:64})"
-  echo "tab: $(mcd --to-wad ${data:130:64})"
+  echo "$tx"
+  p "id"  $(seth --to-dec 0x${data:196:64}) "Bite identifier"
+  p "ink" $(mcd --to-wad ${data:2:64})      "Seized collateral ($MCD_ILK)"
+  p "art" $(mcd --to-wad ${data:66:64})     "Seized debt (DAI)"
+  p "tab" $(mcd --to-wad ${data:130:64})    "Outstanding debt to auction"
 else
-  echo "Bite - failed trasaction: $tx"
-  mcd urn
+  echo >&2 "${0##*/}: Transaction failed."
+  seth >&2 receipt "$tx"
+  exit 1
 fi

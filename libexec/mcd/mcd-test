@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-export MCD_CHAIN=${MCD_CHAIN:-testnet}
-export ETH_FROM=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
+if [[ $MCD_CHAIN != "testnet" ]]; then
+  echo "Warning: testnet only. Do not test with real balances"
+  exit 1
+fi
+
 export SETH_ASYNC=yes
 export ETH_GAS=700000
 source lib/test
@@ -53,6 +56,26 @@ testWipe() {
   assertBalanceChanged $gt $lt $1
 }
 
+testBite() {
+  echo "Test: $MCD_ILK bite"
+  dink=10
+  dart=$(echo "($dink - 1) * $(./bin/mcd ilk spot)" | bc -l)
+  ./bin/mcd gem join $dink
+  ./bin/mcd frob $dink $dart
+  ink=$(./bin/mcd gem balance ink)
+  updatePrice 50
+  ./bin/mcd --urn=$ETH_FROM bite
+  updatePrice 149
+  assertBalanceChanged $ink 0 $ink
+}
+
+updatePrice() {
+  lad=$(eval echo "\${VAL_$MCD_ILK?}")
+  amt=$(seth --to-uint256 $(seth --to-wei "$1" ETH))
+  seth send "$lad" "poke(bytes32)" "$amt"
+  ./bin/mcd poke
+}
+
 export MCD_ILK=ETH
 testJoin 1000
 testLock 100
@@ -60,6 +83,7 @@ testDraw 400
 testWipe 400
 testFree 100
 testExit 1000
+testBite
 
 export MCD_ILK=REP
 urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)

@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
-### mcd-poke -- Update the price feed for a given Ilk
+### mcd-poke -- Update the spot price for a given Ilk
 ### Usage: mcd --ilk=<id> poke
 ###
-### Specify either an ilk identifier or a feed address
 ###
 ### Example: mcd poke ETH
 set -e
 
 ilk=$(mcd --require-ilk $0)
-pip=$(eval echo "\${PIP_$MCD_ILK?}")
-
-echo "Pip $pip poke()"
-seth send $pip 'poke()'
-
-echo "Spotter ${MCD_SPOT?} poke(${MCD_ILK})"
 seth send ${MCD_SPOT?} 'poke(bytes32)' "$ilk"
-
 [[ $SETH_ASYNC != yes ]] && mcd --ilk=$MCD_ILK ilk spot
