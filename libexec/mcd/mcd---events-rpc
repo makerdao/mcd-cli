@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# TODO handle topics over rpc
-seth logs $1 $2

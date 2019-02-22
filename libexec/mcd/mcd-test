@@ -63,9 +63,9 @@ testBite() {
   ./bin/mcd gem join $dink
   ./bin/mcd frob $dink $dart
   ink=$(./bin/mcd gem balance ink)
-  updatePrice 50
+  updatePrice $1 # unsafe
   ./bin/mcd --urn=$ETH_FROM bite
-  updatePrice 149
+  updatePrice $2 # restore config price
   assertBalanceChanged $ink 0 $ink
 }
 
@@ -83,7 +83,7 @@ testDraw 400
 testWipe 400
 testFree 100
 testExit 1000
-testBite
+testBite 50 149
 
 export MCD_ILK=REP
 urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)
@@ -93,3 +93,4 @@ testDraw 400
 testWipe 400
 testFree 100
 testExit 1000
+testBite 1 15

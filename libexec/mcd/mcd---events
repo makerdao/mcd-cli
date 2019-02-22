@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-### Usage: mcd --events <address> [<topic0>]
-ETH_BLOCK=${ETH_BLOCK:-earliest}
-mcd --events-"${ETH_LOGS_API:-etherscan}" $1 $ETH_BLOCK $2
-

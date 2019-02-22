@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 ### mcd-frobs -- Recent frobs
-### Usage: mcd frobs [-B <block>] [--ilk=<id>]
+### Usage: mcd frobs [-B <block>]
 set -e
 
-sig="0xb2afa28318bcc689926b52835d844de174ef8de97e982a85c0199d584920791b"
-abi="event Frob(bytes32 indexed ilk,bytes32 indexed urn,uint256 ink,uint256 art,int256 dink,int256 dart,uint256 iArt);"
+abi="event Frob(bytes32 indexed ilk,bytes32 indexed urn,int256 dink,int256 dart);"
 export SETH_ABI=$(seth abi "$abi")
-
-mcd --events $MCD_PIT $sig
+seth events $MCD_PIT
