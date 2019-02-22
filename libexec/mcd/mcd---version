@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 cat <<.
-mcd 0.2.1
+mcd 0.2.3
+dss-testchain-deploy 37ad1245bb4de7e75f539db95761c8d78e53bf0c
+
 Copyright (C) 2018, 2019 dc <dc@dapp.org>
 
 License: GNU AGPL version 3 or later <https://www.gnu.org/licenses/agpl-3.0>.
