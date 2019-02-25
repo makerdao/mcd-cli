@@ -6,4 +6,20 @@ sig="Bite(bytes32,bytes32,uint256,uint256,uint256,uint256)"
 sig=$(seth keccak "$(seth --from-ascii $sig)")
 [[ "$MCD_ILK" ]] && ilk=0x$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
 [[ "$MCD_URN" ]] && urn=0x$(seth --to-bytes32 "$MCD_URN")
-seth logs ${MCD_CAT?} "$sig" "$ilk" "$urn"
+seth logs ${MCD_CAT?} "$sig" "$ilk" "$urn" |
+  while read -r log; do
+    tx=$(jshon -e transactionHash -u <<<"$log")
+    block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$log"))
+    topics=($(jshon -e topics -a -u <<<"$log"))
+    data=$(jshon -e data -u <<<"$log")
+
+    echo "ilk $(mcd --to-ascii ${topics[1]})"
+    echo "urn ${topics[2]}"
+    echo "ink $(mcd --to-wad ${data:2:64})"
+    echo "art $(mcd --to-wad ${data:66:64})"
+    echo "tab $(mcd --to-wad ${data:130:64})"
+    echo "flip $(seth --to-dec 0x${data:196:64})"
+    echo "tx: $tx";
+    echo "block: $block";
+    echo
+  done

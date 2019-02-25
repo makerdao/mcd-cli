@@ -14,9 +14,6 @@ case "$1" in
     w=$(seth --to-word $(seth --to-hex $(seth --to-wei "$3 eth")))
     mcd flips-kick "$n" "$w"
   };;
-  recent) {
-    mcd bites
-  };;
   *) {
     mcd help flips
   }
