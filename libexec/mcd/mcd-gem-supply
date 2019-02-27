@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+case $MCD_ILK in
+  "ETH") {
+    wei=$(seth balance $(mcd gem adapter))
+    mcd --to-wad $wei
+  };;
+  *) {
+    gem=$(seth call $(mcd gem adapter) 'gem()')
+    sig="balanceOf(address)(uint)"
+    mcd --to-wad $(seth call ${gem:(-40)} $sig $(mcd gem adapter))
+  };;
+esac

@@ -21,6 +21,10 @@ $(mcd gem help)
 }
 
 case $1 in
+  adapter) {
+    ilk=$(mcd --require-ilk $0)
+    echo $(eval echo "\$MCD_JOIN_${MCD_ILK?}")
+  };;
   balance) {
     ilk=$(mcd --require-ilk $0)
     urn=$(mcd --require-urn $0)
@@ -40,6 +44,20 @@ case $1 in
         echo "ext $(cat <&5) External account balance ($MCD_ILK)"
       };;
       *)   { mcd gem balance; };;
+    esac
+  };;
+  supply) {
+    ilk=$(mcd --require-ilk $0)
+    case $2 in
+      mcd) { mcd gem-supply; };;
+      ext) { mcd gem-supply-ext; };;
+      "")   {
+        exec 3< <(mcd gem supply mcd)
+        exec 4< <(mcd gem supply ext)
+        echo "mcd $(cat <&3) Total system balance ($MCD_ILK)"
+        echo "ext $(cat <&4) Total supply ($MCD_ILK)"
+      };;
+      *)   { mcd gem supply; };;
     esac
   };;
   join) { mcd gem-join $2; };;

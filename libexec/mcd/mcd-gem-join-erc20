@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 urn=$(mcd --require-urn $0)
-join=$(eval echo "\$MCD_JOIN_${MCD_ILK}")
+join=$(mcd gem adapter)
 gem=$(seth call $join 'gem()')
 gem="0x$(seth --abi-decode 'f()(address)' $gem)"
 
