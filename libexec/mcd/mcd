@@ -76,7 +76,7 @@ testnet-config() {
     else
       mkdir -p $dir; echo $json > $conf
       pk=$(cat $conf | jq -r .chain_details.accounts[0].priv_key)
-      geth --datadir=$dir --password=${0%/*}/conf/empty.pw \
+      geth --datadir=$dir --password=/dev/null \
            account import <(echo $pk) &>/dev/null
     fi
   fi
@@ -108,7 +108,7 @@ case "$MCD_CHAIN" in
     export ETH_RPC_URL=http://127.0.0.1:8545
     export ETH_LOGS_API=rpc
     export ETH_KEYSTORE=$TESTNET/8545/keystore
-    export ETH_PASSWORD=${0%/*}/conf/empty.pw
+    export ETH_PASSWORD=/dev/null
     export ETH_FROM=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
     ;;
   +([0-9])) # remote testnet id
@@ -116,7 +116,7 @@ case "$MCD_CHAIN" in
     export ETH_RPC_URL=$(cat $path | jq -r .chain_details.rpc_url)
     export ETH_LOGS_API=rpc
     export ETH_KEYSTORE=$TESTNET/tmp/$MCD_CHAIN/keystore
-    export ETH_PASSWORD=${0%/*}/conf/empty.pw
+    export ETH_PASSWORD=/dev/null
     export ETH_FROM=$(cat $path | jq -r .chain_details.coinbase)
     ;;
   *)
