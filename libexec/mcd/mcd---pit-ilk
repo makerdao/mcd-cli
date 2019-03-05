@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-[[ $MCD_PIT_ILK ]] ||
-  export MCD_PIT_ILK=$(seth call ${MCD_PIT?} 'ilks(bytes32)(address, uint256)' $1);
-echo $MCD_PIT_ILK

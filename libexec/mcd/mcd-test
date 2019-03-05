@@ -76,14 +76,14 @@ updatePrice() {
   ./bin/mcd poke
 }
 
-export MCD_ILK=ETH
-testJoin 1000
-testLock 100
-testDraw 400
-testWipe 400
-testFree 100
-testExit 1000
-testBite 50 149
+# export MCD_ILK=ETH
+# testJoin 1000
+# testLock 100
+# testDraw 400
+# testWipe 400
+# testFree 100
+# testExit 1000
+# testBite 50 149
 
 export MCD_ILK=REP
 urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)

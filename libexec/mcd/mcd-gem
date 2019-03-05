@@ -31,7 +31,7 @@ case $1 in
     case $2 in
       vat) {
         sig="gem(bytes32,bytes32)(uint256)"
-        mcd --to-rad $(seth call ${MCD_VAT?} "$sig" "$ilk" "$urn")
+        mcd --to-wad $(seth call ${MCD_VAT?} "$sig" "$ilk" "$urn")
       };;
       ink) { mcd --ilk=${MCD_ILK} urn ink; };;
       ext) { mcd gem-balance-ext $urn; };;

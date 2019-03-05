@@ -12,7 +12,6 @@ set -e
 
 id=$(mcd --require-ilk $0)
 
-pit()  { mcd --pit-ilk $id;  }
 vat()  { mcd --vat-ilk $id;  }
 cat()  { mcd --cat-ilk $id;  }
 jug()  { mcd --jug-ilk $id;  }
@@ -21,12 +20,11 @@ spot() { mcd --spot-ilk $id; }
 p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-ilk() {
+  p "Art"  $(mcd ilk Art)  "Total (DAI)"
+  p "rate" $(mcd ilk rate) "DAI exchange rate"
   p "spot" $(mcd ilk spot) "$MCD_ILK price with safety mat (USD)"
   p "line" $(mcd ilk line) "Debt ceiling (DAI)"
   p "take" $(mcd ilk take) "$MCD_ILK exchange rate"
-  p "rate" $(mcd ilk rate) "DAI exchange rate"
-  p "Ink"  $(mcd ilk Ink)  "Total ($MCD_ILK)"
-  p "Art"  $(mcd ilk Art)  "Total (DAI)"
   p "flip" $(mcd ilk flip) "Flip auction contract"
   p "chop" $(mcd ilk chop) "Liquidation penalty"
   p "lump" $(mcd ilk lump) "Flip auction lot size"
@@ -37,12 +35,11 @@ mcd-ilk() {
 }
 
 case $1 in
-  spot)    { pit  | mcd --to-ray $(mcd --slice 0 64);   };;
-  line)    { pit  | mcd --to-wad $(mcd --slice 65 64);  };;
-  take)    { vat  | mcd --to-ray $(mcd --slice 0 64);   };;
+  Art|art) { vat  | mcd --to-wad $(mcd --slice 0 64);   };;
   rate)    { vat  | mcd --to-ray $(mcd --slice 65 64);  };;
-  Ink|ink) { vat  | mcd --to-wad $(mcd --slice 130 64); };;
-  Art|art) { vat  | mcd --to-wad $(mcd --slice 195 64); };;
+  spot)    { vat  | mcd --to-ray $(mcd --slice 130 64); };;
+  line)    { vat  | mcd --to-rad $(mcd --slice 195 64); };;
+  take)    { vat  | mcd --to-ray $(mcd --slice 0 64);   };;
   flip)    { cat  | echo 0x$(mcd --slice 0 40);         };;
   chop)    { cat  | mcd --to-ray $(mcd --slice 41 64);  };;
   lump)    { vat  | mcd --to-wad $(mcd --slice 105 64); };;
