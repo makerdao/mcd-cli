@@ -60,6 +60,7 @@ testBite() {
   echo "Test: $MCD_ILK bite"
   dink=10
   dart=$(echo "($dink - 1) * $(./bin/mcd ilk spot)" | bc -l)
+  wrap $dink
   ./bin/mcd gem join $dink
   ./bin/mcd frob $dink $dart
   ink=$(./bin/mcd gem balance ink)
@@ -67,6 +68,7 @@ testBite() {
   ./bin/mcd --urn=$ETH_FROM bite
   updatePrice $2 # restore config price
   assertBalanceChanged $ink 0 $ink
+  unwrap $dink
 }
 
 updatePrice() {
@@ -76,14 +78,24 @@ updatePrice() {
   ./bin/mcd poke
 }
 
-# export MCD_ILK=ETH
-# testJoin 1000
-# testLock 100
-# testDraw 400
-# testWipe 400
-# testFree 100
-# testExit 1000
-# testBite 50 149
+wrap() {
+  seth send ${ETH?} --value $(seth --to-wei "$1 eth")
+}
+
+unwrap() {
+  seth send ${ETH?} 'withdraw(uint)' $(seth --to-word $(seth --to-wei "$1 eth"))
+}
+
+export MCD_ILK=ETH
+wrap 1000
+testJoin 1000
+testLock 100
+testDraw 400
+testWipe 400
+testFree 100
+testExit 1000
+unwrap 1000
+testBite 50 149
 
 export MCD_ILK=REP
 urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)
