@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 ### mcd-bite -- Trigger liquidation of an unsafe urn (CDP)
-### Usage: mcd bite --ilk=<id> --urn=<address>
+### Usage: mcd bite --ilk=<id> --urn=<index>
 ###
-### Specify the Ilk identifier and owner address of
-### the Urn to bite.
+### Specify the Ilk identifier and index of the Urn to bite.
 set -e
 
 ilk=$(mcd --require-ilk $0)

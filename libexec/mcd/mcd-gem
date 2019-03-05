@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-gem -- Collateral management
-### Usage: mcd --ilk=<id> [--urn=<id>] gem [<command>]
+### Usage: mcd --ilk=<id> [--urn=<index>] gem [<command>]
 ###
 ### Commands: gem balance    Print balances for a given urn (default: ETH_FROM)
 ###           gem join <wad> Add collateral to the system
