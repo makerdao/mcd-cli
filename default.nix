@@ -3,7 +3,7 @@
 
 stdenv.mkDerivation rec {
   name = "mcd-${version}";
-  version = "0.2.3";
+  version = "0.2.1";
   src = ./.;
 
   nativeBuildInputs = [makeWrapper];
