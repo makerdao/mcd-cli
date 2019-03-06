@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+### mcd-unwrap -- Unwrap WETH to ETH
+### Usage: mcd unwrap <amount>
+set -e
+mcd --require-from $0
+[ -n "$1" ] || mcd --fail "wrap: Please specify an amount to wrap"
+seth send ${ETH?} 'withdraw(uint)' $(seth --to-word $(seth --to-wei "$1 eth"))
+
+[[ $SETH_ASYNC == yes ]] && exit 1
+
+sig="balanceOf(address)(uint)"
+weth=$(mcd --to-wad $(seth call ${ETH?} "$sig" "$ETH_FROM"))
+eth=$(mcd --to-wad $(seth balance $ETH_FROM))
+
+echo "eth $eth"
+echo "weth $weth"
