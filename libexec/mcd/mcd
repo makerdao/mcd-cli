@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### McDai - Multi-collateral Dai
+### MCD - Multi-collateral Dai
 shopt -s extglob
 
 OPTS="mcd [<options>] <command> [<args>]
@@ -12,10 +12,12 @@ C,chain=chain         chain config - mainnet, kovan, testnet or a remote testnet
 F,from=address        account to send from
 G,gas=number          number of gas units to provide
 async                 don't wait for tx receipts
+proxy                 transact via registered proxy
 
   MCD options:
 I,ilk=string          ilk identifier
 U,urn=string          urn identifier
+N,cdp=number          cdp identifier
 
   Filter options:
 B,block=number        from block
@@ -50,13 +52,15 @@ while [[ $1 ]]; do
 
     -I|--ilk)       shift; export MCD_ILK=$1;;
     -U|--urn)       shift; export MCD_URN=$1;;
+    -N|--cdp)       shift; export MCD_CDP=$1;;
 
     -B|--block)     shift; export ETH_BLOCK=$1;;
 
     -F|--from)      shift; export ETH_FROM=$1;;
     -G|--gas)       shift; export ETH_GAS=$1;;
 
-       --async)     export SETH_ASYNC=yes;;
+       --async)            export SETH_ASYNC=yes;;
+       --proxy)            export MCD_PROXY=yes;;
 
     *) printf "${0##*/}: unrecognised option: %q\n" "--$1"; exit 1
   esac; shift

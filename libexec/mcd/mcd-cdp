@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -e
+ilk=$(mcd --require-ilk $0)
+
+if [[ $MCD_CDP ]]; then
+  id=$(seth --to-word $MCD_CDP)
+  id=0x"${id:40:64}"
+  MCD_CDP=$id
+  ETH_FROM=$(seth call ${CDP_MANAGER?} 'lads(bytes12)(address)' "$id")
+  MCD_URN=$(seth call ${CDP_MANAGER?} 'getUrn(bytes12)(bytes32)' "$id")
+fi
+
+case $1 in
+  balance) {
+    mcd --urn=$MCD_URN gem balance
+  };;
+  open) {
+    sig="open()"
+    seth send ${CDP_MANAGER?} 'open()'
+  };;
+  ls) {
+    lad=0x$(seth --to-word $ETH_FROM)
+    sig="NewCdp(address,address,bytes12)"
+    sig=$(seth keccak "$(seth --from-ascii $sig)")
+    seth logs ${CDP_MANAGER?} $sig $lad |
+    while read -r log; do
+      data=$(jshon -e data -u <<<"$log")
+      cdp=$(seth --to-dec ${data::26})
+      echo "cdp: $cdp"
+      mcd --cdp=$cdp cdp urn
+      echo
+    done
+  };;
+  urn) {
+    mcd --urn=$MCD_URN urn
+  };;
+  frob) {
+    dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
+    dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$3 eth")))
+    sig="frob(address,bytes12,bytes32,int,int)"
+    seth send ${CDP_MANAGER?} $sig $MCD_VAT $MCD_CDP $ilk $dink $dart
+    mcd cdp urn
+  };;
+  join) {
+    mcd --urn=$MCD_URN gem join $2
+  };;
+  exit) {
+    sig="exit(address,bytes12,address,uint256)"
+    join=$(mcd gem adapter)
+    amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
+    seth send ${CDP_MANAGER?} $sig $join $MCD_CDP $ETH_FROM $amt
+    [[ $SETH_ASYNC != yes ]] && mcd cdp balance
+  };;
+esac
