@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -e
+act=$1; shift
+
+execute() {
+ sig="execute(address,bytes memory)"
+ bytes=$(seth calldata "$@")
+ seth send ${MCD_PROXY?} "$sig" ${PROXY_ACTIONS} $bytes
+}
+
+case $act in
+  open) {
+    execute "open(address)" ${CDP_MANAGER?}
+  };;
+  ls) {
+    lad=0x$(seth --to-word $MCD_PROXY)
+    guy=0x$(seth --to-word $ETH_FROM)
+    sig="NewCdp(address,address,bytes12)"
+    sig=$(seth keccak "$(seth --from-ascii $sig)")
+    seth logs ${CDP_MANAGER?} $sig $lad $guy |
+    while read -r log; do
+      data=$(jshon -e data -u <<<"$log")
+      cdp=$(seth --to-dec ${data::26})
+      echo "cdp  $cdp"
+      mcd --cdp=$cdp cdp urn
+      echo
+    done
+  };;
+esac
+

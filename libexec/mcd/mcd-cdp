@@ -1,54 +1,46 @@
 #!/usr/bin/env bash
 set -e
-ilk=$(mcd --require-ilk $0)
 
-if [[ $MCD_CDP ]]; then
-  id=$(seth --to-word $MCD_CDP)
-  id=0x"${id:40:64}"
-  MCD_CDP=$id
-  ETH_FROM=$(seth call ${CDP_MANAGER?} 'lads(bytes12)(address)' "$id")
-  MCD_URN=$(seth call ${CDP_MANAGER?} 'getUrn(bytes12)(bytes32)' "$id")
+if [[ $MCD_PROXY == yes ]]; then
+  MCD_PROXY=$(mcd --proxy-address)
+  mcd cdp-proxy "${@:2}"
 fi
 
 case $1 in
-  balance) {
-    mcd --urn=$MCD_URN gem balance
-  };;
   open) {
-    sig="open()"
-    seth send ${CDP_MANAGER?} 'open()'
+    ilk=$(mcd --require-ilk $0)
+    seth send ${CDP_MANAGER?} 'open(bytes32)' $ilk
+  };;
+  count) {
+    sig="count(address)"
+    hex=$(seth call ${CDP_MANAGER?} $sig ${ETH_FROM?})
+    seth --to-dec $hex
   };;
   ls) {
-    lad=0x$(seth --to-word $ETH_FROM)
-    sig="NewCdp(address,address,bytes12)"
+    guy=0x$(seth --to-word $ETH_FROM)
+    sig="NewCdp(address,address,uint256)"
     sig=$(seth keccak "$(seth --from-ascii $sig)")
-    seth logs ${CDP_MANAGER?} $sig $lad |
+    seth logs ${CDP_MANAGER?} $sig $guy |
     while read -r log; do
-      data=$(jshon -e data -u <<<"$log")
-      cdp=$(seth --to-dec ${data::26})
-      echo "cdp: $cdp"
-      mcd --cdp=$cdp cdp urn
-      echo
+      id=$(seth --to-dec $(jshon -e data -u <<<"$log"))
+      echo $id
+      mcd --cdp=$id urn
     done
-  };;
-  urn) {
-    mcd --urn=$MCD_URN urn
   };;
   frob) {
     dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
     dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$3 eth")))
-    sig="frob(address,bytes12,bytes32,int,int)"
-    seth send ${CDP_MANAGER?} $sig $MCD_VAT $MCD_CDP $ilk $dink $dart
-    mcd cdp urn
-  };;
-  join) {
-    mcd --urn=$MCD_URN gem join $2
+    sig="frob(address,uint,int,int)"
+    id=$(seth --to-word ${MCD_CDP?})
+    seth send ${CDP_MANAGER?} $sig $MCD_VAT $id $dink $dart
+    [[ $SETH_ASYNC != yes ]] && mcd urn
   };;
   exit) {
-    sig="exit(address,bytes12,address,uint256)"
+    sig="exit(address,uint256,address,uint256)"
+    id=$(seth --to-word ${MCD_CDP?})
     join=$(mcd gem adapter)
     amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
-    seth send ${CDP_MANAGER?} $sig $join $MCD_CDP $ETH_FROM $amt
+    seth send ${CDP_MANAGER?} $sig $join $id $ETH_FROM $amt
     [[ $SETH_ASYNC != yes ]] && mcd cdp balance
   };;
 esac

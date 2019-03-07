@@ -86,7 +86,7 @@ testDraw 400
 testWipe 400
 testFree 100
 testExit 1000
-.bin/mcd unwrap 1000
+./bin/mcd unwrap 1000
 testBite 50 149
 
 export MCD_ILK=REP

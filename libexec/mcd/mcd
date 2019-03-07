@@ -129,4 +129,13 @@ case "$MCD_CHAIN" in
     ;;
 esac
 
+if [[ $MCD_CDP ]]; then
+  id=$(seth --to-hex ${MCD_CDP?})
+  urn="${CDP_MANAGER?}$(printf "%24s" "${id#0x}" | tr ' ' 0)"
+  sig="ilks(uint256)(bytes32)"
+  ilk=$(seth call ${CDP_MANAGER?} $sig $(seth --to-word $id))
+  export MCD_URN=${urn#0x}
+  export MCD_ILK=$(mcd --to-ascii $ilk)
+fi
+
 "${0##*/}-${1-help}" "${@:2}"

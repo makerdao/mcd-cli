@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+#TODO prompt to confirm transaction
+export ETH_GAS=1200000
+seth send ${PROXY_REGISTRY?} 'build()'
+
+lad=0x$(seth --to-word $PROXY_REGISTRY)
+guy=0x$(seth --to-word $ETH_FROM)
+sig="Created(address,address,address,address)"
+sig=$(seth keccak "$(seth --from-ascii $sig)")
+seth logs ${PROXY_FACTORY?} $sig $lad $guy |
+while read -r log; do
+  data=$(jshon -e data -u <<<"$log")
+  echo 0x${data:26:40}
+done

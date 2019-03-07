@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+sig="proxies(address)(address)"
+lad=0x$(seth call ${PROXY_REGISTRY?} $sig $ETH_FROM)
+if [[ $(seth --to-dec $lad) -eq 0 ]]; then
+  mcd --proxy-build
+else
+  echo $lad
+fi
