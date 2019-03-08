@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 cat <<.
-mcd 0.2.1
-dss-testchain-deploy 3b95164a2bcd5e9e8c4b1b3efaf7ff1f2d7de159
+mcd 0.2.1-rc.1
 
 Copyright (C) 2018, 2019 dc <dc@dapp.org>
 

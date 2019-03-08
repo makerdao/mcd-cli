@@ -129,7 +129,7 @@ case "$MCD_CHAIN" in
     ;;
 esac
 
-if [[ $MCD_CDP ]]; then
+if [[ $MCD_CDP ]] && [[ -z $MCD_URN ]]; then
   id=$(seth --to-hex ${MCD_CDP?})
   urn="${CDP_MANAGER?}$(printf "%24s" "${id#0x}" | tr ' ' 0)"
   sig="ilks(uint256)(bytes32)"

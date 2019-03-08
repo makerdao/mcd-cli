@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ $MCD_PROXY == yes ]]; then
+if [[ $MCD_PROXY = yes ]]; then
   MCD_PROXY=$(mcd --proxy-address)
-  mcd cdp-proxy "${@:2}"
 fi
 
+LAD=${MCD_PROXY:-$ETH_FROM}
 case $1 in
-  open) {
-    ilk=$(mcd --require-ilk $0)
-    seth send ${CDP_MANAGER?} 'open(bytes32)' $ilk
-  };;
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig ${ETH_FROM?})
+    hex=$(seth call ${CDP_MANAGER?} $sig ${LAD?})
     seth --to-dec $hex
   };;
+  owner) {
+    id=$(seth --to-word ${MCD_CDP?})
+    sig="lads(uint256)(address)"
+    echo 0x$(seth call ${CDP_MANAGER?} $sig $id)
+  };;
   ls) {
-    guy=0x$(seth --to-word $ETH_FROM)
+    guy=0x$(seth --to-word $LAD)
     sig="NewCdp(address,address,uint256)"
     sig=$(seth keccak "$(seth --from-ascii $sig)")
     seth logs ${CDP_MANAGER?} $sig $guy |
@@ -27,20 +28,7 @@ case $1 in
       mcd --cdp=$id urn
     done
   };;
-  frob) {
-    dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
-    dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$3 eth")))
-    sig="frob(address,uint,int,int)"
-    id=$(seth --to-word ${MCD_CDP?})
-    seth send ${CDP_MANAGER?} $sig $MCD_VAT $id $dink $dart
-    [[ $SETH_ASYNC != yes ]] && mcd urn
-  };;
-  exit) {
-    sig="exit(address,uint256,address,uint256)"
-    id=$(seth --to-word ${MCD_CDP?})
-    join=$(mcd gem adapter)
-    amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
-    seth send ${CDP_MANAGER?} $sig $join $id $ETH_FROM $amt
-    [[ $SETH_ASYNC != yes ]] && mcd cdp balance
+  *) {
+    mcd cdp-send "$@"
   };;
 esac

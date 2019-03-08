@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -e
+if [[ -n "$MCD_PROXY" ]]; then
+  mcd cdp-send-proxy "$@"
+  exit
+fi
+case $1 in
+  open) {
+    ilk=$(mcd --require-ilk $0)
+    seth send ${CDP_MANAGER?} 'open(bytes32)' $ilk
+  };;
+  give) {
+    id=$(seth --to-word ${MCD_CDP?})
+    sig="move(uint256,address)"
+    seth send ${CDP_MANAGER?} $sig $id $2
+  };;
+  frob) {
+    dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
+    dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$3 eth")))
+    sig="frob(address,uint,int,int)"
+    id=$(seth --to-word ${MCD_CDP?})
+    seth send ${CDP_MANAGER?} $sig $MCD_VAT $id $dink $dart
+    [[ $SETH_ASYNC != yes ]] && mcd urn
+  };;
+  exit) {
+    sig="exit(address,uint256,address,uint256)"
+    id=$(seth --to-word ${MCD_CDP?})
+    join=$(mcd gem adapter)
+    amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
+    seth send ${CDP_MANAGER?} $sig $join $id $ETH_FROM $amt
+    [[ $SETH_ASYNC != yes ]] && mcd cdp balance
+  };;
+esac

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+act=$1; shift
+
+execute() {
+  bytes=$(seth calldata "${@:2}")
+  sig="execute(address,bytes memory)"
+  seth send ${MCD_PROXY?} "$sig" "${1?}" "$bytes"
+}
+
+case $act in
+  open) {
+    ilk=$(mcd --require-ilk $0)
+    sig="open(address,bytes32)"
+    execute $PROXY_ACTIONS $sig $CDP_MANAGER $ilk
+  };;
+  give) {
+    id=$(seth --to-word ${MCD_CDP?})
+    sig="give(address,uint256,address)"
+    execute $PROXY_ACTIONS $sig ${CDP_MANAGER?} $id $1
+  };;
+esac
+
