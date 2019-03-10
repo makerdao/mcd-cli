@@ -2,7 +2,7 @@
 ### mcd-wrap -- Wrap ETH to WETH
 ### Usage: mcd wrap <amount>
 set -e
-mcd --require-from $0
+mcd --require-from $0 &>/dev/null
 [ -n "$1" ] || mcd --fail "wrap: Please specify an amount to wrap"
 seth send ${ETH?} --value $(seth --to-wei "$1 eth")
 

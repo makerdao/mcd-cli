@@ -30,7 +30,7 @@ calc() {
 
 mcd-urn() {
   p "ilk"  $MCD_ILK "Collateral type"
-  p "urn"  $MCD_URN "Urn index"
+  p "urn"  $urn "Urn index"
   ink=$(mcd urn ink)
   art=$(mcd urn art)
   p "ink"  $ink     "Locked collateral ($MCD_ILK)"
