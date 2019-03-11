@@ -17,8 +17,8 @@ sig="allowance(address,address)(uint)"
 amt=$(seth call "$gem" "$sig" $from $join)
 amt=$(mcd --to-wad $(seth --to-dec $amt))
 if (( $(echo "$1 > $amt" | bc -l) )); then
-  echo "Insufficient allowance ($(mcd --to-address $urn))"
-  read -r -p "Grant approval to move ${MCD_ILK} to the vat? [Y/n]: " response
+  echo "Insufficient allowance: $(mcd --to-address $urn)"
+  read -r -p "Grant approval to move ${MCD_ILK} from this account to the vat? [Y/n]: " response
   case $response in
     [yY]) { approve; };;
     *)    { exit 1; };;

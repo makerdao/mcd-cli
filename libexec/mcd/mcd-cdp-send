@@ -7,12 +7,32 @@ fi
 case $1 in
   open) {
     ilk=$(mcd --require-ilk $0)
-    seth send ${CDP_MANAGER?} 'open(bytes32)' $ilk
+    guy=0x$(seth --to-word $ETH_FROM)
+    tx=$(seth send --async ${CDP_MANAGER?} 'open(bytes32)' $ilk)
+    echo >&2 -n "${0##*/}: Waiting for transaction receipt..."
+    block=$(SETH_TICK=true seth receipt "$tx" blockNumber)
+    block=$(seth --to-hex "$block")
+    echo >&2
+    sig="NewCdp(address,address,uint256)"
+    sig=$(seth keccak "$(seth --from-ascii $sig)")
+    logs=$(seth rpc eth_getLogs -- \
+      -n {} \
+        -s "${CDP_MANAGER?}" -i address \
+        -s "$block"          -i fromBlock \
+        -s "$block"          -i toBlock \
+      -n [] \
+        -s "$sig"  -i append \
+        -s "$guy"  -i append \
+      -i topics \
+      -i append | echo "[$(paste -sd , -)]")
+    hex=$(echo "$logs" | jshon -a -e data -u)
+    echo "Opened: cdp $(seth --to-dec $hex)"
   };;
   give) {
     id=$(seth --to-word ${MCD_CDP?})
     sig="move(uint256,address)"
-    seth send ${CDP_MANAGER?} $sig $id $2
+    to=$(seth --to-address $2)
+    seth send ${CDP_MANAGER?} $sig $id $to
   };;
   frob) {
     dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
@@ -28,6 +48,6 @@ case $1 in
     join=$(mcd gem adapter)
     amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
     seth send ${CDP_MANAGER?} $sig $join $id $ETH_FROM $amt
-    [[ $SETH_ASYNC != yes ]] && mcd cdp balance
+    [[ $SETH_ASYNC != yes ]] && mcd gem balance
   };;
 esac

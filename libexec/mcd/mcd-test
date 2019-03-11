@@ -1,8 +1,8 @@
-!/usr/bin/env bash
- if [[ $MCD_CHAIN != "testnet" ]]; then
-   echo "Warning: testnet only. Do not test with real balances"
-   exit 1
- fi
+#!/usr/bin/env bash
+if [[ $MCD_CHAIN != "testnet" ]]; then
+  echo "Warning: testnet only. Do not test with real balances"
+  exit 1
+fi
 
 export SETH_ASYNC=yes
 export ETH_GAS=700000
@@ -78,6 +78,39 @@ updatePrice() {
   ./bin/mcd poke
 }
 
+testCdpOpen() {
+  echo Test: Cdp open
+  cdp=$(./bin/mcd cdp open)
+  cdp=${cdp#*cdp}
+  export MCD_CDP=$(echo $cdp | tr -d '[:space:]')
+  [[ $MCD_CDP =~ [[:digit:]]+ ]] || (echo "FAIL" && exit)
+  echo $MCD_CDP
+}
+
+testCdpJoin() {
+  echo Test: Cdp join
+  lt=$(./bin/mcd gem balance vat)
+  ./bin/mcd gem join $1
+  gt=$(./bin/mcd gem balance vat)
+  assertBalanceChanged $gt $lt $1
+}
+
+testCdpFrob() {
+  echo "Test: cdp frob"
+  lt=$(./bin/mcd gem balance ink)
+  ./bin/mcd cdp frob $1 $2
+  gt=$(./bin/mcd gem balance ink)
+  assertBalanceChanged $gt $lt $1
+}
+
+testCdpExit() {
+  echo "Test: cdp exit"
+  gt=$(./bin/mcd gem balance vat)
+  ./bin/mcd --cdp=$MCD_CDP cdp exit $1
+  lt=$(./bin/mcd gem balance vat)
+  assertBalanceChanged $gt $lt $1
+}
+
 export MCD_ILK=ETH
 ./bin/mcd wrap 10
 testJoin 10
@@ -98,3 +131,9 @@ testWipe 4
 testFree 1
 testExit 10
 testBite 1 15
+
+export MCD_ILK=REP
+testCdpOpen
+testCdpJoin 10
+testCdpFrob 1 0
+testCdpExit 9

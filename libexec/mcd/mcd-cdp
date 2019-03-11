@@ -1,24 +1,31 @@
 #!/usr/bin/env bash
 set -e
+shopt -s extglob
 
 if [[ $MCD_PROXY = yes ]]; then
   MCD_PROXY=$(mcd --proxy-address)
 fi
+GUY=${MCD_PROXY:-$ETH_FROM}
 
-LAD=${MCD_PROXY:-$ETH_FROM}
+require-cdp() {
+  [ -n "$MCD_CDP" ] ||
+    mcd --fail "$1: MCD_CDP not set; Please specify a Cdp id (--cdp=<id>)"
+}
+
 case $1 in
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig ${LAD?})
+    hex=$(seth call ${CDP_MANAGER?} $sig ${GUY?})
     seth --to-dec $hex
   };;
   owner) {
+    require-cdp
     id=$(seth --to-word ${MCD_CDP?})
     sig="lads(uint256)(address)"
     echo 0x$(seth call ${CDP_MANAGER?} $sig $id)
   };;
   ls) {
-    guy=0x$(seth --to-word $LAD)
+    guy=0x$(seth --to-word $GUY)
     sig="NewCdp(address,address,uint256)"
     sig=$(seth keccak "$(seth --from-ascii $sig)")
     seth logs ${CDP_MANAGER?} $sig $guy |
@@ -28,7 +35,11 @@ case $1 in
       mcd --cdp=$id urn
     done
   };;
+  +([[:digit:]]) ) {
+    mcd --cdp=$1 cdp "${@:2}"
+  };;
   *) {
     mcd cdp-send "$@"
   };;
 esac
+

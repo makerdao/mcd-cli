@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-echo >&2 "No proxy registered for $ETH_FROM"
+echo >&2 "No proxy registered for ETH_FROM: $ETH_FROM"
 read -r -p "Create a proxy? [Y/n]: " response
 
 build() {
