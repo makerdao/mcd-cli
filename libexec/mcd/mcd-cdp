@@ -25,14 +25,17 @@ case $1 in
     echo 0x$(seth call ${CDP_MANAGER?} $sig $id)
   };;
   ls) {
-    guy=0x$(seth --to-word $GUY)
-    sig="NewCdp(address,address,uint256)"
-    sig=$(seth keccak "$(seth --from-ascii $sig)")
-    seth logs ${CDP_MANAGER?} $sig $guy |
-    while read -r log; do
-      id=$(seth --to-dec $(jshon -e data -u <<<"$log"))
-      echo $id
-      mcd --cdp=$id urn
+    sig="getCdps(address,address)"
+    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $GUY)
+    data=${data:130:${#data}}
+    mid=$(( ${#data} / 2 ))
+    cdps=${data::$mid}; ilks=${data:(-$mid)}
+    for i in `seq 64 64 $(( ${#cdps} - 64 ))`; do
+      id=$(( 16#${cdps:$i:64} ))
+      echo "cdp $id"
+      echo "urn ${CDP_MANAGER?}$(printf "%24s" "${id#0x}" | tr ' ' 0)"
+      echo "ilk $(mcd --to-ascii ${ilks:$i:64})"
+      echo
     done
   };;
   +([[:digit:]]) ) {
