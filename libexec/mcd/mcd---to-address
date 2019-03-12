@@ -7,6 +7,7 @@ if [[ $1 = @* ]]; then
   [[ ${!name} ]] || mcd --fail "${0##*/}: error: not found: $name";
   [[ ${!name} ]] && seth --to-address "${!name}";
 else
-  lad=${1::40}
+  lad=${1#0x}
+  lad=${lad::40}
   seth --to-address $lad
 fi
