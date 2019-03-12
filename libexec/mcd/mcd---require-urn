@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 urn=${MCD_URN:-$ETH_FROM}
-[[ -n "$urn" ]] || mcd --fail "$1: ETH_FROM or --urn=<address|bytes32> is required"
+[[ -n "$urn" ]] || mcd --fail "$1: ETH_FROM or --urn=<index> is required"
 echo $(seth --to-bytes32 $urn)

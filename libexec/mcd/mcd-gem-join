@@ -1,18 +1,38 @@
 #!/usr/bin/env bash
 set -e
-ilk=$(mcd --require-ilk $0)
-urn=$(mcd --require-urn $0)
 [ -n "$1" ] || mcd --fail "gem: Please specify a join amount"
 
-case $MCD_ILK in
-  # "ETH") {
-  #   wei=$(seth --to-wei $1 eth)
-  #   sig="join(bytes32)"
-  #   seth send $(mcd gem adapter) "$sig" $urn -V $wei
-  # };;
-  *) {
-    mcd gem-join-erc20 $1;
-  };;
-esac
+JOIN=$(mcd gem adapter)
+GEM=$(mcd gem gem)
+
+# gem.approve(GemJoin)
+approve() {
+  max="0x$(printf "f"'%.0s' {1..64})"
+  sig="approve(address,uint)(bool)"
+  seth send "$GEM" $sig $JOIN $max
+}
+
+# gem.allowance(ETH_FROM, gemJoin)
+check-allowance() {
+  FROM=$(mcd --require-from $0)
+  sig="allowance(address,address)(uint)"
+  amt=$(seth call "$GEM" "$sig" $FROM $JOIN)
+  amt=$(mcd --to-wad $(seth --to-dec $amt))
+  if (( $(echo "$1 > $amt" | bc -l) )); then
+    echo "Insufficient allowance ETH_FROM: $(mcd --to-address $FROM)"
+    read -r -p "Grant approval to move ${MCD_ILK} from this account to the vat? [Y/n]: " response
+    case $response in
+      [yY]) { approve; };;
+      *)    { exit 1; };;
+    esac
+  fi
+}
+
+check-allowance $1
+
+# GemJoin.join(urn, wad)
+urn=$(mcd --require-urn $0)
+wei=$(seth --to-uint256 $(seth --to-wei $1 eth))
+seth send "$JOIN" "join(bytes32, uint)" $urn $wei
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance

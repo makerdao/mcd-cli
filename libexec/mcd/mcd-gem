@@ -20,13 +20,17 @@ $(mcd gem help)
 .
 }
 
+ilk=$(mcd --require-ilk $0)
+
 case $1 in
   adapter) {
-    ilk=$(mcd --require-ilk $0)
     echo $(eval echo "\$MCD_JOIN_${MCD_ILK?}")
   };;
+  gem) {
+    gem=$(seth call $(mcd gem adapter) 'gem()')
+    echo "0x$(seth --abi-decode 'f()(address)' $gem)"
+  };;
   balance) {
-    ilk=$(mcd --require-ilk $0)
     urn=$(mcd --require-urn $0)
     case $2 in
       vat) {
@@ -47,7 +51,6 @@ case $1 in
     esac
   };;
   supply) {
-    ilk=$(mcd --require-ilk $0)
     case $2 in
       mcd) { mcd gem-supply; };;
       ext) { mcd gem-supply-ext; };;
