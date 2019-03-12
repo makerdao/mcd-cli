@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -e
+
 if [[ -n "$MCD_PROXY" ]]; then
   mcd cdp-send-proxy "$@"
   exit
 fi
+
 case $1 in
   open) {
     ilk=$(mcd --require-ilk $0)
@@ -29,25 +31,29 @@ case $1 in
     echo "Opened: cdp $(seth --to-dec $hex)"
   };;
   give) {
-    id=$(seth --to-word ${MCD_CDP?})
+    CDP=$(mcd --require-cdp mcd-cdp)
     sig="move(uint256,address)"
-    to=$(seth --to-address $2)
-    seth send ${CDP_MANAGER?} $sig $id $to
+    to=$(mcd --to-address $2)
+    seth send ${CDP_MANAGER?} $sig $CDP $to
   };;
   frob) {
+    CDP=$(mcd --require-cdp mcd-cdp)
     dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
     dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$3 eth")))
     sig="frob(address,uint,int,int)"
-    id=$(seth --to-word ${MCD_CDP?})
-    seth send ${CDP_MANAGER?} $sig $MCD_VAT $id $dink $dart
+    seth send ${CDP_MANAGER?} $sig $MCD_VAT $CDP $dink $dart
     [[ $SETH_ASYNC != yes ]] && mcd urn
   };;
+  join) {
+    CDP=$(mcd --require-cdp mcd-cdp)
+    mcd gem join $2
+  };;
   exit) {
+    CDP=$(mcd --require-cdp mcd-cdp)
+    [ -n "$2" ] || mcd --fail "cdp: Please specify an exit amount"
     sig="exit(address,uint256,address,uint256)"
-    id=$(seth --to-word ${MCD_CDP?})
-    join=$(mcd gem adapter)
     amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
-    seth send ${CDP_MANAGER?} $sig $join $id $ETH_FROM $amt
+    seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP ${CDP_GUY?} $amt
     [[ $SETH_ASYNC != yes ]] && mcd gem balance
   };;
 esac

@@ -10,7 +10,7 @@ using the --ilk=<id> option.
 
 Ilk identifiers:
 
-$(mcd ilks | cut -d ' ' -f 1)
+TBC
 .
 exit 1
 }
@@ -24,13 +24,16 @@ recognised collateral type.
 
 Valid Ilk identifiers:
 
-$(mcd ilks | cut -d ' ' -f 1)
+TBC
 .
 exit 1
 }
 
-[ -n "$MCD_ILK" ] || missing-ilk
+valid-ilks() {
+  mcd ilks | cut -d ' ' -f 1
+}
 
+[ -n "$MCD_ILK" ] || missing-ilk
 
 for id in $(mcd ilks | cut -d ' ' -f 1); do
   if [ "$MCD_ILK" == "$id" ]; then

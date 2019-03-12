@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
+### mcd-cdp -- CDP managerment
 set -e
 shopt -s extglob
 
 if [[ $MCD_PROXY = yes ]]; then
   MCD_PROXY=$(mcd --proxy-address)
 fi
-GUY=${MCD_PROXY:-$ETH_FROM}
+export CDP_GUY=${MCD_PROXY:-$ETH_FROM}
 
 require-cdp() {
   [ -n "$MCD_CDP" ] ||
@@ -15,18 +16,25 @@ require-cdp() {
 case $1 in
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig ${GUY?})
+    hex=$(seth call ${CDP_MANAGER?} $sig ${CDP_GUY?})
     seth --to-dec $hex
   };;
   owner) {
-    require-cdp
-    id=$(seth --to-word ${MCD_CDP?})
+    CDP=$(mcd --require-cdp $0)
     sig="lads(uint256)(address)"
-    echo 0x$(seth call ${CDP_MANAGER?} $sig $id)
+    echo 0x$(seth call ${CDP_MANAGER?} $sig $CDP)
+  };;
+  urn) {
+     mcd --require-cdp $0 &>/dev/null
+     echo $MCD_URN
+  };;
+  ilk) {
+     mcd --require-cdp $0 &>/dev/null
+     echo $MCD_ILK
   };;
   ls) {
     sig="getCdps(address,address)"
-    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $GUY)
+    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $CDP_GUY)
     data=${data:130:${#data}}
     mid=$(( ${#data} / 2 ))
     cdps=${data::$mid}; ilks=${data:(-$mid)}
