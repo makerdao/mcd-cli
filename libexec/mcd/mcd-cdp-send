@@ -44,16 +44,25 @@ case $1 in
     seth send ${CDP_MANAGER?} $sig $MCD_VAT $CDP $dink $dart
     [[ $SETH_ASYNC != yes ]] && mcd urn
   };;
-  join) {
+  dai) {
+    # Aliases with cdp require
     CDP=$(mcd --require-cdp mcd-cdp)
-    mcd gem join $2
+    case $2 in
+      join) { mcd dai join $3; };;
+      exit) { mcd dai exit $3; };;
+    esac
   };;
-  exit) {
+  gem) {
     CDP=$(mcd --require-cdp mcd-cdp)
-    [ -n "$2" ] || mcd --fail "cdp: Please specify an exit amount"
-    sig="exit(address,uint256,address,uint256)"
-    amt=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
-    seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP ${CDP_GUY?} $amt
-    [[ $SETH_ASYNC != yes ]] && mcd gem balance
+    case $2 in
+      join) { mcd gem join $3; };;
+      exit) {
+        [ -n "$3" ] || mcd --fail "cdp: Please specify an exit amount"
+        sig="exit(address,uint256,address,uint256)"
+        wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$3 eth")))
+        seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP ${CDP_GUY?} $wad
+        [[ $SETH_ASYNC != yes ]] && mcd gem balance
+      };;
+    esac
   };;
 esac

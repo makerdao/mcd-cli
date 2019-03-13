@@ -87,10 +87,10 @@ testCdpOpen() {
   echo $MCD_CDP
 }
 
-testCdpJoin() {
+testCdpGemJoin() {
   echo Test: Cdp join
   lt=$(./bin/mcd gem balance vat)
-  ./bin/mcd gem join $1
+  ./bin/mcd cdp gem join $1
   gt=$(./bin/mcd gem balance vat)
   assertBalanceChanged $gt $lt $1
 }
@@ -103,37 +103,37 @@ testCdpFrob() {
   assertBalanceChanged $gt $lt $1
 }
 
-testCdpExit() {
+testCdpGemExit() {
   echo "Test: cdp exit"
   gt=$(./bin/mcd gem balance vat)
-  ./bin/mcd --cdp=$MCD_CDP cdp exit $1
+  ./bin/mcd --cdp=$MCD_CDP cdp gem exit $1
   lt=$(./bin/mcd gem balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
-# export MCD_ILK=ETH
-# ./bin/mcd wrap 10
-# testJoin 10
-# testLock 1
-# testDraw 4
-# testWipe 4
-# testFree 1
-# testExit 10
-# ./bin/mcd unwrap 10
-# testBite 50 149
+export MCD_ILK=ETH
+./bin/mcd wrap 10
+testJoin 10
+testLock 1
+testDraw 4
+testWipe 4
+testFree 1
+testExit 10
+./bin/mcd unwrap 10
+testBite 50 149
 
-# export MCD_ILK=REP
-# urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)
-# testJoin 10
-# testLock 1
-# testDraw 4
-# testWipe 4
-# testFree 1
-# testExit 10
-# testBite 1 15
+export MCD_ILK=REP
+urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)
+testJoin 10
+testLock 1
+testDraw 4
+testWipe 4
+testFree 1
+testExit 10
+testBite 1 15
 
 export MCD_ILK=REP
 testCdpOpen
-testCdpJoin 10
+testCdpGemJoin 10
 testCdpFrob 1 0
-testCdpExit 9
+testCdpGemExit 9

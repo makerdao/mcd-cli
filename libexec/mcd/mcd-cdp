@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 ### mcd-cdp -- CDP managerment
+### Usage: mcd [--cdp=<id>] cdp [<id>] [<command>]
+###
+### Commands: cdp ls                      List Cdps
+###           cdp count                   Cdp count
+###           cdp --ilk=<id> open         Open a new Cdp
+###           cdp <id> owner              Get Cdp owner
+###           cdp <id> give <address>     Change Cdp owner
+###           cdp <id> frob <dink> <dart> Cdp frob
+###           cdp <id> gem join <wad>     Add collateral
+###           cdp <id> gem exit <wad>     Remove collateral
+###           cdp <id> dai join <wad>     Add Dai
+###           cdp <id> dai exit <wad>     Remove Dai
+###
+### With `--proxy', transact via registered proxy.
 set -e
 shopt -s extglob
 
