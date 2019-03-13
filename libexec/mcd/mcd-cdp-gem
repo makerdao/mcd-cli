@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# cdp gem <command>
+case $1 in
+  join) {
+    if [[ $MCD_PROXY == yes ]]; then
+      ilk=$(mcd --require-ilk mcd-cdp)
+      sig="gemJoin_join(address,bytes32,uint)"
+      wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
+      mcd proxy-exec $sig $(mcd gem adapter) $ilk $wad
+    else
+      mcd gem join $2
+    fi
+  };;
+  exit) {
+    [ -n "$2" ] || mcd --fail "cdp: Please specify an exit amount"
+    sig="exit(address,uint256,address,uint256)"
+    wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
+    seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP $ETH_FROM $wad
+    [[ $SETH_ASYNC != yes ]] && mcd gem balance
+  };;
+  *) {
+    mcd gem "$@";
+  };;
+esac

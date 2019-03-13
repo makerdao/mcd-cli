@@ -10,77 +10,77 @@ source lib/test
 
 testJoin() {
   echo "Test: $MCD_ILK join $1"
-  lt=$(./bin/mcd gem balance vat)
-  ./bin/mcd gem join $1
-  gt=$(./bin/mcd gem balance vat)
+  lt=$(mcd gem balance vat)
+  mcd gem join $1
+  gt=$(mcd gem balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
 testExit() {
   echo "Test: $MCD_ILK exit $1"
-  gt=$(./bin/mcd gem balance vat)
-  ./bin/mcd gem exit $1
-  lt=$(./bin/mcd gem balance vat)
+  gt=$(mcd gem balance vat)
+  mcd gem exit $1
+  lt=$(mcd gem balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
 testLock() {
   echo "Test: $MCD_ILK lock $1"
-  lt=$(./bin/mcd gem balance ink)
-  ./bin/mcd frob $1 0
-  gt=$(./bin/mcd gem balance ink)
+  lt=$(mcd gem balance ink)
+  mcd frob $1 0
+  gt=$(mcd gem balance ink)
   assertBalanceChanged $gt $lt $1
 }
 
 testFree() {
   echo "Test: $MCD_ILK free $1"
-  lt=$(./bin/mcd gem balance vat)
-  ./bin/mcd frob -- -$1 0
-  gt=$(./bin/mcd gem balance vat)
+  lt=$(mcd gem balance vat)
+  mcd frob -- -$1 0
+  gt=$(mcd gem balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
 testDraw() {
   echo "Test: $MCD_ILK draw $1"
-  lt=$(./bin/mcd dai balance vat)
-  ./bin/mcd frob 0 $1
-  gt=$(./bin/mcd dai balance vat)
+  lt=$(mcd dai balance vat)
+  mcd frob 0 $1
+  gt=$(mcd dai balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
 testWipe() {
   echo "Test: $MCD_ILK wipe $1"
-  gt=$(./bin/mcd dai balance vat)
-  ./bin/mcd frob -- 0 -$1
-  lt=$(./bin/mcd dai balance vat)
+  gt=$(mcd dai balance vat)
+  mcd frob -- 0 -$1
+  lt=$(mcd dai balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
 testBite() {
   echo "Test: $MCD_ILK bite"
   dink=10
-  dart=$(echo "($dink - 1) * $(./bin/mcd ilk spot)" | bc -l)
-  ./bin/mcd wrap $dink
-  ./bin/mcd gem join $dink
-  ./bin/mcd frob $dink $dart
-  ink=$(./bin/mcd gem balance ink)
+  dart=$(echo "($dink - 1) * $(mcd ilk spot)" | bc -l)
+  mcd wrap $dink
+  mcd gem join $dink
+  mcd frob $dink $dart
+  ink=$(mcd gem balance ink)
   updatePrice $1 # unsafe
-  ./bin/mcd --urn=$ETH_FROM bite
+  mcd --urn=$ETH_FROM bite
   updatePrice $2 # restore config price
   assertBalanceChanged $ink 0 $ink
-  ./bin/mcd unwrap $dink
+  mcd unwrap $dink
 }
 
 updatePrice() {
   lad=$(eval echo "\${VAL_$MCD_ILK?}")
   amt=$(seth --to-uint256 $(seth --to-wei "$1" ETH))
   seth send "$lad" "poke(bytes32)" "$amt"
-  ./bin/mcd poke
+  mcd poke
 }
 
 testCdpOpen() {
   echo Test: Cdp open
-  cdp=$(./bin/mcd cdp open)
+  cdp=$(mcd cdp open)
   cdp=${cdp#*cdp}
   export MCD_CDP=$(echo $cdp | tr -d '[:space:]')
   [[ $MCD_CDP =~ [[:digit:]]+ ]] || (echo "FAIL" && exit)
@@ -88,50 +88,53 @@ testCdpOpen() {
 }
 
 testCdpGemJoin() {
-  echo Test: Cdp join
-  lt=$(./bin/mcd gem balance vat)
-  ./bin/mcd cdp gem join $1
-  gt=$(./bin/mcd gem balance vat)
+  lt=$(mcd --cdp $MCD_CDP gem balance vat)
+  (set -x; mcd cdp $MCD_CDP gem join $1)
+  gt=$(mcd --cdp $MCD_CDP gem balance vat)
+  assertBalanceChanged $gt $lt $1
+}
+
+testCdpDaiJoin() {
+  lt=$(mcd --cdp $MCD_CDP dai balance vat)
+  (set -x; mcd cdp $MCD_CDP dai join $1)
+  gt=$(mcd --cdp $MCD_CDP dai balance vat)
+  assertBalanceChanged $gt $lt $1
+}
+
+testCdpDaiExit() {
+  gt=$(mcd --cdp $MCD_CDP dai balance vat)
+  (set -x; mcd cdp $MCD_CDP dai exit $1)
+  lt=$(mcd --cdp $MCD_CDP dai balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
 testCdpFrob() {
-  echo "Test: cdp frob"
-  lt=$(./bin/mcd gem balance ink)
-  ./bin/mcd cdp frob $1 $2
-  gt=$(./bin/mcd gem balance ink)
+  lt=$(mcd --cdp $MCD_CDP gem balance ink)
+  (set -x; mcd --cdp $MCD_CDP frob -- $1 $2)
+  gt=$(mcd --cdp $MCD_CDP gem balance ink)
   assertBalanceChanged $gt $lt $1
 }
 
 testCdpGemExit() {
-  echo "Test: cdp exit"
-  gt=$(./bin/mcd gem balance vat)
-  ./bin/mcd --cdp=$MCD_CDP cdp gem exit $1
-  lt=$(./bin/mcd gem balance vat)
+  gt=$(mcd --cdp $MCD_CDP gem balance vat)
+  (set -x; mcd cdp $MCD_CDP gem exit $1)
+  lt=$(mcd --cdp $MCD_CDP gem balance vat)
   assertBalanceChanged $gt $lt $1
 }
 
-#TODO test dai join & exit
-# mcd dai join
-# mcd cdp dai join
-# mcd --proxy cdp dai join
-#
-# mcd --cdp=1 dai join ???
-# mcd --cdp=1 gem join
-
 export MCD_ILK=ETH
-./bin/mcd wrap 10
+mcd wrap 10
 testJoin 10
 testLock 1
 testDraw 4
 testWipe 4
 testFree 1
 testExit 10
-./bin/mcd unwrap 10
+mcd unwrap 10
 testBite 50 149
 
 export MCD_ILK=REP
-urn=MCD_URN=$(seth --to-bytes32 $ETH_FROM)
+export MCD_URN=$(seth --to-bytes32 $ETH_FROM)
 testJoin 10
 testLock 1
 testDraw 4
@@ -143,5 +146,8 @@ testBite 1 15
 export MCD_ILK=REP
 testCdpOpen
 testCdpGemJoin 10
-testCdpFrob 1 0
-testCdpGemExit 9
+testCdpFrob 10 1
+testCdpDaiExit 1
+testCdpDaiJoin 1
+testCdpFrob -10 -1
+testCdpGemExit 10

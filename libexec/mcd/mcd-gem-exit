@@ -2,11 +2,11 @@
 set -e
 urn=$(mcd --require-urn $0)
 [ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
-GUY=$(mcd --to-address ${2:-$ETH_FROM})
+guy=$(mcd --to-address ${2:-$MCD_GUY})
 
 # GemJoin.exit(urn, guy, wad)
 wad=$(seth --to-word $(seth --to-wei $1 eth))
 sig="exit(bytes32, address, uint)"
-seth send $(mcd gem adapter) "$sig" "$urn" "$GUY" "$wad"
+seth send $(mcd gem adapter) "$sig" "$urn" "$guy" "$wad"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance

@@ -129,8 +129,21 @@ case "$MCD_CHAIN" in
     ;;
 esac
 
-if [[ "$MCD_CDP" ]] && [[ ! "$MCD_URN" ]]; then
-  exec "${0##*/}-cdp-id" "$@"
+# if a cdp id is set, pass to cdp-id action handler
+# if format is cdp <id> then strip first 2 args
+
+if [[ "$MCD_CDP" ]] && [[ -z "$MCD_URN" ]]; then
+  if [[ "$1" == "cdp" ]];then
+    echo "exec ${0##*/}-cdp ${@:2}"
+    exec "${0##*/}-cdp" "${@:2}"
+  else
+    exec "${0##*/}-cdp-id" "$@"
+  fi
 fi
+
+if [[ $MCD_PROXY = yes ]]; then
+  proxy=$(mcd --proxy-address)
+fi
+export MCD_GUY=${proxy:-$ETH_FROM}
 
 "${0##*/}-${1-help}" "${@:2}"

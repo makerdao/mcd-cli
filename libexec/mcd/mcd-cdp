@@ -13,15 +13,10 @@
 set -e
 shopt -s extglob
 
-if [[ $MCD_PROXY = yes ]]; then
-  proxy=$(mcd --proxy-address)
-fi
-guy=${proxy:-$ETH_FROM}
-
 case $1 in
   ls) {
     sig="getCdps(address,address)"
-    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $guy)
+    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $MCD_GUY)
     data=${data:130:${#data}}
     mid=$(( ${#data} / 2 ))
     cdps=${data::$mid}; ilks=${data:(-$mid)}
@@ -35,7 +30,7 @@ case $1 in
   };;
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig $guy)
+    hex=$(seth call ${CDP_MANAGER?} $sig $MCD_GUY)
     seth --to-dec $hex
   };;
   open) {
@@ -43,5 +38,8 @@ case $1 in
   };;
   +([[:digit:]]) ) {
     mcd --cdp=$1 "${@:2}"
+  };;
+  *) {
+    echo "Unrecognised cdp command"
   };;
 esac

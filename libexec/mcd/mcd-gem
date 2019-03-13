@@ -38,7 +38,10 @@ case $1 in
         mcd --to-wad $(seth call ${MCD_VAT?} "$sig" "$ilk" "$urn")
       };;
       ink) { mcd --ilk=${MCD_ILK} urn ink; };;
-      ext) { mcd gem-balance-ext $urn; };;
+      ext) {
+        sig="balanceOf(address)(uint)"
+        mcd --to-wad $(seth call $(eval echo "\$${MCD_ILK}") "$sig" "$MCD_GUY")
+      };;
       "")   {
         exec 3< <(mcd gem balance vat)
         exec 4< <(mcd gem balance ink)

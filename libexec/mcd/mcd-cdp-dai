@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# cdp dai <command>
+case $1 in
+  join) {
+    mcd dai join $2
+  };;
+  exit) {
+    [ -n "$2" ] || mcd --fail "cdp: Please specify an exit amount"
+    sig="exit(address,uint256,address,uint256)"
+    wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
+    seth send ${CDP_MANAGER?} $sig $MCD_JOIN_DAI $CDP $ETH_FROM $wad
+    [[ $SETH_ASYNC != yes ]] && mcd dai balance
+  };;
+  *) {
+    mcd dai "$@";
+  };;
+esac
