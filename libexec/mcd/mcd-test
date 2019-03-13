@@ -111,6 +111,14 @@ testCdpGemExit() {
   assertBalanceChanged $gt $lt $1
 }
 
+#TODO test dai join & exit
+# mcd dai join
+# mcd cdp dai join
+# mcd --proxy cdp dai join
+#
+# mcd --cdp=1 dai join ???
+# mcd --cdp=1 gem join
+
 export MCD_ILK=ETH
 ./bin/mcd wrap 10
 testJoin 10

@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -e
+act=$1; shift
+hex=$(seth --to-hex ${MCD_CDP?})
+cdp=0x$(seth --to-word $hex)
+sig="ilks(uint256)(bytes32)"
+MCD_ILK=$(seth call ${CDP_MANAGER?} $sig $cdp)
+MCD_URN="${CDP_MANAGER?}$(printf "%24s" "${hex#0x}" | tr ' ' 0)"
+export MCD_URN=${MCD_URN#0x}
+export MCD_ILK=$(mcd --to-ascii $MCD_ILK)
+
+case $act in
+  urn)   { echo $MCD_URN; };;
+  ilk)   { echo $MCD_ILK; };;
+  owner) {
+    sig="lads(uint256)(address)"
+    echo 0x$(seth call ${CDP_MANAGER?} $sig $cdp)
+  };;
+  give) {
+    to=$(mcd --to-address $1)
+    if [[ $MCD_PROXY == yes ]]; then
+      sig="give(address,uint256,address)"
+      mcd --proxy-exec $sig ${CDP_MANAGER?} $cdp $to
+    else
+      sig="move(uint256,address)"
+      seth send ${CDP_MANAGER?} $sig $cdp $to
+    fi
+  };;
+  frob) {
+    dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))
+    dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
+    if [[ $MCD_PROXY == yes ]]; then
+      sig="frob(address,bytes32,bytes32,bytes32,bytes32,int,int)"
+      ilk=$(mcd --require-ilk mcd-cdp)
+      urn=$(mcd --require-urn mcd-cdp)
+      mcd --proxy-exec $sig ${MCD_VAT?} $ilk $urn $urn $urn $dink $dart
+    else
+      sig="frob(address,uint,int,int)"
+      seth send ${CDP_MANAGER?} $sig $MCD_VAT $cdp $dink $dart
+    fi
+    [[ $SETH_ASYNC != yes ]] && mcd urn
+  };;
+  join) {
+    if [[ $MCD_PROXY == yes ]]; then
+      ilk=$(mcd --require-ilk mcd-cdp)
+      sig="gemJoin_join(address,bytes32,uint)"
+      wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$1 eth")))
+      mcd proxy-exec $sig $(mcd gem adapter) $ilk $wad
+    else
+      mcd gem join $1
+    fi
+  };;
+  dai) {
+    case $1 in
+      join) { mcd dai join $2; };;
+      exit) { mcd dai exit $2; };;
+    esac
+  };;
+  gem) {
+    case $1 in
+      join) {
+        mcd gem join $2;
+      };;
+      exit) {
+        [ -n "$2" ] || mcd --fail "cdp: Please specify an exit amount"
+        sig="exit(address,uint256,address,uint256)"
+        wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
+        seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP ${CDP_GUY?} $wad
+        [[ $SETH_ASYNC != yes ]] && mcd gem balance
+      };;
+    esac
+  };;
+esac

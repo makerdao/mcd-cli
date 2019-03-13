@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -e
+execute() {
+  bytes=$(seth calldata "${@:2}")
+  sig="execute(address,bytes memory)"
+  (set -x; seth send $proxy "$sig" "${1?}" "$bytes")
+}
+
+ilk=$(mcd --require-ilk $0)
+
+if [[ $MCD_PROXY == yes ]]; then
+  proxy=$(mcd --proxy-address)
+  tx=$(execute $PROXY_ACTIONS $sig $CDP_MANAGER $ilk)
+else
+  tx=$(seth send --async ${CDP_MANAGER?} 'open(bytes32)' $ilk)
+fi
+
+guy=0x$(seth --to-word ${proxy:-$ETH_FROM})
+echo >&2 -n "${0##*/}: Waiting for transaction receipt..."
+block=$(SETH_TICK=true seth receipt "$tx" blockNumber)
+block=$(seth --to-hex "$block")
+echo >&2
+sig="NewCdp(address,address,uint256)"
+sig=$(seth keccak "$(seth --from-ascii $sig)")
+logs=$(seth rpc eth_getLogs -- \
+    -n {} \
+    -s "${CDP_MANAGER?}" -i address \
+    -s "$block"          -i fromBlock \
+    -s "$block"          -i toBlock \
+    -n [] \
+    -s "$sig"  -i append \
+    -s "$guy"  -i append \
+    -i topics \
+    -i append | echo "[$(paste -sd , -)]")
+hex=$(echo "$logs" | jshon -a -e data -u)
+echo "Opened: cdp $(seth --to-dec $hex)"
