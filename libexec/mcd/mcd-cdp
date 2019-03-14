@@ -37,7 +37,7 @@ case $1 in
     mcd cdp-open "${@:2}";
   };;
   +([[:digit:]]) ) {
-    mcd --cdp=$1 "${@:2}"
+    mcd --cdp=$1 $2 -- "${@:3}"
   };;
   *) {
     echo "Unrecognised cdp command"

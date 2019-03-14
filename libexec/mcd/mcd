@@ -129,9 +129,6 @@ case "$MCD_CHAIN" in
     ;;
 esac
 
-# if a cdp id is set, pass to cdp-id action handler
-# if format is cdp <id> then strip first 2 args
-
 if [[ "$MCD_CDP" ]] && [[ -z "$MCD_URN" ]]; then
   if [[ "$1" == "cdp" ]];then
     echo "exec ${0##*/}-cdp ${@:2}"

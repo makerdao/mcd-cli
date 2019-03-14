@@ -16,8 +16,6 @@ if [[ -z "$MCD_URN" ]]; then
 fi
 
 case $act in
-  urn)   { echo $MCD_URN; };;
-  ilk)   { echo $MCD_ILK; };;
   owner) {
     sig="lads(uint256)(address)"
     echo 0x$(seth call ${CDP_MANAGER?} $sig $CDP)
@@ -46,7 +44,8 @@ case $act in
     fi
     [[ $SETH_ASYNC != yes ]] && mcd urn
   };;
-  dai|gem) { exec "mcd-cdp-$act" "$@"; };;
+  dai|gem) { exec mcd-cdp-$act "$@"; };;
+  ilk|urn) { exec mcd-$act;          };;
   *) {
     echo "Command not recognised: cdp $act"
   };;
