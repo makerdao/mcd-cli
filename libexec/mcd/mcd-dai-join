@@ -12,9 +12,9 @@ approve() {
 
 # dai.allowance(ETH_FROM, DaiJoin)
 check-allowance() {
-  FROM=$(mcd --require-from $0)
+  FROM=$(mcd --require-from dai)
   sig="allowance(address,address)(uint)"
-  amt=$(seth call ${MCD_DAI?} "$sig" $FROM ${MCD_JOIN_DAI?})
+  amt=$(seth call ${MCD_DAI:?} "$sig" $FROM ${MCD_JOIN_DAI?})
   amt=$(mcd --to-wad $(seth --to-dec $amt))
   if (( $(echo "$1 > $amt" | bc -l) )); then
     echo "Insufficient allowance ETH_FROM: $(mcd --to-address $FROM)"

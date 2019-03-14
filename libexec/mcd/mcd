@@ -98,6 +98,29 @@ load-addresses() {
   for e in $exports; do export "$e"; done
 }
 
+chain-help() {
+cat <<.
+Please specify which mcd deployment you wish to target:
+  For example, try running against the latest kovan
+  deployment by settig the chain option:
+
+  mcd --chain=kovan <command>
+
+You could also try running against a remote testnet:
+  List available testnets with: \`mcd testnet chains'
+  and then set the chain option to a testnet id:
+
+  mcd --chain=12899149080555595289 <command>
+
+You can also specify a path to a custom address config
+file when runing against deployments on a local testnet:
+
+  mcd --config=path/to/out.addresses.json <command>
+
+For more options see \`mcd help'.
+.
+}
+
 case "$MCD_CHAIN" in
   mainnet)
     load-addresses ${0%/*}/conf/mainnet.json;
@@ -124,9 +147,8 @@ case "$MCD_CHAIN" in
     export ETH_FROM=$(cat $path | jq -r .chain_details.coinbase)
     ;;
   *)
-    echo >&2 "${0##*/}: warning: \`MCD_CHAIN' not set; using default (kovan)"
-    export MCD_CHAIN=kovan
-    ;;
+    [[ ! "$MCD_VAT" ]] && [[ "$@" != *"help"* ]] &&
+      chain-help && exit 1
 esac
 
 if [[ "$MCD_CDP" ]] && [[ -z "$MCD_URN" ]]; then

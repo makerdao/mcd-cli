@@ -44,7 +44,6 @@ case $1 in
     mcd --cdp=$1 $2 -- "${@:3}"
   };;
   *) {
-    echo "Error: bad command: cdp $1"
     mcd help cdp
   };;
 esac
