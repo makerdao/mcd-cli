@@ -47,6 +47,7 @@ case $act in
   dai|gem) { exec mcd-cdp-$act "$@"; };;
   ilk|urn) { exec mcd-$act;          };;
   *) {
-    echo "Command not recognised: cdp $act"
+    echo "Error: bad command: cdp $MCD_CDP $act"
+    mcd help cdp
   };;
 esac

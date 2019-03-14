@@ -6,8 +6,12 @@
 ###           cdp count                   Cdp count
 ###           cdp open                    Open a new Cdp
 ###           cdp <id> owner              Get Cdp owner
-###           cdp <id> give <address>     Change Cdp owner
-###           cdp <id> frob <dink> <dart> Cdp frob
+###           cdp <id> gem join <wad>     Add collateral
+###           cdp <id> gem exit <wad>     Remove collateral
+###           cdp <id> dai exit <wad>     Add Dai
+###           cdp <id> dai exit <wad>     Remove Dai
+###           cdp <id> give <address>     Change owner
+###           cdp <id> frob <dink> <dart> Manage Cdp state
 ###
 ### With `--proxy', transact via registered proxy.
 set -e
@@ -40,6 +44,7 @@ case $1 in
     mcd --cdp=$1 $2 -- "${@:3}"
   };;
   *) {
-    echo "Unrecognised cdp command"
+    echo "Error: bad command: cdp $1"
+    mcd help cdp
   };;
 esac
