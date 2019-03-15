@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -e
 [ -n "$1" ] || mcd --fail "dai: Please specify a join amount"
-mcd --require-allowance $1 $ETH_FROM $MCD_JOIN_DAI
-urn=$(mcd --require-urn $0)
-wei=$(seth --to-uint256 $(seth --to-wei $1 eth))
-seth send "$MCD_JOIN_DAI" "join(bytes32, uint)" $urn $wei
+
+join=$MCD_JOIN_DAI
+mcd --require-allowance $1 $ETH_FROM $join
+
+# DaiJoin.join(urn, wad)
+urn=$(mcd --require-urn dai)
+wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
+seth send "$join" "join(bytes32, uint)" $urn $wad
+
 [[ $SETH_ASYNC != yes ]] && mcd dai balance

@@ -48,6 +48,22 @@ testDraw() {
   assertBalanceChanged $gt $lt $1
 }
 
+testDaiExit() {
+  echo "Test: $MCD_ILK dai exit $1"
+  gt=$(mcd dai balance vat)
+  mcd dai exit $1
+  lt=$(mcd dai balance vat)
+  assertBalanceChanged $gt $lt $1
+}
+
+testDaiJoin() {
+  echo "Test: $MCD_ILK dai join $1"
+  lt=$(mcd dai balance vat)
+  mcd dai join $1
+  gt=$(mcd dai balance vat)
+  assertBalanceChanged $gt $lt $1
+}
+
 testWipe() {
   echo "Test: $MCD_ILK wipe $1"
   gt=$(mcd dai balance vat)
@@ -122,18 +138,20 @@ testCdpGemExit() {
   assertBalanceChanged $gt $lt $1
 }
 
-export MCD_ILK="ETH-A"
+export MCD_ILK=ETH-A
 mcd wrap 10
 testJoin 10
 testLock 1
 testDraw 4
+testDaiExit 4
+testDaiJoin 4
 testWipe 4
 testFree 1
 testExit 10
 mcd unwrap 10
 testBite 50 149
 
-export MCD_ILK=COL1
+export MCD_ILK=COL1-A
 export MCD_URN=$(seth --to-bytes32 $ETH_FROM)
 testJoin 10
 testLock 1
@@ -143,7 +161,17 @@ testFree 1
 testExit 10
 testBite 1 15
 
-export MCD_ILK=COL1
+export MCD_ILK=COL1-A
+testCdpOpen
+testCdpGemJoin 10
+testCdpFrob 10 1
+testCdpDaiExit 1
+testCdpDaiJoin 1
+testCdpFrob -10 -1
+testCdpGemExit 10
+
+export MCD_ILK=COL1-A
+export MCD_PROXY=yes
 testCdpOpen
 testCdpGemJoin 10
 testCdpFrob 10 1

@@ -1,24 +1,9 @@
 #!/usr/bin/env bash
 set -e
-wad() {
-  [ -n "$1" ] || mcd --fail "cdp: Please specify a gem amount"
-  echo $(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$1 eth")))
-}
 case $1 in
-  join) {
-    wad=$(wad $2)
-    if [[ $MCD_PROXY == yes ]]; then
-      ilk=$(mcd --require-ilk)
-      sig="gemJoin_join(address,bytes32,uint)"
-      mcd --require-allowance $wad $ETH_FROM $MCD_GUY
-      mcd --proxy-exec $sig $(mcd gem adapter) $ilk $wad
-      [[ $SETH_ASYNC != yes ]] && mcd gem balance
-    else
-      mcd gem join $2
-    fi
-  };;
   exit) {
-    wad=$(wad $2)
+    [ -n "$2" ] || mcd --fail "cdp: Please specify a gem amount"
+    wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
     if [[ $MCD_PROXY == yes ]]; then
       sig="exit(address,address,uint,address,uint)"
       mcd --proxy-exec $sig $CDP_MANAGER $(mcd gem adapter) $CDP $ETH_FROM $wad
@@ -26,7 +11,7 @@ case $1 in
       sig="exit(address,uint,address,uint)"
       seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP $ETH_FROM $wad
     fi
-    [[ $SETH_ASYNC != yes ]] && mcd gem balance
+    [[ $SETH_ASYNC != yes ]] && time mcd gem balance
   };;
   *) {
     mcd gem "$@";

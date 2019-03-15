@@ -21,9 +21,10 @@ p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-ilk() {
   p "Art"  $(mcd ilk Art)  "Total debt (DAI)"
-  p "rate" $(mcd ilk rate) "$MCD_ILK DAI exchange rate"
-  p "spot" $(mcd ilk spot) "$MCD_ILK price with safety mat (USD)"
+  p "rate" $(mcd ilk rate) "$(mcd gem symbol) DAI exchange rate"
+  p "spot" $(mcd ilk spot) "$(mcd gem symbol) price with safety mat (USD)"
   p "line" $(mcd ilk line) "Debt ceiling (DAI)"
+  p "dust" $(mcd ilk dust) "Debt floor (DAI)"
   p "flip" $(mcd ilk flip) "Flip auction contract"
   p "chop" $(mcd ilk chop) "Liquidation penalty"
   p "lump" $(mcd ilk lump) "Flip auction lot size"
@@ -38,6 +39,7 @@ case $1 in
   rate)    { vat  | mcd --to-ray $(mcd --slice 65 64);  };;
   spot)    { vat  | mcd --to-ray $(mcd --slice 130 64); };;
   line)    { vat  | mcd --to-rad $(mcd --slice 195 64); };;
+  dust)    { vat  | mcd --to-rad $(mcd --slice 260 64); };;
   flip)    { cat  | echo 0x$(mcd --slice 0 40);         };;
   chop)    { cat  | mcd --to-ray $(mcd --slice 41 64);  };;
   lump)    { vat  | mcd --to-wad $(mcd --slice 105 64); };;
