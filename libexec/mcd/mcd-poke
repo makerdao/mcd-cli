@@ -3,7 +3,7 @@
 ### Usage: mcd --ilk=<id> poke
 ###
 ###
-### Example: mcd poke ETH
+### Example: mcd --ilk=ETH-A poke
 set -e
 
 ilk=$(mcd --require-ilk $0)

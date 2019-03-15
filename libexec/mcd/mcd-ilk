@@ -5,9 +5,9 @@
 ### With no arguments, list all parameters
 ### With `<param>` get a specified Ilk parameter
 ###
-### Example: mcd --ilk=ETH ilk
-###          mcd --ilk=ETH ilk spot
-###          mcd --ilk=ETH ilk Art
+### Example: mcd --ilk=ETH-A ilk
+###          mcd --ilk=ETH-A ilk spot
+###          mcd --ilk=ETH-A ilk Art
 set -e
 
 id=$(mcd --require-ilk $0)

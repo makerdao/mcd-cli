@@ -5,12 +5,9 @@ missing-ilk() {
 cat >&2 <<.
 Error: missing Ilk identifier
 
-You must specify an Ilk (collateral type)
-using the --ilk=<id> option.
+You must specify an Ilk (collateral type) using the --ilk=<id> option.
 
-Ilk identifiers:
-
-TBC
+See \`mcd ilks' for a list of approved collateral types.
 .
 exit 1
 }
@@ -19,12 +16,9 @@ invalid-ilk() {
 cat >&2 <<.
 Error: invalid Ilk identifier
 
-The Ilk identifier $MCD_ILK is not a
-recognised collateral type.
+The Ilk identifier $MCD_ILK is not a recognised collateral type.
 
-Valid Ilk identifiers:
-
-TBC
+See \`mcd ilks' for a list of approved collateral types.
 .
 exit 1
 }

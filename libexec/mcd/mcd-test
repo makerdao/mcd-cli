@@ -122,7 +122,7 @@ testCdpGemExit() {
   assertBalanceChanged $gt $lt $1
 }
 
-export MCD_ILK=ETH
+export MCD_ILK="ETH-A"
 mcd wrap 10
 testJoin 10
 testLock 1
@@ -133,7 +133,7 @@ testExit 10
 mcd unwrap 10
 testBite 50 149
 
-export MCD_ILK=REP
+export MCD_ILK=COL1
 export MCD_URN=$(seth --to-bytes32 $ETH_FROM)
 testJoin 10
 testLock 1
@@ -143,7 +143,7 @@ testFree 1
 testExit 10
 testBite 1 15
 
-export MCD_ILK=REP
+export MCD_ILK=COL1
 testCdpOpen
 testCdpGemJoin 10
 testCdpFrob 10 1

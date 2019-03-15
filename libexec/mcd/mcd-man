@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+for file in ${0%/*}/mcd-*; do
+  commands+=("$file")
+done
+
+cat "${commands[@]}" |
+  sed -n '/^###/p' | sed 's/###//g' | sed '/With/d'

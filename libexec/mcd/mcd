@@ -147,8 +147,8 @@ case "$MCD_CHAIN" in
     export ETH_FROM=$(cat $path | jq -r .chain_details.coinbase)
     ;;
   *)
-    [[ ! "$MCD_VAT" ]] && [[ "$@" != *"help"* ]] &&
-      chain-help && exit 1
+    # [[ ! "$MCD_VAT" ]] && [[ "$@" != *"help"* ]] &&
+    #   chain-help && exit 1
 esac
 
 if [[ "$MCD_CDP" ]] && [[ -z "$MCD_URN" ]]; then

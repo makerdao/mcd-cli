@@ -3,7 +3,7 @@ set -e
 [ -n "$1" ] || mcd --fail "gem: Please specify a join amount"
 
 JOIN=$(mcd gem adapter)
-GEM=$(mcd gem gem)
+GEM=$(mcd gem address)
 
 # gem.approve(GemJoin)
 approve() {
@@ -20,7 +20,7 @@ check-allowance() {
   amt=$(mcd --to-wad $(seth --to-dec $amt))
   if (( $(echo "$1 > $amt" | bc -l) )); then
     echo "Insufficient allowance ETH_FROM: $(mcd --to-address $FROM)"
-    read -r -p "Grant approval to move ${MCD_ILK} from this account to the vat? [Y/n]: " response
+    read -r -p "Grant approval to move $(mcd gem symbol) from this account to the vat? [Y/n]: " response
     case $response in
       [yY]) { approve; };;
       *)    { exit 1; };;

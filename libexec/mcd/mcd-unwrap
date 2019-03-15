@@ -12,5 +12,5 @@ sig="balanceOf(address)(uint)"
 weth=$(mcd --to-wad $(seth call ${ETH?} "$sig" "$ETH_FROM"))
 eth=$(mcd --to-wad $(seth balance $ETH_FROM))
 
-echo "eth $eth"
+echo "eth  $eth"
 echo "weth $weth"

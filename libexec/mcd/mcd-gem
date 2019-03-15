@@ -6,31 +6,37 @@
 ###           gem join <wad>         Add collateral to the system
 ###           gem exit <wad> [<guy>] Remove collateral from the system
 ###
-### Example:  mcd --ilk=ETH gem balance
-###           mcd --ilk=ETH gem join 42
+### Example:  mcd --ilk=ETH-A gem balance
+###           mcd --ilk=ETH-A gem join 42
 set -e
 
 mcd-gem() {
 cat <<.
-Gem: Collateral tokens approved by system governance
+Gem: Governance-approved collateral tokens
 
-$(mcd ilks | tr -s ' ' | cut -d ' ' -f 1,3)
+$(mcd ilks)
 
 $(mcd gem help)
 .
 }
 
-ilk=$(mcd --require-ilk $0)
 
 case $1 in
   adapter) {
-    echo $(eval echo "\$MCD_JOIN_${MCD_ILK?}")
+    mcd --require-ilk &>/dev/null
+    ilk=$(tr '-' '_' <<<$MCD_ILK)
+    echo $(eval echo "\$MCD_JOIN_$ilk")
   };;
-  gem) {
+  gem|address) {
+    ilk=$(mcd --require-ilk $0)
     gem=$(seth call $(mcd gem adapter) 'gem()')
     echo "0x$(seth --abi-decode 'f()(address)' $gem)"
   };;
+  symbol) {
+    mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
+  };;
   balance) {
+    ilk=$(mcd --require-ilk $0)
     urn=$(mcd --require-urn $0)
     case $2 in
       vat) {
@@ -40,7 +46,7 @@ case $1 in
       ink) { mcd --ilk=${MCD_ILK} urn ink; };;
       ext) {
         sig="balanceOf(address)(uint)"
-        mcd --to-wad $(seth call $(eval echo "\$${MCD_ILK}") "$sig" "$MCD_GUY")
+        mcd --to-wad $(seth call $(mcd gem address) "$sig" "$MCD_GUY")
       };;
       "")   {
         exec 3< <(mcd gem balance vat)
@@ -54,6 +60,7 @@ case $1 in
     esac
   };;
   supply) {
+    ilk=$(mcd --require-ilk $0)
     case $2 in
       mcd) { mcd gem-supply; };;
       ext) { mcd gem-supply-ext; };;
@@ -66,8 +73,14 @@ case $1 in
       *)   { mcd gem supply; };;
     esac
   };;
-  join) { mcd gem-join $2; };;
-  exit) { mcd gem-exit $2; };;
+  join) {
+    ilk=$(mcd --require-ilk $0)
+    mcd gem-join $2;
+  };;
+  exit) {
+    ilk=$(mcd --require-ilk $0)
+    mcd gem-exit $2;
+  };;
   "")   { mcd-gem; };;
   *)    { mcd help gem; }
 esac

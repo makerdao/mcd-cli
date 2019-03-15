@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # cdp gem <command>
+set -e
 case $1 in
   join) {
     if [[ $MCD_PROXY == yes ]]; then
