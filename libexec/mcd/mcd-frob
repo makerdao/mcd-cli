@@ -4,7 +4,7 @@
 set -e
 [ $# = 2 ] || mcd --fail "$0: Incorrect arguments"
 
-ilk=$(mcd --require-ilk $0)
+ilk=$(mcd --require-ilk)
 urn=$(mcd --require-urn $0)
 
 dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))

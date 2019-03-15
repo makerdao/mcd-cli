@@ -7,7 +7,7 @@ case $1 in
   join) {
     wad=$(wad $2)
     if [[ $MCD_PROXY == yes ]]; then
-      ilk=$(mcd --require-ilk cdp)
+      ilk=$(mcd --require-ilk)
       sig="daiJoin_join(address,bytes32,uint)"
       mcd --require-allowance $wad $ETH_FROM $MCD_GUY
       mcd --proxy-exec $sig $MCD_JOIN_DAI $ilk $wad

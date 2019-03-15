@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-mcd --require-ilk &>/dev/null
+mcd---require-ilk-opt
 
 gem=$(mcd gem address)
 amt=$(seth --to-dec $1)

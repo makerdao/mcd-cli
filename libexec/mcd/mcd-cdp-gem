@@ -8,7 +8,7 @@ case $1 in
   join) {
     wad=$(wad $2)
     if [[ $MCD_PROXY == yes ]]; then
-      ilk=$(mcd --require-ilk mcd-cdp)
+      ilk=$(mcd --require-ilk)
       sig="gemJoin_join(address,bytes32,uint)"
       mcd --require-allowance $wad $ETH_FROM $MCD_GUY
       mcd --proxy-exec $sig $(mcd gem adapter) $ilk $wad

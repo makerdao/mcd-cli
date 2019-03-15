@@ -2,7 +2,7 @@
 set -e
 [ -n "$1" ] || mcd --fail "gem: Please specify a join amount"
 
-mcd --require-ilk &>/dev/null
+mcd---require-ilk-opt
 join=$(mcd gem adapter)
 mcd --require-allowance $1 $ETH_FROM $join
 

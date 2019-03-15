@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-ilk=$(mcd --require-ilk $0)
-urn=$(mcd --require-urn $0)
+set -e
+ilk=$(mcd---require-ilk)
+urn=$(mcd --require-urn gem)
 gem=$(mcd gem symbol)
 case $1 in
   vat) {

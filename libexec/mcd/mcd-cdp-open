@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-ilk=$(mcd --require-ilk $0)
+ilk=$(mcd --require-ilk)
 
 export SETH_ASYNC=yes
 

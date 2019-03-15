@@ -9,7 +9,7 @@
 ### With `<arg>` get a specified Urn parameter
 set -e
 
-ilk=$(mcd --require-ilk $0)
+ilk=$(mcd --require-ilk)
 urn=$(mcd --require-urn $0)
 
 vat()  { mcd --vat-urn $ilk $urn; }

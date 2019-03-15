@@ -20,25 +20,27 @@ $(mcd gem help)
 .
 }
 
+if [[ -n "$1" ]] && [[ "$1" != "help"  ]]; then
+  mcd---require-ilk-opt
+fi
+
 case $1 in
-  adapter) {
-    mcd --require-ilk &>/dev/null
+  adapter)
     ilk=$(tr '-' '_' <<<$MCD_ILK)
     echo $(eval echo "\$MCD_JOIN_$ilk")
-  };;
-  gem|address) {
-    ilk=$(mcd --require-ilk $0)
+  ;;
+  gem|address)
     gem=$(seth call $(mcd gem adapter) 'gem()')
     echo "0x$(seth --abi-decode 'f()(address)' $gem)"
-  };;
-  symbol) {
+  ;;
+  symbol)
     mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
-  };;
-  balance) {
-    exec mcd-gem-balance $2;
-  };;
-  supply) {
-    ilk=$(mcd --require-ilk $0)
+  ;;
+  balance)
+    mcd-gem-balance $2;
+  ;;
+  supply)
+    ilk=$(mcd --require-ilk)
     case $2 in
       mcd) { mcd gem-supply; };;
       ext) { mcd gem-supply-ext; };;
@@ -50,15 +52,9 @@ case $1 in
       };;
       *)   { mcd gem supply; };;
     esac
-  };;
-  join) {
-    ilk=$(mcd --require-ilk $0)
-    mcd gem-join $2;
-  };;
-  exit) {
-    ilk=$(mcd --require-ilk $0)
-    mcd gem-exit $2;
-  };;
-  "")   { mcd-gem; };;
-  *)    { mcd help gem; }
+  ;;
+  join) mcd gem-join $2; ;;
+  exit) mcd gem-exit $2; ;;
+    "") mcd-gem;         ;;
+     *) mcd help gem;    ;;
 esac

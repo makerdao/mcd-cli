@@ -5,7 +5,7 @@
 ### Specify the Ilk identifier and index of the Urn to bite.
 set -e
 
-ilk=$(mcd --require-ilk $0)
+ilk=$(mcd --require-ilk)
 urn=$(mcd --require-urn $0)
 
 p() { printf "%-3s %-30s %-10s\n" "$1" "$2" "$3"; }
