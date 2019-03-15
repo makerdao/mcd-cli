@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+
+mcd --require-ilk &>/dev/null
+
+gem=$(mcd gem address)
+amt=$(seth --to-dec $1)
+src=${2:-$MCD_GUY}
+dst=$3
+
+approve() {
+  max="0x$(printf "f"'%.0s' {1..64})"
+  sig="approve(address,uint)(bool)"
+  seth send "$gem" $sig $dst $max
+}
+
+check-allowance() {
+  sig="allowance(address,address)(uint)"
+  wad=$(seth call "$gem" "$sig" $src $dst)
+  wad=$(mcd --to-wad $(seth --to-dec $wad))
+  if (( $(echo "$amt > $wad" | bc -l) )); then
+    echo "Insufficient allowance: sender: $(mcd --to-address $src)"
+    read -r -p "Grant approval to move $(mcd gem symbol) from sender to $dst? [Y/n]: " response
+    case $response in
+      [yY]) { approve; };;
+      *)    { exit 1; };;
+    esac
+  fi
+}
+
+check-allowance

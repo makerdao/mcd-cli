@@ -1,36 +1,8 @@
 #!/usr/bin/env bash
-#TODO combine similar gem & dai join implementations
 set -e
 [ -n "$1" ] || mcd --fail "dai: Please specify a join amount"
-
-# dai.approve(DaiJoin)
-approve() {
-  max="0x$(printf "f"'%.0s' {1..64})"
-  sig="approve(address,uint)(bool)"
-  seth send "${MCD_DAI?}" $sig ${MCD_JOIN_DAI?} $max
-}
-
-# dai.allowance(ETH_FROM, DaiJoin)
-check-allowance() {
-  FROM=$(mcd --require-from dai)
-  sig="allowance(address,address)(uint)"
-  amt=$(seth call ${MCD_DAI:?} "$sig" $FROM ${MCD_JOIN_DAI?})
-  amt=$(mcd --to-wad $(seth --to-dec $amt))
-  if (( $(echo "$1 > $amt" | bc -l) )); then
-    echo "Insufficient allowance ETH_FROM: $(mcd --to-address $FROM)"
-    read -r -p "Grant approval to move Dai from this account to the vat? [Y/n]: " response
-    case $response in
-      [yY]) { approve; };;
-      *)    { exit 1; };;
-    esac
-  fi
-}
-
-check-allowance $1
-
-# DaiJoin.join(urn, wad)
+mcd --require-allowance $1 $ETH_FROM $MCD_JOIN_DAI
 urn=$(mcd --require-urn $0)
 wei=$(seth --to-uint256 $(seth --to-wei $1 eth))
 seth send "$MCD_JOIN_DAI" "join(bytes32, uint)" $urn $wei
-
 [[ $SETH_ASYNC != yes ]] && mcd dai balance

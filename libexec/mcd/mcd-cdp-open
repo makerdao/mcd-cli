@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
 set -e
-execute() {
-  bytes=$(seth calldata "${@:2}")
-  sig="execute(address,bytes memory)"
-  (set -x; seth send $proxy "$sig" "${1?}" "$bytes")
-}
 
 ilk=$(mcd --require-ilk $0)
 
+export SETH_ASYNC=yes
+
 if [[ $MCD_PROXY == yes ]]; then
-  proxy=$(mcd --proxy-address)
-  tx=$(execute $PROXY_ACTIONS $sig $CDP_MANAGER $ilk)
+  sig="open(address,bytes32)"
+  tx=$(mcd --proxy-exec $sig ${CDP_MANAGER?} $ilk)
 else
-  tx=$(seth send --async ${CDP_MANAGER?} 'open(bytes32)' $ilk)
+  sig="open(bytes32)"
+  tx=$(seth send ${CDP_MANAGER?} $sig $ilk)
 fi
 
-guy=0x$(seth --to-word ${proxy:-$ETH_FROM})
+guy=0x$(seth --to-word ${MCD_GUY?})
 echo >&2 -n "${0##*/}: Waiting for transaction receipt..."
 block=$(SETH_TICK=true seth receipt "$tx" blockNumber)
 block=$(seth --to-hex "$block")

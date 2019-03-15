@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
-# cdp dai <command>
+wad() {
+  [ -n "$1" ] || mcd --fail "cdp: Please specify a dai amount"
+  echo $(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$1 eth")))
+}
 case $1 in
   join) {
-    mcd dai join $2
+    wad=$(wad $2)
+    if [[ $MCD_PROXY == yes ]]; then
+      ilk=$(mcd --require-ilk cdp)
+      sig="daiJoin_join(address,bytes32,uint)"
+      mcd --require-allowance $wad $ETH_FROM $MCD_GUY
+      mcd --proxy-exec $sig $MCD_JOIN_DAI $ilk $wad
+      [[ $SETH_ASYNC != yes ]] && mcd dai balance
+    else
+      mcd dai join $2
+    fi
   };;
   exit) {
-    [ -n "$2" ] || mcd --fail "cdp: Please specify an exit amount"
-    sig="exit(address,uint256,address,uint256)"
-    wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
-    seth send ${CDP_MANAGER?} $sig $MCD_JOIN_DAI $CDP $ETH_FROM $wad
+    wad=$(wad $2)
+    if [[ $MCD_PROXY == yes ]]; then
+      sig="exit(address,address,uint,address,uint)"
+      mcd --proxy-exec $sig $CDP_MANAGER $MCD_JOIN_DAI $CDP $ETH_FROM $wad
+    else
+      sig="exit(address,uint,address,uint)"
+      seth send ${CDP_MANAGER?} $sig $MCD_JOIN_DAI $CDP $ETH_FROM $wad
+    fi
     [[ $SETH_ASYNC != yes ]] && mcd dai balance
   };;
   *) {

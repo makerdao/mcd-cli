@@ -34,10 +34,8 @@ case $act in
     dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))
     dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
     if [[ $MCD_PROXY == yes ]]; then
-      sig="frob(address,bytes32,bytes32,bytes32,bytes32,int,int)"
-      ilk=$(mcd --require-ilk mcd-cdp)
-      urn=$(mcd --require-urn mcd-cdp)
-      mcd --proxy-exec $sig ${MCD_VAT?} $ilk $urn $urn $urn $dink $dart
+      sig="frob(address,address,uint,int,int)"
+      mcd --proxy-exec $sig $CDP_MANAGER $MCD_VAT $CDP $dink $dart
     else
       sig="frob(address,uint,int,int)"
       seth send ${CDP_MANAGER?} $sig $MCD_VAT $CDP $dink $dart

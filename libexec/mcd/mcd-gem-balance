@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+ilk=$(mcd --require-ilk $0)
+urn=$(mcd --require-urn $0)
+gem=$(mcd gem symbol)
+case $1 in
+  vat) {
+    sig="gem(bytes32,bytes32)(uint256)"
+    mcd --to-wad $(seth call ${MCD_VAT?} "$sig" "$ilk" "$urn")
+  };;
+  ink) { mcd --ilk=${MCD_ILK} urn ink; };;
+  ext) {
+    sig="balanceOf(address)(uint)"
+    mcd --to-wad $(seth call $(mcd gem address) "$sig" "$ETH_FROM")
+  };;
+  "")   {
+    exec 3< <(mcd gem balance vat)
+    exec 4< <(mcd gem balance ink)
+    exec 5< <(mcd gem balance ext)
+    echo "vat $(cat <&3) Free collateral ($gem)"
+    echo "ink $(cat <&4) Locked collateral ($gem)"
+    echo "ext $(cat <&5) External account balance ($gem)"
+    if [[ "$gem" == "WETH" ]]; then
+       eth=$(mcd --to-wad $(seth balance $ETH_FROM))
+       echo "ext $eth External account balance (ETH)"
+    fi
+  };;
+  *)   { mcd gem balance; };;
+esac
