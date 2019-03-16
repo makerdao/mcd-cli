@@ -3,13 +3,14 @@ set -e
 case $1 in
   exit) {
     [ -n "$2" ] || mcd --fail "cdp: Please specify a gem amount"
+    join=$(mcd gem adapter)
     wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
     if [[ $MCD_PROXY == yes ]]; then
       sig="exit(address,address,uint,address,uint)"
-      mcd --proxy-exec $sig $CDP_MANAGER $(mcd gem adapter) $CDP $ETH_FROM $wad
+      mcd --proxy-exec $sig $CDP_MANAGER $join $CDP $ETH_FROM $wad
     else
       sig="exit(address,uint,address,uint)"
-      seth send ${CDP_MANAGER?} $sig $(mcd gem adapter) $CDP $ETH_FROM $wad
+      seth send ${CDP_MANAGER?} $sig $join $CDP $ETH_FROM $wad
     fi
     [[ $SETH_ASYNC != yes ]] && time mcd gem balance
   };;

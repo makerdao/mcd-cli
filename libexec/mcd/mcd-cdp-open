@@ -6,14 +6,15 @@ ilk=$(mcd --require-ilk)
 export SETH_ASYNC=yes
 
 if [[ $MCD_PROXY == yes ]]; then
+  guy=0x$(seth --to-word $(mcd --proxy-address))
   sig="open(address,bytes32)"
   tx=$(mcd --proxy-exec $sig ${CDP_MANAGER?} $ilk)
 else
+  guy=0x$(seth --to-word ${ETH_FROM})
   sig="open(bytes32)"
   tx=$(seth send ${CDP_MANAGER?} $sig $ilk)
 fi
 
-guy=0x$(seth --to-word ${MCD_GUY?})
 echo >&2 -n "${0##*/}: Waiting for transaction receipt..."
 block=$(SETH_TICK=true seth receipt "$tx" blockNumber)
 block=$(seth --to-hex "$block")

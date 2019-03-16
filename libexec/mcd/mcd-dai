@@ -36,7 +36,7 @@ case $1 in
       };;
       ext) {
         sig="balanceOf(address)(uint)"
-        mcd --to-wad $(seth call ${MCD_DAI?} $sig $MCD_GUY)
+        mcd --to-wad $(seth call ${MCD_DAI?} $sig $ETH_FROM)
       };;
       "")  { mcd-dai-cmd balance; };;
       *)   { mcd dai balance;     };;

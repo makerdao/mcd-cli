@@ -135,11 +135,6 @@ if ! [[ $MCD_INIT ]]; then
   TESTNET=${TESTNET:-~/.dapp/testnet}
   export MCD_INIT=1
   mcd-init
-
-  if [[ $MCD_PROXY = yes ]]; then
-    proxy=$(mcd --proxy-address)
-  fi
-  export MCD_GUY=${proxy:-$ETH_FROM}
 fi
 
 if [[ "$MCD_CDP" ]] && [[ -z "$MCD_URN" ]]; then

@@ -2,7 +2,8 @@
 set -e
 urn=$(mcd --require-urn $0)
 [ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
-guy=$(mcd --to-address ${2:-$MCD_GUY})
+[ -n "$2" ] || mcd --fail "gem: Please specify a destination address"
+guy=$(mcd --to-address $2)
 
 # GemJoin.exit(urn, guy, wad)
 wad=$(seth --to-word $(seth --to-wei $1 eth))

@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 set -e
-sig="proxies(address)(address)"
-lad=0x$(seth call ${PROXY_REGISTRY?} $sig $ETH_FROM)
-if [[ $(seth --to-dec $lad) -eq 0 ]]; then
-  mcd --proxy-build
-else
-  echo $lad
+
+if [[ -z "$MCD_PROXY_ADDRESS" ]]; then
+  sig="proxies(address)(address)"
+  proxy=0x$(seth call ${PROXY_REGISTRY?} $sig $ETH_FROM)
 fi
+
+if [[ $(seth --to-dec $proxy) -eq 0 ]]; then
+  proxy=$(mcd --proxy-build)
+fi
+
+export MCD_PROXY_ADDRESS=$proxy
+echo $proxy

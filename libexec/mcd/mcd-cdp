@@ -17,10 +17,15 @@
 set -e
 shopt -s extglob
 
+guy=$ETH_FROM
+if [[ $MCD_PROXY == yes ]];then
+  guy=(mcd --proxy-address)
+fi
+
 case $1 in
   ls) {
     sig="getCdps(address,address)"
-    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $MCD_GUY)
+    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $guy)
     data=${data:130:${#data}}
     mid=$(( ${#data} / 2 ))
     cdps=${data::$mid}; ilks=${data:(-$mid)}
@@ -34,7 +39,7 @@ case $1 in
   };;
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig $MCD_GUY)
+    hex=$(seth call ${CDP_MANAGER?} $sig $guy)
     seth --to-dec $hex
   };;
   open) {

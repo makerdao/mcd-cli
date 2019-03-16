@@ -5,7 +5,7 @@ mcd---require-ilk-opt
 
 gem=$(mcd gem address)
 amt=$(seth --to-dec $1)
-src=${2:-$MCD_GUY}
+src=$2
 dst=$3
 
 approve() {
