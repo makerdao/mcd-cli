@@ -3,8 +3,30 @@ set -e
 [ -n "$1" ] || mcd --fail "gem: Please specify a join amount"
 
 mcd---require-ilk-opt
+
+gem=$(mcd gem address)
 join=$(mcd gem adapter)
-mcd --require-allowance $1 $ETH_FROM $join
+
+approve() {
+  max="0x$(printf "f"'%.0s' {1..64})"
+  seth send "$gem" "approve(address,uint)" $join $max
+}
+
+check-allowance() {
+  sig="allowance(address,address)(uint)"
+  wad=$(seth call "$gem" "$sig" $ETH_FROM $join)
+  wad=$(mcd --to-wad $(seth --to-dec $wad))
+  if (( $(echo "$1 > $wad" | bc -l) )); then
+    echo "Insufficient allowance: ETH_FROM: $ETH_FROM)"
+    read -r -p "Grant approval to move $(mcd gem symbol) to the Vat? [Y/n]: " response
+    case $response in
+      [yY]) { approve; };;
+      *)    { exit 1; };;
+    esac
+  fi
+}
+
+check-allowance $1
 
 # GemJoin.join(urn, wad)
 urn=$(mcd --require-urn gem)

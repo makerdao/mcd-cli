@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 set -e
-urn=$(mcd --require-urn $0)
 [ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
-[ -n "$2" ] || mcd --fail "gem: Please specify a destination address"
-guy=$(mcd --to-address $2)
 
-# GemJoin.exit(urn, guy, wad)
+urn=$(mcd --require-urn gem)
+guy=$(mcd --to-address ${2:-$ETH_FROM})
 wad=$(seth --to-word $(seth --to-wei $1 eth))
 sig="exit(bytes32, address, uint)"
 seth send $(mcd gem adapter) "$sig" "$urn" "$guy" "$wad"

@@ -2,12 +2,28 @@
 set -e
 [ -n "$1" ] || mcd --fail "dai: Please specify a join amount"
 
-join=$MCD_JOIN_DAI
-mcd --require-allowance $1 $ETH_FROM $join
+approve() {
+  seth send "$MCD_DAI" "approve(address)" $MCD_JOIN_DAI
+}
 
-# DaiJoin.join(urn, wad)
+check-allowance() {
+  max="0x$(printf "f"'%.0s' {1..64})"
+  sig="allowance(address,address)"
+  wad=$(seth call "$MCD_DAI" "$sig" $ETH_FROM $MCD_JOIN_DAI)
+  if [[ $wad != $max ]]; then
+    echo "Insufficient allowance: ETH_FROM: $ETH_FROM"
+    read -r -p "Grant approval to move Dai to the Vat? [Y/n]: " response
+    case $response in
+      [yY]) { approve; };;
+      *)    { exit 1; };;
+    esac
+  fi
+}
+
+check-allowance
+
 urn=$(mcd --require-urn dai)
 wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-seth send "$join" "join(bytes32, uint)" $urn $wad
+seth send "$MCD_JOIN_DAI" "join(bytes32, uint)" $urn $wad
 
 [[ $SETH_ASYNC != yes ]] && mcd dai balance
