@@ -12,7 +12,7 @@ set -e
 ilk=$(mcd --require-ilk)
 urn=$(mcd --require-urn $0)
 
-vat()  { mcd --vat-urn $ilk $urn; }
+vat() { mcd --vat-urn $ilk $urn; }
 
 p() { printf "%-4s %-64s %-10s\n" "$1" "$2" "$3"; }
 
@@ -33,19 +33,19 @@ mcd-urn() {
   p "urn"  $urn "Urn index"
   ink=$(mcd urn ink)
   art=$(mcd urn art)
-  p "ink"  $ink     "Locked collateral ($MCD_ILK)"
+  p "ink"  $ink     "Locked collateral ($(mcd gem symbol))"
   p "art"  $art     "Outstanding debt (DAI)"
   calc
-  p "spot" $spot    "Price with safety margin (USD)"
-  p "rate" $rate    "Debt scaling factor"
+  p "spot" $spot    "Price with safety mat (USD)"
+  p "rate" $rate    "$(mcd gem symbol) DAI exchange rate"
   p "fill" $fill    "Collateralization Ratio (%)"
 }
 
 case $1 in
-  ink)  { vat | mcd --to-wad $(mcd --slice 0 64);   };;
-  art)  { vat | mcd --to-wad $(mcd --slice 65 129); };;
-  spot) { mcd urn spot;                             };; # alias for consistency
-  rate) { mcd urn rate;                             };; # alias for consistency
-  "")   { mcd-urn;                                  };;
-  *)    { mcd help urn;                             }
+  ink)  vat | mcd --to-wad $(awk '{print $1}'); ;;
+  art)  vat | mcd --to-wad $(awk '{print $2}'); ;;
+  spot) mcd urn spot;                           ;; # alias for consistency
+  rate) mcd urn rate;                           ;; # alias for consistency
+  "")   mcd-urn;                                ;;
+  *)    mcd help urn;
 esac

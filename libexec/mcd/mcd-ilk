@@ -35,18 +35,18 @@ mcd-ilk() {
 }
 
 case $1 in
-  Art|art) { vat  | mcd --to-wad $(mcd --slice 0 64);   };;
-  rate)    { vat  | mcd --to-ray $(mcd --slice 65 64);  };;
-  spot)    { vat  | mcd --to-ray $(mcd --slice 130 64); };;
-  line)    { vat  | mcd --to-rad $(mcd --slice 195 64); };;
-  dust)    { vat  | mcd --to-rad $(mcd --slice 260 64); };;
-  flip)    { cat  | echo 0x$(mcd --slice 0 40);         };;
-  chop)    { cat  | mcd --to-ray $(mcd --slice 41 64);  };;
-  lump)    { vat  | mcd --to-wad $(mcd --slice 105 64); };;
-  tax)     { jug  | mcd --to-ray $(mcd --slice 0 64);   };;
-  rho)     { jug  | mcd --to-dec $(mcd --slice 65 64);  };;
-  pip)     { spot | echo 0x$(mcd --slice 0 40);         };;
-  mat)     { spot | mcd --to-ray $(mcd --slice 41 64);  };;
-  "")      { mcd-ilk;                                   };;
-  *)       { mcd help ilk;                              }
+  Art|art) vat  | mcd --to-wad $(awk '{print $1}'); ;;
+  rate)    vat  | mcd --to-ray $(awk '{print $2}'); ;;
+  spot)    vat  | mcd --to-ray $(awk '{print $3}'); ;;
+  line)    vat  | mcd --to-rad $(awk '{print $4}'); ;;
+  dust)    vat  | mcd --to-rad $(awk '{print $5}'); ;;
+  flip)    cat  | echo 0x$(awk '{print $1}');       ;;
+  chop)    cat  | mcd --to-ray $(awk '{print $2}'); ;;
+  lump)    cat  | mcd --to-wad $(awk '{print $3}'); ;;
+  tax)     jug  | mcd --to-ray $(awk '{print $1}'); ;;
+  rho)     jug  | mcd --to-dec $(awk '{print $2}'); ;;
+  pip)     spot | echo 0x$(awk '{print $1}');       ;;
+  mat)     spot | mcd --to-ray $(awk '{print $2}'); ;;
+  "")      mcd-ilk;                                 ;;
+  *)       mcd help ilk;
 esac
