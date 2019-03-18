@@ -21,8 +21,9 @@ case $1 in
     echo "ink $(cat <&4) Locked collateral ($gem)"
     echo "ext $(cat <&5) External account balance ($gem)"
     if [[ "$gem" == "WETH" ]]; then
-       eth=$(mcd --to-wad $(seth balance $ETH_FROM))
-       echo "ext $eth External account balance (ETH)"
+      eth=$(mcd --to-wad $(seth balance $ETH_FROM))
+      echo "eth $eth External account balance (ETH)"
+      echo
     fi
   };;
   *)   { mcd gem balance; };;

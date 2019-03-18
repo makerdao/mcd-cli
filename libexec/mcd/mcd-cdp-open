@@ -2,6 +2,7 @@
 set -e
 
 ilk=$(mcd --require-ilk)
+urn=$(mcd --require-urn cdp)
 
 export SETH_ASYNC=yes
 

@@ -12,10 +12,11 @@
 set -e
 
 mcd-dai-cmd() {
+  mcd --require-urn $0 &>/dev/null
   exec 5< <(mcd dai $1 vat)
   exec 6< <(mcd dai $1 ext)
-  echo "vat $(cat <&5) Vat $1"
-  echo "ext $(cat <&6) ERC20 $1"
+  echo "vat $(cat <&5) Vat Dai $1"
+  echo "ext $(cat <&6) ERC20 Dai $1"
 }
 
 case $1 in

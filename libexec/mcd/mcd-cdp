@@ -45,6 +45,13 @@ case $1 in
   open) {
     mcd cdp-open "${@:2}";
   };;
+  balances) {
+    mcd cdp ls | sed '/^$/d;s/cdp//;s/ilk//;s/urn//' | paste -d" " - - - |
+    while read -r cdp urn ilk; do
+      echo "cdp  $cdp"
+      mcd --ilk=$ilk --urn=$urn urn; echo
+    done
+  };;
   +([[:digit:]]) ) {
     mcd --cdp=$1 $2 -- "${@:3}"
   };;

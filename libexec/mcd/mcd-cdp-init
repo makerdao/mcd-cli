@@ -43,7 +43,7 @@ case $act in
     [[ $SETH_ASYNC != yes ]] && mcd urn
   };;
   dai|gem) { exec mcd-cdp-$act "$@"; };;
-  ilk|urn) { exec mcd-$act;          };;
+  ilk|urn) { exec mcd-$act; };;
   *) {
     echo "Error: bad command: cdp $MCD_CDP $act"
     mcd help cdp
