@@ -21,10 +21,11 @@ calc() {
   exec 4< <(mcd ilk rate)
   spot=$(cat <&3);
   rate=$(cat <&4);
-  fill=0
+  fill=0; rap=0
   if [ ${art:0:1} -gt 0 ]; then
     fill=$(bc <<< "scale=2; (($ink*$spot)/($art*$rate)) * 100")
     fill=$(bc <<< "$fill / 1")
+    rap=$(printf '%.18f\n' $(bc <<< "($art * $rate) - $art"))
   fi
 }
 
@@ -34,11 +35,12 @@ mcd-urn() {
   ink=$(mcd urn ink)
   art=$(mcd urn art)
   p "ink"  $ink "Locked collateral ($(mcd gem symbol))"
-  p "art"  $art "Outstanding debt (DAI)"
+  p "art"  $art "Outstanding debt (Dai)"
   calc
   p "spot" $spot "Price with safety mat (USD)"
   p "rate" $rate "$(mcd gem symbol) DAI exchange rate"
   p "fill" $fill "Collateralization Ratio (%)"
+  p "rap"  $rap  "Accumulated stability fee (Dai)"
   p "dai"  $(mcd urn dai) "Vat Dai"
   p "gem"  $(mcd urn gem) "Unlocked collateral ($(mcd gem symbol))"
 }

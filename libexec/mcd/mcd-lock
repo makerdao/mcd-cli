@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+mcd frob $1 0
