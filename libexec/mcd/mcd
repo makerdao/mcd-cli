@@ -126,7 +126,7 @@ mcd-init() {
       if [[ "$@" != *"help"* ]]; then
         echo "Warning: \`--chain' option not specified. Defaulting to kovan"
         config-init ${0%/*}/conf/kovan.json;
-        export MCD_CHAIN=kovan
+        export SETH_CHAIN=kovan
       fi
   esac
 }

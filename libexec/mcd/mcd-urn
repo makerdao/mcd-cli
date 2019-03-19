@@ -39,8 +39,8 @@ mcd-urn() {
   p "spot" $spot "Price with safety mat (USD)"
   p "rate" $rate "$(mcd gem symbol) DAI exchange rate"
   p "fill" $fill "Collateralization Ratio (%)"
-  p "dai"  $(mcd urn dai) "Unencumbered Dai"
-  p "gem"  $(mcd urn gem) "Unencumbered $(mcd gem symbol)"
+  p "dai"  $(mcd urn dai) "Vat Dai"
+  p "gem"  $(mcd urn gem) "Unlocked collateral ($(mcd gem symbol))"
 }
 
 case $1 in

@@ -20,14 +20,6 @@ mcd-dai-cmd() {
 }
 
 case $1 in
-  address) {
-    case $2 in
-      vat) { echo ${MCD_VAT?};    };;
-      ext) { echo ${MCD_DAI?};    };;
-      "")  { mcd-dai-cmd address; };;
-      *)   { mcd dai address;     };;
-    esac
-  };;
   balance) {
     case $2 in
       vat)   {
