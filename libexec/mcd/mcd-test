@@ -1,12 +1,25 @@
 #!/usr/bin/env bash
-if [[ $MCD_CHAIN != "testnet" ]]; then
+if [[ $MCD_CHAIN == "mainnet" ]]; then
   echo "Warning: testnet only. Do not test with real balances"
   exit 1
 fi
 
 export SETH_ASYNC=yes
 export ETH_GAS=700000
-source lib/test
+
+p() { [ $1 = "false" ] && echo "FAIL" && exit; }
+
+numericCompare() {
+  p $(awk -v n1="${1}" -v n2="${2}" \
+    'BEGIN { print (n1 == n2) ? "true" : "false" }' 2>/dev/null)
+}
+
+assertBalanceChanged() {
+  diff=$(echo "$1 - $2" | bc)
+  numericCompare $diff $3
+}
+
+#====================================================================
 
 testJoin() {
   echo "Test: $MCD_ILK join $1"
