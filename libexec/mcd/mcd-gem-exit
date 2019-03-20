@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-[ -n "$1" ] || mcd --fail "gem: Please specify an exit amount"
+[ -n "$1" ] || mcd --fail "mcd-gem: Please specify an exit amount"
 
 urn=$(mcd --require-urn gem)
 guy=$(mcd --to-address ${2:-$ETH_FROM})

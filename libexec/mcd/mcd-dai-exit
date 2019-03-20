@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-[ -n "$1" ] || mcd --fail "dai: Please specify an exit amount"
+[ -n "$1" ] || mcd --fail "mcd-dai: Please specify an exit amount"
 
 urn=$(mcd --require-urn dai)
 guy=$(mcd --to-address ${2:-$ETH_FROM})

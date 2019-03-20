@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-[ -n "$1" ] || mcd --fail "gem: Please specify a join amount"
+[ -n "$1" ] || mcd --fail "mcd-gem: Please specify a join amount"
 
 mcd---require-ilk-opt
 

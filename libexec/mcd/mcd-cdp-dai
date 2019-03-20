@@ -2,7 +2,7 @@
 set -e
 case $1 in
   exit) {
-    [ -n "$2" ] || mcd --fail "cdp: Please specify a dai amount"
+    [ -n "$2" ] || mcd --fail "mcd-cdp: Please specify a dai amount"
     wad=$(seth --to-uint256 $(seth --to-hex $(seth --to-wei "$2 eth")))
     if [[ $MCD_PROXY == yes ]]; then
       sig="exit(address,address,uint,address,uint)"
