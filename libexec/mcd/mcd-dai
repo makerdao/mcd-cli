@@ -24,7 +24,7 @@ case $1 in
     case $2 in
       vat)   {
         urn=$(mcd --require-urn $0)
-        sig="dai(bytes32)(uint256)"
+        sig="dai(address)(uint256)"
         mcd --to-rad $(seth call ${MCD_VAT?} $sig $urn)
       };;
       ext) {

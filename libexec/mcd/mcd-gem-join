@@ -31,6 +31,6 @@ check-allowance $1
 # GemJoin.join(urn, wad)
 urn=$(mcd --require-urn gem)
 wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-seth send "$join" "join(bytes32, uint)" $urn $wad
+seth send "$join" "join(address, uint)" $urn $wad
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance

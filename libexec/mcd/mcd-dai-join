@@ -24,6 +24,6 @@ check-allowance
 
 urn=$(mcd --require-urn dai)
 wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-seth send "$MCD_JOIN_DAI" "join(bytes32, uint)" $urn $wad
+seth send "$MCD_JOIN_DAI" "join(address, uint)" $urn $wad
 
 [[ $SETH_ASYNC != yes ]] && mcd dai balance

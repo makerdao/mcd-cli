@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 [[ $MCD_VAT_URN ]] ||
-  export MCD_VAT_URN=$(seth call "${MCD_VAT?}" 'urns(bytes32,bytes32)(uint256,uint256)' "$1" "$2")
+  export MCD_VAT_URN=$(seth call "${MCD_VAT?}" 'urns(bytes32,address)(uint256,uint256)' "$1" "$2")
 echo $MCD_VAT_URN
