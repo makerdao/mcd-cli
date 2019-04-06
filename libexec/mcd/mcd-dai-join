@@ -2,17 +2,18 @@
 set -e
 [ -n "$1" ] || mcd --fail "mcd-dai: Please specify a join amount"
 
+max="0x$(printf "f"'%.0s' {1..64})"
+
 approve() {
-  seth send "$MCD_DAI" "approve(address)" $MCD_JOIN_DAI
+  seth send "$MCD_DAI" "approve(address,uint)" $MCD_JOIN_DAI $max
 }
 
 check-allowance() {
-  max="0x$(printf "f"'%.0s' {1..64})"
   sig="allowance(address,address)"
-  wad=$(seth call "$MCD_DAI" "$sig" $ETH_FROM $MCD_JOIN_DAI)
+  wad=$(seth call "${MCD_DAI?}" "$sig" $ETH_FROM $MCD_JOIN_DAI)
   if [[ $wad != $max ]]; then
-    echo "Insufficient allowance: ETH_FROM: $ETH_FROM"
-    read -r -p "Grant approval to move Dai to the Vat? [Y/n]: " response
+    echo "ERC20 Dai: insufficient allowance: ETH_FROM: $ETH_FROM"
+    read -r -p "Grant approval to transfer Dai to the Vat? [Y/n]: " response
     case $response in
       [yY]) { approve; };;
       *)    { exit 1; };;

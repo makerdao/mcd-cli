@@ -1,11 +1,30 @@
 #!/usr/bin/env bash
 set -e
 [ -n "$1" ] || mcd --fail "mcd-dai: Please specify an exit amount"
-
 urn=$(mcd --require-urn dai)
-guy=$(mcd --to-address ${2:-$ETH_FROM})
+usr=$(mcd --to-address ${2:-$urn})
+
+hope() {
+  seth send "$MCD_VAT" "hope(address)" $MCD_JOIN_DAI
+}
+
+check-hope() {
+  sig="can(address,address)"
+  can=$(seth call "${MCD_VAT?}" "$sig" $urn $MCD_JOIN_DAI)
+  if [[ $(seth --to-dec $can) -ne 1 ]]; then
+    echo "Vat Dai: approval required: urn: $urn"
+    read -r -p "Grant approval to move Dai from that Vat? [Y/n]: " response
+    case $response in
+      [yY]) { hope; };;
+      *)    { exit 1; };;
+    esac
+  fi
+}
+
+check-hope
+
 wad=$(seth --to-word $(seth --to-wei $1 eth))
-sig="exit(address, uint256)"
-seth send $MCD_JOIN_DAI "$sig" $urn $guy $wad
+sig="exit(address usr, uint256 wad)"
+seth send $MCD_JOIN_DAI "$sig" $usr $wad
 
 [[ $SETH_ASYNC != yes ]] && mcd dai balance
