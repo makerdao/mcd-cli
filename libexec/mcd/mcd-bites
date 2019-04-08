@@ -14,10 +14,10 @@ seth logs ${MCD_CAT?} "$sig" "$ilk" "$urn" |
     data=$(jshon -e data -u <<<"$log")
 
     echo "ilk $(mcd --to-ascii ${topics[1]})"
-    echo "urn ${topics[2]}"
+    echo "urn 0x${topics[2]:26:64}"
     echo "ink $(mcd --to-wad ${data:2:64})"
     echo "art $(mcd --to-wad ${data:66:64})"
-    echo "tab $(mcd --to-wad ${data:130:64})"
+    echo "tab $(mcd --to-rad ${data:130:64})"
     echo "flip $(seth --to-dec 0x${data:196:64})"
     echo "tx: $tx";
     echo "block: $block";

@@ -14,7 +14,7 @@ urn=$(mcd --require-urn $0)
 
 vat() { mcd --vat-urn $ilk $urn; }
 
-p() { printf "%-4s %-64s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-4s %-50s %-10s\n" "$1" "$2" "$3"; }
 
 calc() {
   exec 3< <(mcd ilk spot)
@@ -31,7 +31,7 @@ calc() {
 
 mcd-urn() {
   p "ilk"  $MCD_ILK "Collateral type"
-  p "urn"  $urn "Urn index"
+  p "urn"  $urn "Owner"
   ink=$(mcd urn ink)
   art=$(mcd urn art)
   p "ink"  $ink "Locked collateral ($(mcd gem symbol))"

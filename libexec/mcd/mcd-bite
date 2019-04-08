@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 ### mcd-bite -- Trigger liquidation of an unsafe Urn
-### Usage: mcd bite --ilk=<id> --urn=<index>
+### Usage: mcd bite --ilk=<id> --urn=<address>
 ###
-### Specify the Ilk identifier and index of the Urn to bite.
+### Specify the Ilk identifier and Urn address to bite.
 set -e
 
 ilk=$(mcd --require-ilk)
 urn=$(mcd --require-urn $0)
 
-p() { printf "%-3s %-30s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-3s %-50s %-10s\n" "$1" "$2" "$3"; }
 
 sig="bite(bytes32,address)(uint256)"
 tx=$(seth send --async "${MCD_CAT?}" "$sig" "$ilk" "$urn")
@@ -27,7 +27,7 @@ logs=$(seth rpc eth_getLogs -- \
   -n [] \
     -s "$keccak" -i append \
     -s "0x$ilk"  -i append \
-    -s "0x$urn"  -i append \
+    -s "0x$(seth --to-word $urn)" -i append \
   -i topics \
   -i append | echo "[$(paste -sd , -)]")
 data=$(echo "$logs" | jshon -a -e data -u)
@@ -38,7 +38,7 @@ if [ "$hash" == "$tx" ]; then
   p "id"  $(seth --to-dec 0x${data:196:64}) "Bite identifier"
   p "ink" $(mcd --to-wad ${data:2:64})      "Seized collateral ($MCD_ILK)"
   p "art" $(mcd --to-wad ${data:66:64})     "Seized debt (DAI)"
-  p "tab" $(mcd --to-wad ${data:130:64})    "Outstanding debt to auction"
+  p "tab" $(mcd --to-rad ${data:130:64})    "Outstanding debt to auction"
 else
   echo >&2 "${0##*/}: Transaction failed."
   seth >&2 receipt "$tx"

@@ -17,7 +17,7 @@ cat()  { mcd --cat-ilk $id;  }
 jug()  { mcd --jug-ilk $id;  }
 spot() { mcd --spot-ilk $id; }
 
-p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-4s %-52s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-ilk() {
   p "Art"  $(mcd ilk Art)  "Total debt (DAI)"
@@ -42,7 +42,7 @@ case $1 in
   dust)    vat  | mcd --to-rad $(awk '{print $5}'); ;;
   flip)    cat  | echo 0x$(awk '{print $1}');       ;;
   chop)    cat  | mcd --to-ray $(awk '{print $2}'); ;;
-  lump)    cat  | mcd --to-wad $(awk '{print $3}'); ;;
+  lump)    cat  | mcd --to-rad $(awk '{print $3}'); ;;
   tax)     jug  | mcd --to-ray $(awk '{print $1}'); ;;
   rho)     jug  | mcd --to-dec $(awk '{print $2}'); ;;
   pip)     spot | echo 0x$(awk '{print $1}');       ;;

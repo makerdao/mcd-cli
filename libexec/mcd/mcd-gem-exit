@@ -6,6 +6,6 @@ urn=$(mcd --require-urn gem)
 guy=$(mcd --to-address ${2:-$ETH_FROM})
 wad=$(seth --to-word $(seth --to-wei $1 eth))
 sig="exit(address, uint)"
-seth send $(mcd gem adapter) "$sig" "$urn" "$guy" "$wad"
+seth send $(mcd gem adapter) "$sig" "$urn" "$wad"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance
