@@ -19,20 +19,22 @@ shopt -s extglob
 
 guy=$ETH_FROM
 if [[ $MCD_PROXY == yes ]];then
-  guy=(mcd --proxy-address)
+  guy=$(mcd --proxy-address)
 fi
 
 case $1 in
   ls) {
-    sig="getCdps(address,address)"
+    sig="getCdpsDesc(address,address)"
     data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $guy)
-    data=${data:130:${#data}}
-    mid=$(( ${#data} / 2 ))
-    cdps=${data::$mid}; ilks=${data:(-$mid)}
+    data=${data:194:${#data}}
+    size=$(( ${#data} / 3))
+    cdps=${data::$size};
+    urns=${data:$size:$(( $size * 2 ))};
+    ilks=${data:(-$size)}
     for i in `seq 64 64 $(( ${#cdps} - 64 ))`; do
       id=$(( 16#${cdps:$i:64} ))
       echo "cdp $id"
-      echo "urn ${CDP_MANAGER?}$(printf "%24s" "${id#0x}" | tr ' ' 0)"
+      echo "urn 0x${urns:$(( $i+24)):40}"
       echo "ilk $(mcd --to-ascii ${ilks:$i:64})"
       echo
     done

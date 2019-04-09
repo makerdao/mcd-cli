@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 set -e
-
 ilk=$(mcd --require-ilk)
-urn=$(mcd --require-urn cdp)
 
 export SETH_ASYNC=yes
 
 if [[ $MCD_PROXY == yes ]]; then
-  guy=0x$(seth --to-word $(mcd --proxy-address))
+  export ETH_GAS=233775
+  guy=$(mcd --proxy-address)
   sig="open(address,bytes32)"
   tx=$(mcd --proxy-exec $sig ${CDP_MANAGER?} $ilk)
 else
-  guy=0x$(seth --to-word ${ETH_FROM})
+  export ETH_GAS=212072
+  guy=$(mcd --require-from)
   sig="open(bytes32)"
   tx=$(seth send ${CDP_MANAGER?} $sig $ilk)
 fi
@@ -29,7 +29,7 @@ logs=$(seth rpc eth_getLogs -- \
     -s "$block"          -i toBlock \
     -n [] \
     -s "$sig"  -i append \
-    -s "$guy"  -i append \
+    -s "0x$(seth --to-word $guy)" -i append \
     -i topics \
     -i append | echo "[$(paste -sd , -)]")
 hex=$(echo "$logs" | jshon -a -e data -u)
