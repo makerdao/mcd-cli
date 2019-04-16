@@ -5,7 +5,7 @@ ilk=$(mcd --require-ilk)
 export SETH_ASYNC=yes
 
 if [[ $MCD_PROXY == yes ]]; then
-  export ETH_GAS=233775
+  export ETH_GAS=233776
   guy=$(mcd --proxy-address)
   sig="open(address,bytes32)"
   tx=$(mcd --proxy-exec $sig ${CDP_MANAGER?} $ilk)

@@ -11,8 +11,7 @@ if [[ -z "$MCD_ILK" ]]; then
 fi
 
 if [[ -z "$MCD_URN" ]]; then
-  MCD_URN="${CDP_MANAGER?}$(printf "%24s" "${hex#0x}" | tr ' ' 0)"
-  export MCD_URN=${MCD_URN#0x}
+  export MCD_URN=$(seth call $CDP_MANAGER 'urns(uint)(address)' $CDP)
 fi
 
 case $act in
@@ -34,11 +33,11 @@ case $act in
     dink=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$1 eth")))
     dart=$(seth --to-uint256 $(mcd --to-hex $(seth --to-wei "$2 eth")))
     if [[ $MCD_PROXY == yes ]]; then
-      sig="frob(address,address,uint,int,int)"
-      mcd --proxy-exec $sig $CDP_MANAGER $MCD_VAT $CDP $dink $dart
+      sig="frob(address,uint,address,int,int)"
+      mcd --proxy-exec $sig $CDP_MANAGER $CDP $ETH_FROM $dink $dart
     else
-      sig="frob(address,uint,int,int)"
-      seth send ${CDP_MANAGER?} $sig $MCD_VAT $CDP $dink $dart
+      sig="frob(uint,address,int,int)"
+      seth send ${CDP_MANAGER?} $sig $CDP $ETH_FROM $dink $dart
     fi
     [[ $SETH_ASYNC != yes ]] && mcd urn
   };;

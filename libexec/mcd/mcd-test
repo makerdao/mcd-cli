@@ -137,10 +137,17 @@ testCdpDaiExit() {
   assertBalanceChanged $gt $lt $1
 }
 
-testCdpFrob() {
+testCdpFrobPush() {
   lt=$(mcd --cdp $MCD_CDP gem balance ink)
   (set -x; mcd --cdp $MCD_CDP frob -- $1 $2)
   gt=$(mcd --cdp $MCD_CDP gem balance ink)
+  assertBalanceChanged $gt $lt $1
+}
+
+testCdpFrobPull() {
+  gt=$(mcd --cdp $MCD_CDP gem balance ink)
+  (set -x; mcd --cdp $MCD_CDP frob -- $1 $2)
+  lt=$(mcd --cdp $MCD_CDP gem balance ink)
   assertBalanceChanged $gt $lt $1
 }
 
@@ -164,14 +171,15 @@ testExit 10
 mcd unwrap 10
 testBite 50 149
 
-# export MCD_ILK=COL1-A
-# testCdpOpen
-# testCdpGemJoin 10
-# testCdpFrob 10 1
-# testCdpDaiExit 1
-# testCdpDaiJoin 1
-# testCdpFrob -10 -1
-# testCdpGemExit 10
+export MCD_ILK=ETH-A
+testCdpOpen
+testCdpGemJoin 10
+testCdpFrobPush 10 1
+testCdpFrobPull -10 -1
+testCdpGemExit 10
+
+testCdpDaiExit 1
+testCdpDaiJoin 1
 
 # export MCD_ILK=COL1-A
 # export MCD_PROXY=yes
