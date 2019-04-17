@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-awk -F'|' '{printf "%-5s %-5s %12-s\n", $1, $2, $3}' ${0%/*}/conf/ilks
+set -e
+awk -F'|' '{printf "%5s %5s %12s\n", $1, $2, $3}' ${0%/*}/conf/ilks
