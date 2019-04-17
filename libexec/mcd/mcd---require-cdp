@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -e
-[ -n "$MCD_CDP" ] || mcd --fail "$1: MCD_CDP not set; Please specify a Cdp id (--cdp=<id>)"
-echo $(seth --to-word ${MCD_CDP?})

@@ -10,7 +10,6 @@ Commands:
 
    bite            Trigger liquidation of an unsafe Urn
    bites           ReUrns
-   cdp             Cdp managerment
    dai             Dai management
    debt            Total dai issuance
    drip            Trigger stability fee accumulation
@@ -221,56 +220,6 @@ Individial balance values can be retrieved by adding `vat` or `ext` as an argume
 $ mcd dai balance vat
 1030.003120998308631176024235912000000000000000000
 ```
-
-## Cdp
-
-The `cdp` command makes uses the [Cdp Manager](https://github.com/makerdao/dss-cdp-manager) to allow Urns to be treated as non-fungible tokens with a unique NFT identifier:
-
-```sh
-$ cdp --ilk=ETH-A open
-cdp 42 opened
-```
-
-Once a Cdp has been opened it can be managed via its unique <id> identiier rather than the `I, --ilk` and `U, urn` options. The identifier can be either be passed via the `--cdp` option flag or as the first argument to the `cdp` command. Hence these commands are equivilent:
-
-```sh
-$ mcd --cdp=42 gem join 100
-# or
-$ mcd cdp 42 gem join
-```
-
-All of the native Mcd functionality can be applied to Cdp's simply by supplying a Cdp identifier to the appropriate command:
-
-```sh
-$ mcd --cdp=42 gem join <wad>     Add collateral
-$ mcd --cdp=42 gem exit <wad>     Remove collateral
-$ mcd --cdp=42 dai join <wad>     Add Dai
-$ mcd --cdp=42 dai exit <wad>     Remove Dai
-$ mcd --cdp=42 frob <dink> <dart> Manage Cdp state
-```
-
-Cdp Manger-specific functionality is also available via cdp`subcommands:
-
-```
-cdp ls                      List Cdps
-cdp count                   Cdp count
-cdp open                    Open a new Cdp
-cdp <id> owner              Get Cdp owner address
-cdp <id> give <address>     Change Cdp owner
-```
-
-### Cdp Portal
-
-The Cdp Portal uses a proxy contract for improved UX on the front-end. The `--proxy` option is available for compatability with Cdps created via the Cdp Portal:
-
-```sh
-$ mcd --proxy --cdp=42 frob 500 200
-```
-
-This will send calls via the registered proxy for `ETH_FROM`, matching  the behaviour of the Cdp portal. If the sender doesn't yet have a registered proxy, an option will be presented to create one.
-
----
-
 ## Examples
 
 Note: examples assume that `ETH_FROM` is set to an address controlled by the user, and that the `MCD_CHAIN` env variable has been set to a vaild chain identifier.
@@ -305,41 +254,6 @@ fill 2000                                                             Collateral
 
 # iv) Withdraw Dai
 $ mcd dai exit 500
-vat 0.000060682318362511884962000000000000000000000 Vat balance
-ext 500.000000000000000000 ERC20 balance
-```
-
-### 2. Managed Cdp - lock 100 ETH & draw 500 Dai
-
-```sh
-# i) Wrap
-$ mcd wrap 100
-eth  900.000000000000000000
-weth 100.000000000000000000
-
-# ii) Open
-$ mcd --ilk=ETH-A cdp open
-Opened: cdp 42
-
-# iii) Gem join
-$ mcd --cdp=42 gem join 100
-vat 100.000000000000000000 Free collateral (WETH)
-ink   0.000000000000000000 Locked collateral (WETH)
-ext   0.000000000000000000 External account balance (WETH)
-ext 900.000000000000000000 External account balance (ETH)
-
-# iv) Lock & Draw
-$ mcd --cdp=42 frob 100 500
-ilk  ETH-A                                                            Collateral type
-urn  63b0df87c81f55bb92c00b5690bdff84426fe36000000000000000000000002a Urn index
-ink  100.000000000000000000                                           Locked collateral (WETH)
-art  500.000000000000000000                                           Outstanding debt (DAI)
-spot 100.000000000000000000000000000                                  Price with safety mat (USD)
-rate 1.000000000000000000000000000                                    WETH DAI exchange rate
-fill 2000                                                             Collateralization Ratio (%)
-
-# v) Withdraw Dai
-$ mcd --cdp=42 dai exit 500
 vat 0.000060682318362511884962000000000000000000000 Vat balance
 ext 500.000000000000000000 ERC20 balance
 ```

@@ -12,12 +12,10 @@ C,chain=chain         chain config - mainnet, kovan, testnet or a remote testnet
 F,from=address        account to send from
 G,gas=number          number of gas units to provide
 async                 don't wait for tx receipts
-proxy                 transact via registered proxy
 
   MCD options:
 I,ilk=string          ilk identifier
 U,urn=string          urn identifier
-N,cdp=number          cdp identifier
 
   Filter options:
 B,block=number        from block
@@ -52,7 +50,6 @@ while [[ $1 ]]; do
 
     -I|--ilk)       shift; export MCD_ILK=$1;;
     -U|--urn)       shift; export MCD_URN=$1;;
-    -N|--cdp)       shift; export MCD_CDP=$1;;
 
     -B|--block)     shift; export ETH_BLOCK=$1;;
 
@@ -60,7 +57,6 @@ while [[ $1 ]]; do
     -G|--gas)       shift; export ETH_GAS=$1;;
 
        --async)            export SETH_ASYNC=yes;;
-       --proxy)            export MCD_PROXY=yes;;
 
     *) printf "${0##*/}: unrecognised option: %q\n" "--$1"; exit 1
   esac; shift
@@ -135,14 +131,6 @@ if ! [[ $MCD_INIT ]]; then
   TESTNET=${TESTNET:-~/.dapp/testnet}
   export MCD_INIT=1
   mcd-init
-fi
-
-if [[ "$MCD_CDP" ]] && [[ -z "$MCD_URN" ]]; then
-  if [[ "$1" == "cdp" ]];then
-    exec "${0##*/}-cdp" "${@:2}"
-  else
-    exec "${0##*/}-cdp-init" "$@"
-  fi
 fi
 
 "${0##*/}-${1-help}" "${@:2}"

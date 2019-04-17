@@ -107,57 +107,6 @@ updatePrice() {
   mcd poke
 }
 
-testCdpOpen() {
-  echo Test: Cdp open
-  cdp=$(mcd cdp open)
-  cdp=${cdp#*cdp}
-  export MCD_CDP=$(echo $cdp | tr -d '[:space:]')
-  [[ $MCD_CDP =~ [[:digit:]]+ ]] || (echo "FAIL" && exit)
-  echo $MCD_CDP
-}
-
-testCdpGemJoin() {
-  lt=$(mcd --cdp $MCD_CDP gem balance vat)
-  (set -x; mcd cdp $MCD_CDP gem join $1)
-  gt=$(mcd --cdp $MCD_CDP gem balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testCdpDaiJoin() {
-  lt=$(mcd --cdp $MCD_CDP dai balance vat)
-  (set -x; mcd cdp $MCD_CDP dai join $1)
-  gt=$(mcd --cdp $MCD_CDP dai balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testCdpDaiExit() {
-  gt=$(mcd --cdp $MCD_CDP dai balance vat)
-  (set -x; mcd cdp $MCD_CDP dai exit $1)
-  lt=$(mcd --cdp $MCD_CDP dai balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testCdpFrobPush() {
-  lt=$(mcd --cdp $MCD_CDP gem balance ink)
-  (set -x; mcd --cdp $MCD_CDP frob -- $1 $2)
-  gt=$(mcd --cdp $MCD_CDP gem balance ink)
-  assertBalanceChanged $gt $lt $1
-}
-
-testCdpFrobPull() {
-  gt=$(mcd --cdp $MCD_CDP gem balance ink)
-  (set -x; mcd --cdp $MCD_CDP frob -- $1 $2)
-  lt=$(mcd --cdp $MCD_CDP gem balance ink)
-  assertBalanceChanged $gt $lt $1
-}
-
-testCdpGemExit() {
-  gt=$(mcd --cdp $MCD_CDP gem balance vat)
-  (set -x; mcd cdp $MCD_CDP gem exit $1)
-  lt=$(mcd --cdp $MCD_CDP gem balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
 export MCD_ILK=ETH-A
 mcd wrap 10
 testJoin 10
@@ -170,23 +119,3 @@ testFree 1
 testExit 10
 mcd unwrap 10
 testBite 50 149
-
-export MCD_ILK=ETH-A
-testCdpOpen
-testCdpGemJoin 10
-testCdpFrobPush 10 1
-testCdpFrobPull -10 -1
-testCdpGemExit 10
-
-testCdpDaiExit 1
-testCdpDaiJoin 1
-
-# export MCD_ILK=COL1-A
-# export MCD_PROXY=yes
-# testCdpOpen
-# testCdpGemJoin 10
-# testCdpFrob 10 1
-# testCdpDaiExit 1
-# testCdpDaiJoin 1
-# testCdpFrob -10 -1
-# testCdpGemExit 10
