@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-bites -- Recent bites
-### Usage: mcd bites [-B <block>] [--ilk=<id>] [--urn=<index>]
+### Usage: mcd bites [-B <block>] [--ilk=<id>] [--urn=<address>]
 set -e
 sig="Bite(bytes32,address,uint256,uint256,uint256,uint256)"
 sig=$(seth keccak "$(seth --from-ascii $sig)")

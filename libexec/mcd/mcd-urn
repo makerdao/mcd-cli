@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-urn -- CDP state
-### Usage: mcd --ilk=<id> [--urn=<index>] urn [<arg>]
+### Usage: mcd --ilk=<id> [--urn=<address>] urn [<arg>]
 ###
 ### Display the status of the urn at ETH_FROM or
 ### at a given urn address if provided.

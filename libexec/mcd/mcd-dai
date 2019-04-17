@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-dai -- Dai management
-### Usage: mcd [--urn=<index>] dai [<command>]
+### Usage: mcd [--urn=<address>] dai [<command>]
 ###
 ### Commands: dai balance    Print balances for a given urn (default: ETH_FROM)
 ###           dai supply     Get the total supply

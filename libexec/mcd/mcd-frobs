@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-frobs -- Recent frobs
-### Usage: mcd frobs [-B <block>] [--ilk=<id>] [--urn=<index>]
+### Usage: mcd frobs [-B <block>] [--ilk=<id>] [--urn=<address>]
 set -e
 sig="frob(bytes32,address,address,address,int256,int256)"
 sig=$(seth keccak "$(seth --from-ascii $sig)")

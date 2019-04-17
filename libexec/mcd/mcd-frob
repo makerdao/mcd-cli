@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### mcd-frob -- Urn management
-### Usage: mcd frob --ilk=<id> [--urn=<index>] -- [-]<dink> [-]<dart>
+### Usage: mcd frob --ilk=<id> [--urn=<address>] -- [-]<dink> [-]<dart>
 set -e
 [ $# = 2 ] || mcd --fail "$0: Incorrect arguments"
 

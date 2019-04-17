@@ -148,7 +148,7 @@ gem --ilk=<id> exit <wad> [<guy>] Remove collateral from an Urn (default: ETH_FR
 
 The `join` command can add collateral from the sender account to any specified Urn. The `exit` command can remove collateral from a specified Urn, provided that the sender controls the private key associated with that Urn.
 
-By default, `ETH_FROM` is used to determine which Urn should be credited with collateral. Use `U, --urn=<index>` to optionally credit an Urn other than the default.
+By default, `ETH_FROM` is used to determine which Urn should be credited with collateral. Use `U, --urn=<address>` to optionally credit an Urn other than the default.
 
 ```sh
 $ mcd --ilk=ETH-A --urn=0x123456789abcdef0123456789abcdef012345678 join 100
@@ -162,22 +162,22 @@ $ mcd --ilk=ETH-A exit 100 0xDecaf00000000000000000000000000000000000
 
 ## Urn
 
-Urns represent Cdp state for any given Urn index, where an Urn index consists of an address component (the public key of the account that owns the Urn) and an optional index component.
+Urns represent Cdp state for any given Urn address.
 
 Use the `urn` command to view Urn state for any given Ilk:
 
 ```sh
 $ mcd --ilk=ETH-A urn
-ilk  ETH-A                                                            Collateral type
-urn  4Ffa8667Fe2db498DCb95A322b448eA688Ce430c000000000000000000000000 Urn index
-ink  204.000000000000000000                                           Locked collateral (WETH)
-art  40.000000000000000000                                            Outstanding debt (DAI)
-spot 99.333333333333333333333333333                                   Price with safety mat (USD)
-rate 1.000080370887129123082627939                                    WETH DAI exchange rate
-fill 50655                                                            Collateralisation ratio (%)
+ilk  ETH-A                                    Collateral type
+urn  4Ffa8667Fe2db498DCb95A322b448eA688Ce430c Owner
+ink  204.000000000000000000                   Locked collateral (WETH)
+art  40.000000000000000000                    Outstanding debt (DAI)
+spot 99.333333333333333333333333333           Price with safety mat (USD)
+rate 1.000080370887129123082627939            WETH DAI exchange rate
+fill 50655                                    Collateralisation ratio (%)
 ```
 
-By default, `ETH_FROM` is used to determine which Urn to query. Use the `U, --urn=<index>` option to query Urns at other indexes.
+By default, `ETH_FROM` is used to determine which Urn to query. Use the `U, --urn=<address>` option to query Urns at other indexes.
 
 #### Urn management
 
@@ -244,13 +244,13 @@ ext 900.000000000000000000 External account balance (ETH)
 
 # iii) Lock & Draw
 $ mcd --ilk=ETH-A frob 100 500
-ilk  ETH-A                                                            Collateral type
-urn  41dc7BaBdEE52047e00F5F55973F3122985E7eBc000000000000000000000000 Urn index
-ink  100.000000000000000000                                           Locked collateral (WETH)
-art  500.000000000000000000                                           Outstanding debt (DAI)
-spot 100.000000000000000000000000000                                  Price with safety mat (USD)
-rate 1.000000000000000000000000000                                    WETH DAI exchange rate
-fill 2000                                                             Collateralization Ratio (%)
+ilk  ETH-A                                    Collateral type
+urn  41dc7BaBdEE52047e00F5F55973F3122985E7eBc Owner
+ink  100.000000000000000000                   Locked collateral (WETH)
+art  500.000000000000000000                   Outstanding debt (DAI)
+spot 100.000000000000000000000000000          Price with safety mat (USD)
+rate 1.000000000000000000000000000            WETH DAI exchange rate
+fill 2000                                     Collateralization Ratio (%)
 
 # iv) Withdraw Dai
 $ mcd dai exit 500
