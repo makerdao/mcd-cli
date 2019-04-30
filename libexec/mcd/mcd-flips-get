@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-id=$(seth --to-word $(seth --to-hex $1))
-flip=$(seth call "${MCD_CAT}" 'flips(uint256)(bytes32,address,uint256,uint256)' "$id")
-ilk=${flip:0:64}
-echo "ilk $(mcd --to-ascii $ilk)"
-echo "urn 0x${flip:65:40}"
-echo "ink $(mcd --to-wad ${flip:130:64})"
-echo "tab $(mcd --to-rad ${flip:195:64})"

@@ -6,13 +6,20 @@ set -e
 shopt -s extglob
 case "$1" in
   +([[:digit:]])) {
-    mcd flips-get "$1"
+    id=$(seth --to-word $(seth --to-hex $1))
+    flip=$(seth call "${MCD_CAT?}" 'flips(uint256)(bytes32,address,uint256,uint256)' "$id")
+    ilk=${flip:0:64}
+    echo "ilk $(mcd --to-ascii $ilk)"
+    echo "urn 0x${flip:65:40}"
+    echo "ink $(mcd --to-wad ${flip:130:64})"
+    echo "tab $(mcd --to-rad ${flip:195:64})"
   };;
   kick) {
     [ $# = 3 ] || mcd --fail "$0: Incorrect arguments"
-    n=$(seth --to-word $(seth --to-hex $2))
-    w=$(seth --to-word $(seth --to-hex $(seth --to-wei "$3 eth")))
-    mcd flips-kick "$n" "$w"
+    id=$(seth --to-word $(seth --to-hex $2))
+    rad=$(bc <<<"$3 * 10 ^ 45 / 1")
+    rad=$(seth --to-word $(seth --to-hex $rad))
+    mcd flips-kick $id $rad
   };;
   *) {
     mcd help flips
