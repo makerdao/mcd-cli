@@ -34,7 +34,7 @@ fi
 if [[ $2 = --help ]]; then
   exec "${0##*/}" help -- "$1"
 elif [[ $1 == testnet ]]; then
-  exec "${0##*/}-testnet" $2
+  exec "${0##*/}-testnet" "${@:2}"
 elif [[ $1 = -* ]] && command -v "${0##*/}-$1" &>/dev/null; then
   exec "${0##*/}-$1" "${@:2}"
 fi
@@ -106,17 +106,18 @@ mcd-init() {
       config-init "${MCD_CONFIG:-$TESTNET/8545/config/addresses.json}"
       export ETH_RPC_URL=${ETH_RPC_URL:-http://127.0.0.1:8545}
       export ETH_LOGS_API=${ETH_LOGS_API:-rpc}
-      export ETH_KEYSTORE=${ETH_KEYSTORE:-TESTNET/8545/keystore}
+      export ETH_KEYSTORE=${ETH_KEYSTORE:-$TESTNET/8545/keystore}
       export ETH_PASSWORD=${ETH_PASSWORD:-/dev/null}
-      export ETH_FROM=${ETH_FROM:-(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')}
+      from=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
+      export ETH_FROM=${ETH_FROM:-$from}
       ;;
     +([0-9])) # remote testnet id
       testnet-init "$MCD_CHAIN"
-      export ETH_RPC_URL=${ETH_RPC_URL:-(cat $path | jq -r .chain_details.rpc_url)}
+      export ETH_RPC_URL=${ETH_RPC_URL:-$(cat $path | jq -r .chain_details.rpc_url)}
       export ETH_LOGS_API=${ETH_LOGS_API:-rpc}
-      export ETH_KEYSTORE=${ETH_KEYSTORE:-TESTNET/tmp/$MCD_CHAIN/keystore}
+      export ETH_KEYSTORE=${ETH_KEYSTORE:-$TESTNET/tmp/$MCD_CHAIN/keystore}
       export ETH_PASSWORD=${ETH_PASSWORD:-/dev/null}
-      export ETH_FROM=${ETH_FROM:-(cat $path | jq -r .chain_details.coinbase)}
+      export ETH_FROM=${ETH_FROM:-$(cat $path | jq -r .chain_details.coinbase)}
       ;;
     *)
       if [[ "$@" != *"help"* ]]; then
