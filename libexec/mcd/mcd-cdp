@@ -5,14 +5,17 @@
 ### Commands: cdp ls [<owner>]            List Cdps
 ###           cdp count [<owner>]         Cdp count
 ###           cdp open                    Open a new Cdp
+###           cdp <id> lock <wad>         Join & lock collateral
+###           cdp <id> free <wad>         Free & exit collateral
 set -e
+shopt -s extglob
 
-usr=${2:-$(mcd --proxy-address)}
+export MCD_PROXY=$(mcd --proxy-address)
 
 case $1 in
   ls) {
     sig="getCdpsDesc(address,address)"
-    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $usr)
+    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $MCD_PROXY)
     data=${data:194:${#data}}
     size=$(( ${#data} / 3))
     cdps=${data::$size};
@@ -28,13 +31,21 @@ case $1 in
   };;
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig $usr)
+    hex=$(seth call ${CDP_MANAGER?} $sig $MCD_PROXY)
     seth --to-dec $hex
   };;
   open) {
     mcd cdp-open "${@:2}";
   };;
+  +([[:digit:]]) ) {
+    export MCD_CDP=$1
+    mcd cdp-cmd "${@:2}"
+  };;
   *) {
-    mcd help cdp
+    if [[ -n $MCD_CDP ]];then
+      mcd cdp-cmd "${@}"
+    else
+      mcd help cdp
+    fi
   };;
 esac

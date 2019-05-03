@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+
+id=$(seth --to-hex ${MCD_CDP?})
+CDP=0x$(seth --to-word $id)
+
+ilk=$(seth call ${CDP_MANAGER?} 'ilks(uint)(bytes32)' $CDP)
+export MCD_ILK=$(mcd --to-ascii $ilk)
+
+case $1 in
+  lock) {
+    export ETH_GAS=210000
+    mcd --gem-approve $MCD_PROXY $2
+    sig="lockGem(address,address,uint,uint)"
+    mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $2
+  };;
+  free) {
+    sig="freeGem(address,address,uint,uint)"
+    mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $2
+  };;
+  *) {
+    mcd help cdp
+  };;
+esac
