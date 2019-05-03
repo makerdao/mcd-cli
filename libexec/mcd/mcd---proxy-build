@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+echo >&2 "No proxy registered for ETH_FROM: $ETH_FROM"
+read -r -p "Create a proxy? [Y/n]: " response
+
+build() {
+  export ETH_GAS=1200000
+  seth send ${PROXY_REGISTRY?} 'build()'
+
+  reg=0x$(seth --to-word $PROXY_REGISTRY)
+  usr=0x$(seth --to-word $ETH_FROM)
+  sig="Created(address,address,address,address)"
+  sig=$(seth keccak "$(seth --from-ascii $sig)")
+  seth logs ${PROXY_FACTORY?} $sig $reg $usr |
+    while read -r log; do
+      data=$(jshon -e data -u <<<"$log")
+      echo 0x${data:26:40}
+    done
+}
+
+case $response in
+  [yY]) { build;  };;
+     *) { exit 1; };;
+esac

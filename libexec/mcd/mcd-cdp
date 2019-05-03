@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+### mcd-cdp -- CDP managerment
+### Usage: mcd [--cdp=<id>] cdp [<id>] [<command>]
+###
+### Commands: cdp ls [<owner>]            List Cdps
+###           cdp count [<owner>]         Cdp count
+###           cdp open                    Open a new Cdp
+set -e
+
+usr=${2:-$(mcd --proxy-address)}
+
+case $1 in
+  ls) {
+    sig="getCdpsDesc(address,address)"
+    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $usr)
+    data=${data:194:${#data}}
+    size=$(( ${#data} / 3))
+    cdps=${data::$size};
+    urns=${data:$size:$(( $size * 2 ))};
+    ilks=${data:(-$size)}
+    for i in `seq 64 64 $(( ${#cdps} - 64 ))`; do
+      id=$(( 16#${cdps:$i:64} ))
+      echo "cdp $id"
+      echo "urn 0x${urns:$(( $i+24)):40}"
+      echo "ilk $(mcd --to-ascii ${ilks:$i:64})"
+      echo
+    done
+  };;
+  count) {
+    sig="count(address)"
+    hex=$(seth call ${CDP_MANAGER?} $sig $usr)
+    seth --to-dec $hex
+  };;
+  open) {
+    mcd cdp-open "${@:2}";
+  };;
+  *) {
+    mcd help cdp
+  };;
+esac

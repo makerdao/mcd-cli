@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+proxy=$(mcd --proxy-address)
+bytes=$(seth calldata "${@}")
+sig="execute(address,bytes memory)"
+seth send $proxy "$sig" "${PROXY_ACTIONS?}" "$bytes"
