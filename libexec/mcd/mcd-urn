@@ -10,8 +10,9 @@
 set -e
 
 URN=$(mcd --require-urn $0)
+ILK=$(mcd --require-ilk)
 
-vat() { mcd --vat-urn $(mcd --require-ilk) $URN; }
+vat() { mcd --vat-urn $ILK $URN; }
 
 p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
 
@@ -20,11 +21,11 @@ calc() {
   exec 4< <(mcd ilk rate)
   spot=$(cat <&3);
   rate=$(cat <&4);
-  lev=0; rap=0; tab=0
+  rat=0; rap=0; tab=0
   if [ ${art:0:1} -gt 0 ]; then
     tab=$(printf '%.27f\n' $(bc <<< "$art*$rate"))
-    lev=$(bc <<< "scale=2; (($ink*$spot)/$tab)")
     rap=$(printf '%.27f\n' $(bc <<< "$tab - $art"))
+    rat=$(bc <<< "scale=1; (($ink*$spot)/$tab)")
   fi
 }
 
@@ -36,13 +37,13 @@ mcd-urn() {
   p "ink"  $ink "Locked collateral ($(mcd gem symbol))"
   p "art"  $art "Issued debt (Dai)"
   calc
-  p "tab"  $tab  "Outstanding debt (Dai)"
-  p "rap"  $rap  "Accumulated stability fee (Dai)"
+  p "tab"  $tab      "Outstanding debt (Dai)"
+  p "rap"  $rap      "Accumulated stability fee (Dai)"
+  p "-->"  $rat      "Collateralization ratio"
   echo
   p "spot" $spot "$(mcd gem symbol) price with safety mat (USD)"
   p "rate" $rate "$(mcd gem symbol) DAI exchange rate"
-  p "lev"  $lev "Collateralization ratio"
-  p "mat"  $(mcd ilk mat) "Min. collateralization ratio"
+  p "mat"  $(mcd ilk mat) "Min. collateralalization ratio"
 }
 
 case $1 in
