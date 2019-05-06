@@ -28,7 +28,7 @@ mcd-ilk() {
   p "flip" $(mcd ilk flip) "Flip auction contract"
   p "chop" $(mcd ilk chop) "Liquidation penalty"
   p "lump" $(mcd ilk lump) "Flip auction lot size"
-  p "tax"  $(mcd ilk tax)  "Stability fee"
+  p "duty" $(mcd ilk duty)  "Stability fee"
   p "rho"  $(mcd ilk rho)  "Last drip timestamp"
   p "pip"  $(mcd ilk pip)  "Price feed contract"
   p "mat"  $(mcd ilk mat)  "Liquidation ratio"
@@ -43,7 +43,7 @@ case $1 in
   flip)    cat  | echo 0x$(awk '{print $1}');       ;;
   chop)    cat  | mcd --to-ray $(awk '{print $2}'); ;;
   lump)    cat  | mcd --to-rad $(awk '{print $3}'); ;;
-  tax)     jug  | mcd --to-ray $(awk '{print $1}'); ;;
+  duty)    jug  | mcd --to-ray $(awk '{print $1}'); ;;
   rho)     jug  | mcd --to-dec $(awk '{print $2}'); ;;
   pip)     spot | echo 0x$(awk '{print $1}');       ;;
   mat)     spot | mcd --to-ray $(awk '{print $2}'); ;;
