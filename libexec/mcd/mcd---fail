@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 err=${1##*/}
+act=${err%\:*}
 echo $err >&2; echo >&2
 mcd >&2 ${act#*-} --help
 exit 1
