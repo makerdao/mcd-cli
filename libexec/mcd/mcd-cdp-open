@@ -3,7 +3,7 @@ set -e
 ilk=$(mcd --require-ilk)
 
 export SETH_ASYNC=yes
-export ETH_GAS=240000
+export ETH_GAS=250000
 
 usr=$(mcd --proxy-address)
 sig="open(address,bytes32)"
@@ -26,4 +26,13 @@ logs=$(seth rpc eth_getLogs -- \
     -i topics \
     -i append | echo "[$(paste -sd , -)]")
 hex=$(echo "$logs" | jshon -a -e data -u)
-echo "Opened: cdp $(seth --to-dec $hex)"
+hash=$(echo "$logs" | jshon -a -e transactionHash -u)
+
+if [ "$hash" == "$tx" ]; then
+  echo "$tx"
+  echo "Opened: cdp $(seth --to-dec $hex)"
+else
+  echo >&2 "${0##*/}: Transaction failed."
+  seth >&2 receipt "$tx"
+  exit 1
+fi
