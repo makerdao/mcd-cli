@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+### mcd-line -- Total debt ceiling
+### Usage: mcd line
+set -e
+line=$(seth call "${MCD_VAT}" 'Line()(uint256)')
+echo $(mcd --to-rad "$line")

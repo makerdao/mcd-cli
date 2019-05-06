@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+### mcd-live -- Liveness flag
+### Usage: mcd live
+set -e
+live=$(seth call "${MCD_VAT}" 'live()(uint256)')
+echo $(seth --to-dec "$live")
