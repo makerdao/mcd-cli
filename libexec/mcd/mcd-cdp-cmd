@@ -1,22 +1,65 @@
 #!/usr/bin/env bash
 set -e
 
-id=$(seth --to-hex ${MCD_CDP?})
-CDP=0x$(seth --to-word $id)
-
+CDP=0x$(seth --to-word $(seth --to-hex ${MCD_CDP?}))
 ilk=$(seth call ${CDP_MANAGER?} 'ilks(uint)(bytes32)' $CDP)
 export MCD_ILK=$(mcd --to-ascii $ilk)
+export ETH_GAS=250000
+
+function require-wad {
+  [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount"
+  wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
+}
 
 case $1 in
   lock) {
-    export ETH_GAS=210000
+    require-wad $2
     mcd --gem-approve $MCD_PROXY $2
     sig="lockGem(address,address,uint,uint)"
-    mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $2
+    mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $wad
+
+    [[ $SETH_ASYNC != yes ]] && mcd cdp info
   };;
   free) {
+    require-wad $2
     sig="freeGem(address,address,uint,uint)"
-    mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $2
+    mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $wad
+
+    [[ $SETH_ASYNC != yes ]] && mcd cdp info
+  };;
+  draw) {
+    require-wad $2
+    sig="draw(address,address,uint,uint)"
+    mcd --proxy-exec $sig ${CDP_MANAGER?} $MCD_JOIN_DAI $CDP $wad
+
+    [[ $SETH_ASYNC != yes ]] && mcd cdp info
+  };;
+  wipe) {
+    require-wad $2
+    export MCD_TOKEN=$MCD_DAI
+    mcd --dai-approve $MCD_PROXY
+    sig="wipe(address,address,uint,uint)"
+    mcd --proxy-exec $sig ${CDP_MANAGER?} $MCD_JOIN_DAI $CDP $wad
+
+    [[ $SETH_ASYNC != yes ]] && mcd cdp info
+  };;
+  urn) {
+    sig="urns(uint)(address)"
+    echo $(seth call ${CDP_MANAGER?} $sig $CDP)
+  };;
+  proxy) {
+    sig="lads(uint)(address)"
+    echo 0x$(seth call ${CDP_MANAGER?} $sig $CDP)
+  };;
+  owner) {
+    echo 0x$(seth call $(mcd cdp proxy) 'owner()(address)')
+  };;
+  info) {
+    export MCD_URN=$(mcd cdp urn)
+    mcd urn
+  };;
+  gem) {
+    mcd gem "${@:2}"
   };;
   *) {
     mcd help cdp

@@ -10,18 +10,14 @@ approve() {
   seth send "$gem" "approve(address,uint)" $dst $max
 }
 
-check-allowance() {
-  sig="allowance(address,address)(uint)"
-  wad=$(seth call "$gem" "$sig" $ETH_FROM $dst)
-  wad=$(mcd --to-wad $(seth --to-dec $wad))
-  if (( $(echo "$amt > $wad" | bc -l) )); then
-    echo "Insufficient allowance: ETH_FROM: $ETH_FROM"
-    read -r -p "Grant approval to move $(mcd gem symbol) to $dst? [Y/n]: " response
-    case $response in
-      [yY]) { approve; };;
-      *)    { exit 1; };;
-    esac
-  fi
-}
-
-check-allowance
+sig="allowance(address,address)(uint)"
+wad=$(seth call "$gem" "$sig" $ETH_FROM $dst)
+wad=$(mcd --to-wad $(seth --to-dec $wad))
+if (( $(echo "$amt > $wad" | bc -l) )); then
+  echo "Insufficient allowance: ETH_FROM: $ETH_FROM"
+  read -r -p "Grant approval to move $(mcd gem symbol) to $dst? [Y/n]: " response
+  case $response in
+    [yY]) { approve; };;
+    *)    { exit 1; };;
+  esac
+fi

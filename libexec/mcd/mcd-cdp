@@ -31,7 +31,7 @@ case $1 in
   };;
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig $MCD_PROXY)
+    hex=$(seth call ${CDP_MANAGER?} $sig ${2:-MCD_PROXY})
     seth --to-dec $hex
   };;
   open) {
