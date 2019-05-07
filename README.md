@@ -9,7 +9,8 @@ Usage: mcd [<options>] <command> [<args>]
 Commands:
 
    bite            Trigger liquidation of an unsafe Urn
-   bites           ReUrns
+   bites           Recent bites
+   cdp             CDP managerment
    dai             Dai management
    debt            Total dai issuance
    drip            Trigger stability fee accumulation
@@ -22,6 +23,8 @@ Commands:
    gem             Collateral management
    help            Print help about mcd or one of its subcommands
    ilk             Ilk (collateral type) parameters
+   line            Total debt ceiling
+   live            Liveness flag
    poke            Update the spot price for a given Ilk
    unwrap          Unwrap WETH to ETH
    urn             CDP state
@@ -46,7 +49,7 @@ $ dapp pkg install mcd
 
 ## Configuration
 
-Mcd is built on top of [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
+Mcd is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
 
 Similar to Seth, `mcd` also supports transaction signing with Ledger hardware wallets and can run against both local and remote nodes.
 
@@ -167,14 +170,16 @@ Urns represent Cdp state for any given Urn address.
 Use the `urn` command to view Urn state for any given Ilk:
 
 ```sh
-$ mcd --ilk=ETH-A urn
-ilk  ETH-A                                    Collateral type
-urn  4Ffa8667Fe2db498DCb95A322b448eA688Ce430c Owner
-ink  204.000000000000000000                   Locked collateral (WETH)
-art  40.000000000000000000                    Outstanding debt (DAI)
-spot 99.333333333333333333333333333           Price with safety mat (USD)
-rate 1.000080370887129123082627939            WETH DAI exchange rate
-fill 50655                                    Collateralisation ratio (%)
+ilk  ETH-A                                      Collateral type
+urn  0xC93C178EC17B06bddBa0CC798546161aF9D25e8A Urn handler
+ink  45.000000000000000000                      Locked collateral (WETH)
+art  120.000000000000000000                     Issued debt (Dai)
+tab  120.000244107582797248312544980            Outstanding debt (Dai)
+rap  0.000244107582797248312544980              Accumulated stability fee (Dai)
+-->  37.24                                      Collateralization ratio
+
+spot 99.333333333333333333333333333             WETH price with safety mat (USD)
+rate 1.000002034229856643749638820              WETH DAI exchange rate
 ```
 
 By default, `ETH_FROM` is used to determine which Urn to query. Use the `U, --urn=<address>` option to query Urns at other indexes.
@@ -220,13 +225,38 @@ Individial balance values can be retrieved by adding `vat` or `ext` as an argume
 $ mcd dai balance vat
 1030.003120998308631176024235912000000000000000000
 ```
+
+## Cdp
+
+The `cdp` command provides compatability with CDPs managed via the CDP Portal and uses
+the same proxy contract and [Cdp Manager](https://github.com/makerdao/dss-cdp-manager)
+font-end. This allows CDPs to be managed via a unique integer identifier rather than the
+`I, --ilk` and `U, --urn` options.
+
+```sh
+Usage: mcd cdp [<id>] [<command>]
+
+Commands: ls [<owner>]     List Cdps
+          count [<owner>]  Cdp count
+          open             Open a new Cdp
+          <id> urn         Cdp state
+          <id> lock <wad>  Join & lock collateral
+          <id> free <wad>  Free & exit collateral
+          <id> draw <wad>  Draw & exit dai
+          <id> wipe <wad>  Join & wipe dai
+```
+
+---
+
 ## Examples
 
 Note: examples assume that `ETH_FROM` is set to an address controlled by the user, and that the `MCD_CHAIN` env variable has been set to a vaild chain identifier.
 
 ### 1. Native Urn - lock 100 ETH & draw 500 Dai
 
-Note: The system doesn't handle ETH directly but instead uses WETH to represent ETH collateral. For convenience, the `wrap` and `unwrap` commands are provided for exchanging ETH to WETH and visa versa.
+Note: The system doesn't handle ETH directly but instead uses WETH to represent
+ETH collateral. For convenience, the `wrap` and `unwrap` commands are provided
+for exchanging ETH to WETH and visa versa.
 
 ```sh
 # i) Wrap
@@ -244,16 +274,54 @@ ext 900.000000000000000000 External account balance (ETH)
 
 # iii) Lock & Draw
 $ mcd --ilk=ETH-A frob 100 500
-ilk  ETH-A                                    Collateral type
-urn  41dc7BaBdEE52047e00F5F55973F3122985E7eBc Owner
-ink  100.000000000000000000                   Locked collateral (WETH)
-art  500.000000000000000000                   Outstanding debt (DAI)
-spot 100.000000000000000000000000000          Price with safety mat (USD)
-rate 1.000000000000000000000000000            WETH DAI exchange rate
-fill 2000                                     Collateralization Ratio (%)
+ilk  ETH-A                                      Collateral type
+urn  0xC93C178EC17B06bddBa0CC798546161aF9D25e8A Urn handler
+ink  100.000000000000000000                     Locked collateral (WETH)
+art  500.000000000000000000                     Issued debt (Dai)
+tab  500.000244107582797248312544980            Outstanding debt (Dai)
+rap  0.000244107582797248312544980              Accumulated stability fee (Dai)
+-->  19.86                                      Collateralization ratio
 
 # iv) Withdraw Dai
 $ mcd dai exit 500
 vat 0.000060682318362511884962000000000000000000000 Vat balance
 ext 500.000000000000000000 ERC20 balance
+```
+
+### 2. Managed Cdp - lock 100 COL1 & draw 50 Dai
+
+```sh
+# i) Open
+$ mcd --ilk=COL1-A cdp open
+mcd-cdp-open: Waiting for transaction receipt...
+0x800e5578d3ac4b77b7ada1aba48cf80d0d238d4392d2676d79159eac2c2cdd73
+Opened: cdp 19
+
+# ii) Lock
+$ mcd --ilk=COL1-A cdp 19 lock 100
+seth-send: Published transaction with 260 bytes of calldata.
+seth-send: 0x4d30cb4863ca997d24ff2346c9a92e86648369ce7b4a86ed004c73b8d4ef299a
+seth-send: Waiting for transaction receipt...
+seth-send: Transaction included in block 333.
+ilk  COL1-A                                     Collateral type
+urn  0x4518c4709a50C915b7996A0e6Dfb38c67248BBcF Urn handler
+ink  100.000000000000000000                     Locked collateral (COL1)
+art  0.000000000000000000                       Issued debt (Dai)
+tab  0                                          Outstanding debt (Dai)
+rap  0                                          Accumulated stability fee (Dai)
+-->  0                                          Collateralization ratio
+
+# iii) Draw
+$ mcd --ilk=COL1-A cdp 19 draw 500
+seth-send: Published transaction with 260 bytes of calldata.
+seth-send: 0xd5fb7ddf94bb910fbba2af118ecde88a03a13129b2e1979238236afe672781c3
+seth-send: Waiting for transaction receipt...
+seth-send: Transaction included in block 335.
+ilk  COL1-A                                     Collateral type
+urn  0x4518c4709a50C915b7996A0e6Dfb38c67248BBcF Urn handler
+ink  100.000000000000000000                     Locked collateral (COL1)
+art  49.999505439113270178                      Issued debt (Dai)
+tab  50.000000000000000000000000000             Outstanding debt (Dai)
+rap  0.000494560886729822000020743              Accumulated stability fee (Dai)
+-->  16.66                                      Collateralization ratio
 ```

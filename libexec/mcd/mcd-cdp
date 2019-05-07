@@ -2,14 +2,14 @@
 ### mcd-cdp -- CDP managerment
 ### Usage: mcd cdp [<id>] [<command>]
 ###
-### Commands: cdp ls [<owner>]     List Cdps
-###           cdp count [<owner>]  Cdp count
-###           cdp open             Open a new Cdp
-###           cdp urn              Get Cdp state
-###           cdp <id> lock <wad>  Join & lock collateral
-###           cdp <id> free <wad>  Free & exit collateral
-###           cdp <id> draw <wad>  Draw & exit dai
-###           cdp <id> wipe <wad>  Join & wipe dai
+### Commands: ls [<owner>]       List Cdps
+###           count [<owner>]    Cdp count
+###           open               Open a new Cdp
+###           <id> urn           Cdp state
+###           <id> lock <wad>    Join & lock collateral
+###           <id> free <wad>    Free & exit collateral
+###           <id> draw <wad>    Draw & exit dai
+###           <id> wipe <wad>    Join & wipe dai
 set -e
 shopt -s extglob
 
