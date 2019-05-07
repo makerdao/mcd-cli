@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 ### mcd-cdp -- CDP managerment
-### Usage: mcd [--cdp=<id>] cdp [<id>] [<command>]
+### Usage: mcd cdp [<id>] [<command>]
 ###
-### Commands: cdp ls [<owner>]            List Cdps
-###           cdp count [<owner>]         Cdp count
-###           cdp open                    Open a new Cdp
-###           cdp <id> lock <wad>         Join & lock collateral
-###           cdp <id> free <wad>         Free & exit collateral
+### Commands: cdp ls [<owner>]     List Cdps
+###           cdp count [<owner>]  Cdp count
+###           cdp open             Open a new Cdp
+###           cdp urn              Get Cdp state
+###           cdp <id> lock <wad>  Join & lock collateral
+###           cdp <id> free <wad>  Free & exit collateral
+###           cdp <id> draw <wad>  Draw & exit dai
+###           cdp <id> wipe <wad>  Join & wipe dai
 set -e
 shopt -s extglob
 
@@ -38,14 +41,9 @@ case $1 in
     mcd cdp-open "${@:2}";
   };;
   +([[:digit:]]) ) {
-    export MCD_CDP=$1
-    mcd cdp-cmd "${@:2}"
+    mcd-cdp-cmd "${@}"
   };;
   *) {
-    if [[ -n $MCD_CDP ]];then
-      mcd cdp-cmd "${@}"
-    else
-      mcd help cdp
-    fi
+    mcd help cdp
   };;
 esac

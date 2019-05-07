@@ -3,7 +3,7 @@ set -e
 ilk=$(mcd --require-ilk)
 
 export SETH_ASYNC=yes
-export ETH_GAS=250000
+export ETH_GAS=${ETH_GAS:-250000}
 
 usr=$(mcd --proxy-address)
 sig="open(address,bytes32)"

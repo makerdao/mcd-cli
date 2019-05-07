@@ -9,6 +9,10 @@ export ETH_GAS=700000
 
 p() { [ $1 = "false" ] && echo "FAIL" && exit; }
 
+#====================================================================
+# Helpers
+#====================================================================
+
 numericCompare() {
   p $(awk -v n1="${1}" -v n2="${2}" \
     'BEGIN { print (n1 == n2) ? "true" : "false" }' 2>/dev/null)
@@ -16,89 +20,26 @@ numericCompare() {
 
 assertBalanceChanged() {
   diff=$(echo "$1 - $2" | bc)
-  numericCompare $diff $3
+  amt=$(echo $3 | sed 's/-//g')
+  numericCompare $diff $amt
 }
 
-#====================================================================
-
-testJoin() {
-  echo "Test: $MCD_ILK join $1"
-  lt=$(mcd gem balance vat)
-  mcd gem join $1
-  gt=$(mcd gem balance vat)
-  assertBalanceChanged $gt $lt $1
+testChange() {
+  cmd=$1; amt=$2; bal=$3; dir=$4;
+  echo "$MCD_ILK: mcd $cmd $amt"
+  lt=$(eval "mcd $bal")
+  eval "mcd $cmd -- $amt"
+  gt=$(eval "mcd $bal")
+  if [[ $dir == "+" ]]; then
+    assertBalanceChanged $gt $lt $amt
+  else
+    assertBalanceChanged $lt $gt $amt
+  fi
 }
 
-testExit() {
-  echo "Test: $MCD_ILK exit $1"
-  gt=$(mcd gem balance vat)
-  mcd gem exit $1
-  lt=$(mcd gem balance vat)
-  assertBalanceChanged $gt $lt $1
-}
+testInc() { testChange "${@}" "+"; }
 
-testLock() {
-  echo "Test: $MCD_ILK lock $1"
-  lt=$(mcd gem balance ink)
-  mcd frob $1 0
-  gt=$(mcd gem balance ink)
-  assertBalanceChanged $gt $lt $1
-}
-
-testFree() {
-  echo "Test: $MCD_ILK free $1"
-  lt=$(mcd gem balance vat)
-  mcd frob -- -$1 0
-  gt=$(mcd gem balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testDraw() {
-  echo "Test: $MCD_ILK draw $1"
-  lt=$(mcd dai balance vat)
-  mcd frob 0 $1
-  gt=$(mcd dai balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testDaiExit() {
-  echo "Test: $MCD_ILK dai exit $1"
-  gt=$(mcd dai balance vat)
-  mcd dai exit $1
-  lt=$(mcd dai balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testDaiJoin() {
-  echo "Test: $MCD_ILK dai join $1"
-  lt=$(mcd dai balance vat)
-  mcd dai join $1
-  gt=$(mcd dai balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testWipe() {
-  echo "Test: $MCD_ILK wipe $1"
-  gt=$(mcd dai balance vat)
-  mcd frob -- 0 -$1
-  lt=$(mcd dai balance vat)
-  assertBalanceChanged $gt $lt $1
-}
-
-testBite() {
-  echo "Test: $MCD_ILK bite"
-  dink=10
-  dart=$(echo "($dink - 1) * $(mcd ilk spot)" | bc -l)
-  mcd wrap $dink
-  mcd gem join $dink
-  mcd frob $dink $dart
-  ink=$(mcd gem balance ink)
-  updatePrice $1 # unsafe
-  mcd --urn=$ETH_FROM bite
-  updatePrice $2 # restore config price
-  assertBalanceChanged $ink 0 $ink
-  mcd unwrap $dink
-}
+testDec() { testChange "${@}"; }
 
 updatePrice() {
   lad=$(eval echo "\${VAL_$MCD_ILK?}")
@@ -107,15 +48,52 @@ updatePrice() {
   mcd poke
 }
 
-export MCD_ILK=ETH-A
-mcd wrap 10
-testJoin 10
-testLock 1
-testDraw 4
-testDaiExit 4
-testDaiJoin 4
-testWipe 4
-testFree 1
-testExit 10
-mcd unwrap 10
-testBite 50 149
+#====================================================================
+# Tests
+#====================================================================
+
+testEthFrob() {
+  export MCD_ILK=ETH-A
+  mcd wrap 10
+  testInc "gem join" "10"    "gem balance vat" # Gem join
+  testInc "frob"     "1 4"   "gem balance ink" # Lock & draw
+  testDec "dai exit" "4"     "dai balance vat" # Dai exit
+  testInc "dai join" "4"     "dai balance vat" # Dai join
+  testDec "frob"     "-1 -4" "gem balance ink" # Wipe & free
+  testDec "gem exit" "10"    "gem balance vat" # Gem exit
+  mcd unwrap 10
+}
+testEthFrob
+
+testBite() {
+  export MCD_ILK=COL1-A
+  dink=10
+  spot=$(mcd ilk spot); mat=$(mcd ilk mat)
+  dart=$(echo "($dink * $spot) - 1" | bc -l)
+  mcd gem join $dink
+  mcd frob $dink $dart
+  ink=$(mcd gem balance ink)
+  updatePrice $(echo "($spot * $mat) * 0.9" | bc -l) # unsafe
+  mcd --urn=$ETH_FROM bite
+  updatePrice $(echo "($spot * $mat) * 1" | bc -l) # safe
+  assertBalanceChanged $ink 0 $ink
+}
+testBite
+
+testCdpOpen() {
+  cdp=$(mcd cdp open)
+  cdp=${cdp#*cdp}
+  cdp=$(echo $cdp | tr -d '[:space:]')
+  [[ $cdp =~ [[:digit:]]+ ]] || (echo "FAIL" && exit)
+  echo $cdp
+}
+
+testCdp() {
+  export MCD_ILK=COL1-A
+  id=$(testCdpOpen)
+  testDec "cdp $id lock" "10"    "gem balance ext"
+  testInc "cdp $id draw" "10"    "dai balance ext"
+  testDec "cdp $id wipe" "10"    "dai balance ext"
+  testInc "cdp $id free" "10"    "gem balance ext"
+}
+testCdp

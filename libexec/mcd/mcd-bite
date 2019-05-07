@@ -5,6 +5,8 @@
 ### Specify the Ilk identifier and Urn address to bite.
 set -e
 
+export ETH_GAS=${ETH_GAS:-250000}
+
 ilk=$(mcd --require-ilk)
 urn=$(mcd --require-urn $0)
 

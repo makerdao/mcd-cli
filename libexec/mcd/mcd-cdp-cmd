@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+MCD_CDP=$1; shift;
 CDP=0x$(seth --to-word $(seth --to-hex ${MCD_CDP?}))
 ilk=$(seth call ${CDP_MANAGER?} 'ilks(uint)(bytes32)' $CDP)
 export MCD_ILK=$(mcd --to-ascii $ilk)
-export ETH_GAS=260000
+export ETH_GAS=${ETH_GAS:-260000}
 
-function require-wad {
+require-wad() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount"
   wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
 }
@@ -18,21 +19,21 @@ case $1 in
     sig="lockGem(address,address,uint,uint)"
     mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $wad
 
-    [[ $SETH_ASYNC != yes ]] && mcd cdp info
+    [[ $SETH_ASYNC != yes ]] && mcd cdp $MCD_CDP urn
   };;
   free) {
     require-wad $2
     sig="freeGem(address,address,uint,uint)"
     mcd --proxy-exec $sig ${CDP_MANAGER?} $(mcd gem adapter) $CDP $wad
 
-    [[ $SETH_ASYNC != yes ]] && mcd cdp info
+    [[ $SETH_ASYNC != yes ]] && mcd cdp $MCD_CDP urn
   };;
   draw) {
     require-wad $2
     sig="draw(address,address,uint,uint)"
     mcd --proxy-exec $sig ${CDP_MANAGER?} $MCD_JOIN_DAI $CDP $wad
 
-    [[ $SETH_ASYNC != yes ]] && mcd cdp info
+    [[ $SETH_ASYNC != yes ]] && mcd cdp $MCD_CDP urn
   };;
   wipe) {
     require-wad $2
@@ -41,11 +42,7 @@ case $1 in
     sig="wipe(address,address,uint,uint)"
     mcd --proxy-exec $sig ${CDP_MANAGER?} $MCD_JOIN_DAI $CDP $wad
 
-    [[ $SETH_ASYNC != yes ]] && mcd cdp info
-  };;
-  urn) {
-    sig="urns(uint)(address)"
-    echo $(seth call ${CDP_MANAGER?} $sig $CDP)
+    [[ $SETH_ASYNC != yes ]] && mcd cdp $MCD_CDP urn
   };;
   proxy) {
     sig="lads(uint)(address)"
@@ -54,8 +51,9 @@ case $1 in
   owner) {
     echo 0x$(seth call $(mcd cdp proxy) 'owner()(address)')
   };;
-  info) {
-    export MCD_URN=$(mcd cdp urn)
+  urn) {
+    sig="urns(uint)(address)"
+    export MCD_URN=$(seth call ${CDP_MANAGER?} $sig $CDP)
     mcd urn
   };;
   gem) {
