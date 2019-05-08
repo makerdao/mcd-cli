@@ -2,7 +2,7 @@
 set -e
 [ -n "$1" ] || mcd --fail "mcd-gem: Please specify an exit amount"
 
-usr=$(mcd --require-from gem)
+usr=$(mcd --get-from gem)
 
 wad=$(seth --to-word $(seth --to-wei $1 eth))
 sig="exit(address, uint)"

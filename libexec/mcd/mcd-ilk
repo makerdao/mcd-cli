@@ -10,7 +10,7 @@
 ###          mcd --ilk=ETH-A ilk Art
 set -e
 
-id=$(mcd --require-ilk)
+id=$(mcd --get-ilk)
 
 vat()  { mcd --vat-ilk $id;  }
 cat()  { mcd --cat-ilk $id;  }

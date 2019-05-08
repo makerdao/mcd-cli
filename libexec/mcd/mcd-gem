@@ -22,7 +22,7 @@ $(mcd gem help)
 }
 
 if [[ -n "$1" ]] && [[ "$1" != "help"  ]]; then
-  mcd---require-ilk-opt
+  mcd --require-ilk
 fi
 
 case $1 in
@@ -41,7 +41,7 @@ case $1 in
     mcd-gem-balance $2;
   ;;
   supply)
-    ilk=$(mcd --require-ilk)
+    ilk=$(mcd --get-ilk)
     case $2 in
       mcd) { mcd gem-supply; };;
       ext) { mcd gem-supply-ext; };;

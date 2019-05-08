@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-mcd --require-ilk-opt
+mcd --require-ilk
 rate=$(mcd ilk rate)
 wad=$(bc <<< "scale=18; $1 / $rate")
 mcd frob 0 $wad

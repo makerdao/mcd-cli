@@ -2,5 +2,5 @@
 ### mcd-drip -- Trigger stability fee accumulation
 ### Usage: mcd drip --ilk=<id>
 set -e
-ilk=$(mcd --require-ilk)
+ilk=$(mcd --get-ilk)
 seth send "${MCD_JUG?}" "drip(bytes32)" "$ilk"

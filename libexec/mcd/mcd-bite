@@ -7,8 +7,8 @@ set -e
 
 export ETH_GAS=${ETH_GAS:-250000}
 
-ilk=$(mcd --require-ilk)
-urn=$(mcd --require-urn $0)
+ilk=$(mcd --get-ilk)
+urn=$(mcd --get-urn $0)
 
 p() { printf "%-3s %-50s %-10s\n" "$1" "$2" "$3"; }
 

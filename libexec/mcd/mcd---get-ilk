@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+mcd --require-ilk
+echo $(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))

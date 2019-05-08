@@ -12,7 +12,7 @@
 set -e
 
 mcd-dai-cmd() {
-  mcd --require-urn $0 &>/dev/null
+  mcd --require-urn
   exec 5< <(mcd dai $1 vat)
   exec 6< <(mcd dai $1 ext)
   echo "vat $(cat <&5) Vat Dai $1"
@@ -23,7 +23,7 @@ case $1 in
   balance) {
     case $2 in
       vat)   {
-        urn=$(mcd --require-urn $0)
+        urn=$(mcd --get-urn $0)
         sig="dai(address)(uint256)"
         mcd --to-rad $(seth call ${MCD_VAT?} $sig $urn)
       };;

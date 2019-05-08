@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 [ -n "$1" ] || mcd --fail "mcd-dai: Please specify an exit amount"
-urn=$(mcd --require-urn dai)
+urn=$(mcd --get-urn dai)
 usr=$(mcd --to-address ${2:-$urn})
 
 hope() {

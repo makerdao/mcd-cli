@@ -2,4 +2,3 @@
 set -e
 urn=${MCD_URN:-$ETH_FROM}
 [[ -n "$urn" ]] || mcd --fail "$1: ETH_FROM or --urn=<address> is required"
-echo $(seth --to-address $urn)

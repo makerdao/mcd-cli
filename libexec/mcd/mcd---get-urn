@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+fail=$1
+mcd --require-urn $fail
+export MCD_URN=${MCD_URN:-$ETH_FROM}
+seth --to-address $MCD_URN
