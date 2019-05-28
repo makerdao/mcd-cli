@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+### mcd-cdp -- Flip auction management
+### Usage: mcd flips [<id>] [<command>]
+###
+### Commands: ls                List recent flip auctions
+###           beg               Minimum bid increase
+###           ttl               Max bid lifetime
+###           end               Max auction duration
+###           count             Total auction count
+###           <id>              View auction status
+###           <id> tick         Extend an auction with no bids
+###           <id> tend <bid>   Submit a tend-phase bid
+###           <id> dent <bid>   Submit a dent-phase bid
+###           <id> deal         Settle
+set -e
+shopt -s extglob
+
+FLIPPER=$(mcd ilk flip)
+
+case $1 in
+  ls) {
+    sig="Kick(uint256,uint256,uint256,uint256,address,address)"
+    sig=$(seth keccak "$(seth --from-ascii $sig)")
+    seth logs $FLIPPER $sig |
+      while read -r log; do
+        tx=$(jshon -e transactionHash -u <<<"$log")
+        idx=$(seth --to-dec $(jshon -e logIndex -u <<<"$log"))
+        block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$log"))
+        topics=($(jshon -e topics -a -u <<<"$log"))
+        data=$(jshon -e data -u <<<"$log")
+
+        echo "id $(seth --to-dec ${data:2:64})"
+        echo "urn 0x${topics[1]:26:64}"
+        echo "lot $(mcd --to-wad ${data:66:64})"
+        echo "tab $(mcd --to-rad ${data:218:64})"
+        echo "tx: $tx:$idx";
+        echo "block: $block";
+        echo
+      done
+  };;
+  beg) {
+    mcd --to-ray $(seth call $FLIPPER 'beg()(uint)')
+  };;
+  ttl) {
+    seth --to-dec $(seth call $FLIPPER 'ttl()(uint48)')
+  };;
+  tau) {
+    seth --to-dec $(seth call $FLIPPER 'tau()(uint48)')
+  };;
+  count) {
+    seth --to-dec $(seth call $FLIPPER 'kicks()(uint48)')
+  };;
+  +([[:digit:]]) ) {
+    mcd-bids $FLIPPER "${@}"
+  };;
+  *) {
+    mcd help flips
+  };;
+esac

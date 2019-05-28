@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+dst=$(seth --to-address $1)
+
+hope() {
+  seth send "$MCD_VAT" "hope(address)" $dst
+}
+
+sig="can(address,address)"
+can=$(seth call "${MCD_VAT?}" "$sig" $ETH_FROM $dst)
+if [[ $(seth --to-dec $can) -ne 1 ]]; then
+  echo "Vat: move approval required: to: $dst"
+  read -r -p "Grant approval to move Dai [Y/n]: " response
+  case $response in
+    [yY]) { hope; };;
+    *)    { exit 1; };;
+  esac
+fi

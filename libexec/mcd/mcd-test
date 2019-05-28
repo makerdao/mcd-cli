@@ -53,33 +53,33 @@ updatePrice() {
 # Tests
 #====================================================================
 
-# testEthFrob() {
-#   export MCD_ILK=ETH-A
-#   mcd wrap 10
-#   testInc "gem join" "10"    "gem balance vat" # Gem join
-#   testInc "frob"     "1 4"   "gem balance ink" # Lock & draw
-#   testDec "dai exit" "4"     "dai balance vat" # Dai exit
-#   testInc "dai join" "4"     "dai balance vat" # Dai join
-#   testDec "frob"     "-1 -4" "gem balance ink" # Wipe & free
-#   testDec "gem exit" "10"    "gem balance vat" # Gem exit
-#   mcd unwrap 10
-# }
-# testEthFrob
+testEthFrob() {
+  export MCD_ILK=ETH-A
+  mcd wrap 10
+  testInc "gem join" "10"    "gem balance vat" # Gem join
+  testInc "frob"     "1 4"   "gem balance ink" # Lock & draw
+  testDec "dai exit" "4"     "dai balance vat" # Dai exit
+  testInc "dai join" "4"     "dai balance vat" # Dai join
+  testDec "frob"     "-1 -4" "gem balance ink" # Wipe & free
+  testDec "gem exit" "10"    "gem balance vat" # Gem exit
+  mcd unwrap 10
+}
+testEthFrob
 
-# testBite() {
-#   export MCD_ILK=COL1-A
-#   dink=10
-#   spot=$(mcd ilk spot); mat=$(mcd ilk mat)
-#   dart=$(echo "($dink * $spot) - 1" | bc -l)
-#   mcd gem join $dink
-#   mcd frob $dink $dart
-#   ink=$(mcd gem balance ink)
-#   updatePrice $(echo "($spot * $mat) * 0.9" | bc -l) # unsafe
-#   mcd --urn=$ETH_FROM bite
-#   updatePrice $(echo "($spot * $mat) * 1" | bc -l) # safe
-#   assertBalanceChanged $ink 0 $ink
-# }
-# testBite
+testBite() {
+  export MCD_ILK=COL1-A
+  dink=10
+  spot=$(mcd ilk spot); mat=$(mcd ilk mat)
+  dart=$(echo "($dink * $spot) - 1" | bc -l)
+  mcd gem join $dink
+  mcd frob $dink $dart
+  ink=$(mcd gem balance ink)
+  updatePrice $(echo "($spot * $mat) * 0.9" | bc -l) # unsafe
+  mcd --urn=$ETH_FROM bite
+  updatePrice $(echo "($spot * $mat) * 1" | bc -l) # safe
+  assertBalanceChanged $ink 0 $ink
+}
+testBite
 
 testCdpOpen() {
   cdp=$(mcd cdp open)

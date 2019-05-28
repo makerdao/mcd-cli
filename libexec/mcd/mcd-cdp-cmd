@@ -7,7 +7,7 @@ ilk=$(seth call ${CDP_MANAGER?} 'ilks(uint)(bytes32)' $hex)
 act=$1; shift;
 
 export MCD_ILK=$(mcd --to-ascii $ilk)
-export ETH_GAS=${ETH_GAS:-260000}
+export ETH_GAS=${ETH_GAS:-270000}
 
 require-wad() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
