@@ -2,16 +2,16 @@
 ### mcd-cdp -- Flip auction management
 ### Usage: mcd flips [<id>] [<command>]
 ###
-### Commands: ls                List recent flip auctions
-###           beg               Minimum bid increase
-###           ttl               Max bid lifetime
-###           end               Max auction duration
-###           count             Total auction count
-###           <id>              View auction status
-###           <id> tick         Extend an auction with no bids
-###           <id> tend <bid>   Submit a tend-phase bid
-###           <id> dent <bid>   Submit a dent-phase bid
-###           <id> deal         Settle
+### Commands: ls                    List recent flip auctions
+###           beg                   Minimum bid increase
+###           ttl                   Max bid lifetime
+###           end                   Max auction duration
+###           count                 Total auction count
+###           <id>                  View auction status
+###           <id> tick             Extend an auction with no bids
+###           <id> tend <lot> <bid> Submit a tend-phase bid
+###           <id> dent <lot> <bid> Submit a dent-phase bid
+###           <id> deal             Settle
 set -e
 shopt -s extglob
 
@@ -51,7 +51,7 @@ case $1 in
     seth --to-dec $(seth call $FLIPPER 'kicks()(uint48)')
   };;
   +([[:digit:]]) ) {
-    mcd-bids $FLIPPER "${@}"
+    mcd-flips-cmd $FLIPPER "${@}"
   };;
   *) {
     mcd help flips
