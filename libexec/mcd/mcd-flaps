@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+### mcd-cdp -- Flap auction management
+### Usage: mcd flaps [<id>] [<command>]
+###
+### Commands: ls                    List recent flap auctions
+###           beg                   Minimum bid increase
+###           ttl                   Max bid lifetime
+###           end                   Max auction duration
+###           count                 Total auction count
+###           <id>                  View auction status
+###           <id> tend <lot> <bid> Submit a tend-phase bid
+###           <id> deal             Settle
+set -e
+shopt -s extglob
+
+case $1 in
+  ls) {
+    sig="Kick(uint256,uint256,uint256,address)"
+    sig=$(seth keccak "$(seth --from-ascii $sig)")
+    seth logs ${MCD_FLAP?} $sig |
+      while read -r log; do
+        tx=$(jshon -e transactionHash -u <<<"$log")
+        block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$log"))
+        topics=($(jshon -e topics -a -u <<<"$log"))
+        data=$(jshon -e data -u <<<"$log")
+
+        echo "id $(seth --to-dec ${data:2:64})"
+        echo "lot $(mcd --to-wad ${data:66:64})"
+        echo "bid $(mcd --to-rad ${data:130:64})"
+        echo "gal 0x${topics[1]:26:64}"
+        echo "tx: $tx";
+        echo "block: $block";
+        echo
+      done
+  };;
+  beg) {
+    mcd --to-ray $(seth call ${MCD_FLAP?} 'beg()(uint)')
+  };;
+  ttl) {
+    seth --to-dec $(seth call ${MCD_FLAP?} 'ttl()(uint48)')
+  };;
+  tau) {
+    seth --to-dec $(seth call ${MCD_FLAP?} 'tau()(uint48)')
+  };;
+  count) {
+    seth --to-dec $(seth call ${MCD_FLAP?} 'kicks()(uint48)')
+  };;
+  +([[:digit:]]) ) {
+    mcd-flaps-cmd "${@}"
+  };;
+  *) {
+    mcd help flaps
+  };;
+esac
