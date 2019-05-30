@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+### mcd-heal -- Process joy & woe
+### Usage: mcd heal <amount>
+set -e
+[ $# = 1 ] || mcd --fail "$0: A debt amount is required"
+
+exec 3< <(mcd vow Joy)
+exec 4< <(mcd vow Woe)
+
+joy=$(cat <&3)
+woe=$(cat <&4)
+
+if (( $(echo "$1 > $joy" | bc -l) )); then
+  echo "Fail: Insufficient Joy ($joy)"
+  exit 1
+fi
+
+if (( $(echo "$1 > $woe" | bc -l) )); then
+  echo "Fail: Insufficient Woe ($woe)"
+  exit 1
+fi
+
+rad=$(seth --to-uint256 $(bc <<<"$1 * 10 ^ 45 / 1"))
+seth send "${MCD_VOW}" "heal(uint)" $rad

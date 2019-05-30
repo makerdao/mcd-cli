@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-cdp -- Flap auction management
+### mcd-flaps -- Flap auction management
 ### Usage: mcd flaps [<id>] [<command>]
 ###
 ### Commands: ls                    List recent flap auctions
@@ -8,7 +8,7 @@
 ###           end                   Max auction duration
 ###           count                 Total auction count
 ###           <id>                  View auction status
-###           <id> tend <lot> <bid> Submit a tend-phase bid
+###           <id> tend <lot> <bid> Submit a bid (increasing bid amount)
 ###           <id> deal             Settle
 set -e
 shopt -s extglob

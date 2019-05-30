@@ -4,7 +4,7 @@ if [[ $MCD_CHAIN == "mainnet" ]]; then
   exit 1
 fi
 
-export SETH_ASYNC=yes
+# export SETH_ASYNC=yes
 export ETH_GAS=700000
 
 
@@ -42,16 +42,16 @@ testInc() { testChange "${@}" "+"; }
 
 testDec() { testChange "${@}"; }
 
+#====================================================================
+# Tests
+#====================================================================
+
 updatePrice() {
   lad=$(eval echo "\${VAL_$MCD_ILK?}")
   amt=$(seth --to-uint256 $(seth --to-wei "$1" ETH))
   seth send "$lad" "poke(bytes32)" "$amt"
   mcd poke
 }
-
-#====================================================================
-# Tests
-#====================================================================
 
 testEthFrob() {
   export MCD_ILK=ETH-A
@@ -92,9 +92,16 @@ testCdpOpen() {
 testCdp() {
   export MCD_ILK=COL1-A
   id=$(testCdpOpen)
-  testDec "cdp $id lock" "10"    "gem balance ext"
-  testInc "cdp $id draw" "10"    "dai balance ext"
-  testDec "cdp $id wipe" "10"    "dai balance ext"
-  testInc "cdp $id free" "10"    "gem balance ext"
+  testDec "cdp $id lock" "10" "gem balance ext"
+  testInc "cdp $id draw" "10" "dai balance ext"
+  testDec "cdp $id wipe" "10" "dai balance ext"
+  testInc "cdp $id free" "10" "gem balance ext"
 }
 testCdp
+
+# testFlap() {
+#   amt=1000
+#   rad=$(seth --to-uint256 $(bc <<<"$amt * 10 ^ 45 / 1"))
+#   seth send $MCD_VAT 'move(address, address, uint)' $ETH_FROM $MCD_VOW $rad
+# }
+# testFlap

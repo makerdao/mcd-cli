@@ -4,9 +4,11 @@ set -e
 hexdata=$(seth --to-hexdata "$1")
 hexnum=${hexdata#0x}
 hexnum=$(tr a-f A-F <<<"$hexnum")
+top=$(bc <<< "obase=16; (2^256)")
 
-if [[ $hexnum =~ ^F+ ]]; then
-  top=$(bc <<< "obase=16; (2^256)")
+if [[ $(( 0x$hexnum )) -eq -1 ]]; then
+  num=$top
+elif [[ $hexnum =~ ^F+ ]]; then
   num=-$(bc <<< "scale=16; ibase=16; $top - $hexnum")
 else
   num=$(bc <<<"ibase=16; $hexnum")

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+### mcd-kiss -- Process on-auction debt
+### Usage: mcd kiss <amount>
+set -e
+[ $# = 1 ] || mcd --fail "$0: A debt amount is required"
+
+exec 3< <(mcd vow Ash)
+exec 4< <(mcd vow Joy)
+
+ash=$(cat <&3)
+joy=$(cat <&4)
+
+if (( $(echo "$1 > $ash" | bc -l) )); then
+  echo "Fail: Insufficient Ash ($ash)"
+  exit 1
+fi
+
+if (( $(echo "$1 > $joy" | bc -l) )); then
+  echo "Fail: Insufficient Joy ($joy)"
+  exit 1
+fi
+
+rad=$(seth --to-uint256 $(bc <<<"$1 * 10 ^ 45 / 1"))
+seth send "${MCD_VOW}" "kiss(uint)" $rad

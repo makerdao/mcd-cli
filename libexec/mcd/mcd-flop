@@ -16,6 +16,7 @@ sump=$(cat <&5)
 
 if (( $(echo "$joy > 0" | bc -l) )); then
   echo "Fail: Joy ($joy) is not zero"
+  echo "Hint: mcd heal $joy"
   exit 1
 fi
 

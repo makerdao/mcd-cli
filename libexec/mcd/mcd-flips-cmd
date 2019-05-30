@@ -13,25 +13,25 @@ case $1 in
   tend) {
     [ $# = 3 ] || mcd --fail "mcd-flips: Incorrect arguments"
     mcd --vat-hope $FLIPPER
-    lot=$(seth --to-uint256 $(seth --to-wei $2 eth))
-    bid=$(seth --to-uint256 $(seth --to-wei $3 eth))
-    (set -x; seth send $FLIPPER 'tend(uint id, uint lot, uint bid)' $ID $lot $bid)
+    lot=$(seth --to-uint256 $(seth --to-wei $2 eth))     # [wad]
+    bid=$(seth --to-uint256 $(bc <<<"$3 * 10 ^ 45 / 1")) # [rad]
+    seth send $FLIPPER 'tend(uint id, uint lot, uint bid)' $ID $lot $bid
     [[ $SETH_ASYNC != yes ]] && mcd flips $(seth --to-dec $ID)
   };;
   dent) {
     [ $# = 3 ] || mcd --fail "mcd-flips: Incorrect arguments"
     mcd --vat-hope $FLIPPER
-    lot=$(seth --to-uint256 $(seth --to-wei $2 eth))
-    bid=$(seth --to-uint256 $(seth --to-wei $3 eth))
-    (set -x; seth send $FLIPPER 'dent(uint id, uint lot, uint bid)' $ID $lot $bid)
+    lot=$(seth --to-uint256 $(seth --to-wei $2 eth))     # [wad]
+    bid=$(seth --to-uint256 $(bc <<<"$3 * 10 ^ 45 / 1")) # [rad]
+    seth send $FLIPPER 'dent(uint id, uint lot, uint bid)' $ID $lot $bid
     [[ $SETH_ASYNC != yes ]] && mcd flips $(seth --to-dec $ID)
   };;
   deal) {
-    (set -x; seth send $FLIPPER 'deal(uint256)' $ID)
+    seth send $FLIPPER 'deal(uint256)' $ID
   };;
   *) {
     bid=$(seth call $FLIPPER 'bids(uint)' $ID)
-    p "bid" $(mcd --to-wad ${bid:2:64})    "Last bid amount"
+    p "bid" $(mcd --to-rad ${bid:2:64})    "Last bid amount"
     p "lot" $(mcd --to-wad ${bid:66:64})   "Lot amount"
     p "guy" 0x${bid:154:40}                "Highest bidder"
     p "tic" $(seth --to-dec ${bid:194:64}) "Bid expiry"

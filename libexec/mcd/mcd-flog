@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### mcd-flog -- Release queued bad-debt for auction
+### mcd-flog -- Release queued debt for auction
 ### Usage: mcd flog <timestamp>
 ###
 ### Specify a sin-queue timestamp to release debt for auction.
@@ -7,13 +7,14 @@
 ###
 ### See also mcd-vow
 set -e
-
 [ $# = 1 ] || mcd --fail "$0: A timestamp is required"
 
-# TODO
-# timestamp parsing
-# list all items in the debt queue
+era=$(seth --to-uint256 $1)
+tab=$(seth call ${MCD_VOW?} 'sin(uint48)(uint256)' $era)
 
-era="$1"
+if [[ $(seth --to-dec $tab) -eq 0 ]];then
+  echo "Fail: No debt queued at timestamp: $1"
+  exit 1
+fi
 
-(set -x; seth send "${MCD_VOW}" "flog(uint48)" $era)
+seth send "${MCD_VOW}" "flog(uint48)" $era
