@@ -4,7 +4,7 @@ if [[ $MCD_CHAIN == "mainnet" ]]; then
   exit 1
 fi
 
-# export SETH_ASYNC=yes
+export SETH_ASYNC=yes
 export ETH_GAS=700000
 
 
