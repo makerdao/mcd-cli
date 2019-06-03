@@ -1,23 +1,29 @@
 #!/usr/bin/env bash
 set -e
-
 gem=$(mcd gem address)
-dst=$1
+dst=$(seth --to-address $1)
 amt=$2
 
 approve() {
   max="0x$(printf "f"'%.0s' {1..64})"
-  seth send "$gem" "approve(address,uint)" $dst $max
+  (set -x; seth send "$gem" "approve(address,uint)" $dst $max)
+}
+
+prompt() {
+  sym=$(mcd gem symbol)
+  echo "$sym: Insufficient allowance."
+  echo "src: $ETH_FROM (ETH_FROM)"
+  echo "dst: $dst"
+  read -r -p "Grant approval to move $sym [Y/n]: " response
+  case $response in
+    [yY]) { approve; };;
+    *)    { exit 1; };;
+  esac
 }
 
 sig="allowance(address,address)(uint)"
 wad=$(seth call "$gem" "$sig" $ETH_FROM $dst)
 wad=$(mcd --to-wad $(seth --to-dec $wad))
 if (( $(echo "$amt > $wad" | bc -l) )); then
-  echo "Insufficient allowance: ETH_FROM: $ETH_FROM"
-  read -r -p "Grant approval to move $(mcd gem symbol) to $dst? [Y/n]: " response
-  case $response in
-    [yY]) { approve; };;
-    *)    { exit 1; };;
-  esac
+  [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi

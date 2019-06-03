@@ -1,20 +1,25 @@
 #!/usr/bin/env bash
 set -e
-
 dst=$1
 max="0x$(printf "f"'%.0s' {1..64})"
 
 approve() {
-  seth send "$MCD_DAI" "approve(address,uint)" $dst $max
+  (set -x; seth send "$MCD_DAI" "approve(address,uint)" $dst $max)
+}
+
+prompt() {
+  echo "ERC20 Dai: Insufficient allowance."
+  echo "src: $ETH_FROM (ETH_FROM)"
+  echo "dst: $dst"
+  read -r -p "Grant approval to transfer Dai? [Y/n]: " response
+  case $response in
+    [yY]) { approve; };;
+    *)    { exit 1; };;
+  esac
 }
 
 sig="allowance(address,address)"
 wad=$(seth call "${MCD_DAI?}" "$sig" $ETH_FROM $dst)
 if [[ $wad != $max ]]; then
-  echo "ERC20 Dai: insufficient allowance: ETH_FROM: $ETH_FROM"
-  read -r -p "Grant approval to transfer Dai to the $dst? [Y/n]: " response
-  case $response in
-    [yY]) { approve; };;
-    *)    { exit 1; };;
-  esac
+  [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi

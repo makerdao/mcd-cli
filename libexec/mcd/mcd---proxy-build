@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 set -e
-echo >&2 "No proxy registered for ETH_FROM: $ETH_FROM"
-read -r -p "Create a proxy? [Y/n]: " response
 
 build() {
   export ETH_GAS=${ETH_GAS:-1200000}
@@ -18,7 +16,13 @@ build() {
     done
 }
 
-case $response in
-  [yY]) { build;  };;
-     *) { exit 1; };;
-esac
+prompt() {
+  echo >&2 "No proxy registered for ETH_FROM: $ETH_FROM"
+  read -r -p "Create a proxy? [Y/n]: " response
+  case $response in
+    [yY]) { build;  };;
+    *) { exit 1; };;
+  esac
+}
+
+[[ $SETH_ASYNC != yes ]] && prompt || build
