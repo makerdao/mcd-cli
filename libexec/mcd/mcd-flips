@@ -19,6 +19,7 @@ FLIPPER=$(mcd ilk flip)
 
 case $1 in
   ls) {
+    export ETH_BLOCK=${ETH_BLOCK:-$(mcd --from-block)}
     sig="Kick(uint256,uint256,uint256,uint256,address,address)"
     sig=$(seth keccak "$(seth --from-ascii $sig)")
     seth logs $FLIPPER $sig |

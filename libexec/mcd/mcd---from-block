@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+offset=1000
+latest=$(seth block latest number)
+(( $latest > $offset )) && earliest=$(( $latest - $offset ))
+echo $(seth --to-hex ${earliest:-1})
