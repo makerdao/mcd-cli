@@ -39,9 +39,9 @@ case $1 in
   sump) mcd --to-rad $(seth call "${MCD_VOW}" 'sump()(uint256)'); ;;
   bump) mcd --to-rad $(seth call "${MCD_VOW}" 'bump()(uint256)'); ;;
   hump) mcd --to-rad $(seth call "${MCD_VOW}" 'hump()(uint256)'); ;;
-  Awe)  mcd --to-rad $(seth call "${MCD_VOW}" 'Awe()(uint256)' ); ;;
-  Joy)  mcd --to-rad $(seth call "${MCD_VOW}" 'Joy()(uint256)' ); ;;
-  Woe)  mcd --to-rad $(seth call "${MCD_VOW}" 'Woe()(uint256)' ); ;;
+  Awe)  mcd --to-rad $(seth call "${MCD_VAT}" 'sin(address)' $MCD_VOW ); ;;
+  Joy)  mcd --to-rad $(seth call "${MCD_VAT}" 'dai(address)' $MCD_VOW ); ;;
+  Woe)  printf '%.45f\n' $(bc <<< "$(mcd vow Awe) - $(mcd vow Sin) - $(mcd vow Ash)") ;;
   sin)  mcd vow-sin $2;                                           ;;
   "")   mcd-vow;                                                  ;;
   *)    mcd help vow;
