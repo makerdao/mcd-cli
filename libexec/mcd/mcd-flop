@@ -22,6 +22,7 @@ fi
 
 if (( $(echo "$woe < $sump" | bc -l) )); then
   echo "Fail: Insufficient Woe ($woe)"
+  echo "Hint: mcd flog <timestamp>"
   exit 1
 fi
 
