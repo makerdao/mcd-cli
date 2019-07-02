@@ -1,10 +1,10 @@
-ILK    | GEM  | DESC
-       |      |
-ETH-A  | WETH | Ethereum
-ETH-B  | WETH | Ethereum
-ETH-C  | WETH | Ethereum
-COL1-A | COL1 | Token 1
-COL2-A | COL2 | Token 2
-COL3-A | COL3 | Token 3
-COL4-A | COL4 | Token 4
-COL5-A | COL5 | Token 5
+ILK   | GEM  | DESC
+      |      |
+ETH-A | WETH | Ethereum
+ETH-B | WETH | Ethereum
+ETH-C | WETH | Ethereum
+REP-A | REP  | Augur
+ZRX-A | ZRX  | 0x
+OMG-A | OMG  | OmiseGO
+BAT-A | BAT  | Basic Attention Token
+DGD-A | DGD  | Digix

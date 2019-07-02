@@ -110,7 +110,7 @@ ILK      GEM    DESC
 
 ETH-A    WETH   Ethereum
 ETH-B    WETH   Ethereum
-COL1-A   COL1   Token 1
+REP-A    REP    Augur
 ```
 
 Each Ilk has its own set of configuration parameters which can be viewed via the `ilk` command. The `I, --ilk=<id>` option is used to scope commands to a particular Ilk:
@@ -288,38 +288,38 @@ vat 0.000060682318362511884962000000000000000000000 Vat balance
 ext 500.000000000000000000 ERC20 balance
 ```
 
-### 2. Managed Cdp - lock 100 COL1 & draw 50 Dai
+### 2. Managed Cdp - lock 100 REP & draw 50 Dai
 
 ```sh
 # i) Open
-$ mcd --ilk=COL1-A cdp open
+$ mcd --ilk=REP-A cdp open
 mcd-cdp-open: Waiting for transaction receipt...
 0x800e5578d3ac4b77b7ada1aba48cf80d0d238d4392d2676d79159eac2c2cdd73
 Opened: cdp 19
 
 # ii) Lock
-$ mcd --ilk=COL1-A cdp 19 lock 100
+$ mcd --ilk=REP-A cdp 19 lock 100
 seth-send: Published transaction with 260 bytes of calldata.
 seth-send: 0x4d30cb4863ca997d24ff2346c9a92e86648369ce7b4a86ed004c73b8d4ef299a
 seth-send: Waiting for transaction receipt...
 seth-send: Transaction included in block 333.
-ilk  COL1-A                                     Collateral type
+ilk  REP-A                                      Collateral type
 urn  0x4518c4709a50C915b7996A0e6Dfb38c67248BBcF Urn handler
-ink  100.000000000000000000                     Locked collateral (COL1)
+ink  100.000000000000000000                     Locked collateral (REP)
 art  0.000000000000000000                       Issued debt (Dai)
 tab  0                                          Outstanding debt (Dai)
 rap  0                                          Accumulated stability fee (Dai)
 -->  0                                          Collateralization ratio
 
 # iii) Draw
-$ mcd --ilk=COL1-A cdp 19 draw 500
+$ mcd --ilk=REP-A cdp 19 draw 500
 seth-send: Published transaction with 260 bytes of calldata.
 seth-send: 0xd5fb7ddf94bb910fbba2af118ecde88a03a13129b2e1979238236afe672781c3
 seth-send: Waiting for transaction receipt...
 seth-send: Transaction included in block 335.
-ilk  COL1-A                                     Collateral type
+ilk  REP-A                                      Collateral type
 urn  0x4518c4709a50C915b7996A0e6Dfb38c67248BBcF Urn handler
-ink  100.000000000000000000                     Locked collateral (COL1)
+ink  100.000000000000000000                     Locked collateral (REP)
 art  49.999505439113270178                      Issued debt (Dai)
 tab  50.000000000000000000000000000             Outstanding debt (Dai)
 rap  0.000494560886729822000020743              Accumulated stability fee (Dai)
