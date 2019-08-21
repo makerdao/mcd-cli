@@ -2,42 +2,45 @@
 ### mcd-cdp -- CDP managerment
 ### Usage: mcd cdp [<id>] [<command>]
 ###
-### Commands: ls [<owner>]        List Cdps
-###           count [<owner>]     Cdp count
-###           open                Open a new Cdp
-###           <id> urn            Cdp state
-###           <id> lock <wad>     Join & lock collateral
-###           <id> free <wad>     Free & exit collateral
-###           <id> draw <wad>     Draw & exit dai
-###           <id> wipe <wad>     Join & wipe dai
-###           <id> give <address> Give a Cdp to another owner
-###           <id> quit <address> Convert a Cdp to native Urn
+### Commands: ls [<owner>]              List Cdps
+###           count [<owner>]           Cdp count
+###           open                      Open a new Cdp
+###           <id> urn                  Cdp state
+###           <id> lock <wad>           Join & lock standard gem collateral
+###           <id> safe-lock <wad>      Join & safely lock standard gem collateral (checks it is your CDP)
+###           <id> free <wad>           Free & exit standard gem collateral
+###           <id> draw <wad>           Draw & exit dai
+###           <id> wipe <wad>           Join & wipe dai
+###           <id> safe-wipe <wad>      Join & wipe dai
+###           <id> give <address>       Give a Cdp to another owner
+###           <id> quit <address>       Convert a Cdp to native Urn
 set -e
 shopt -s extglob
 
-export MCD_PROXY=$(mcd --proxy-address)
+MCD_PROXY=$(mcd --proxy-address)
+export MCD_PROXY
 
 case $1 in
   ls) {
     sig="getCdpsDesc(address,address)"
-    data=$(seth call ${GET_CDPS?} $sig ${CDP_MANAGER?} $MCD_PROXY)
+    data=$(seth call "${GET_CDPS?}" "$sig" "${CDP_MANAGER?}" "$MCD_PROXY")
     data=${data:194:${#data}}
     size=$(( ${#data} / 3))
     cdps=${data::$size};
-    urns=${data:$size:$(( $size * 2 ))};
+    urns=${data:$size:$(( "$size" * 2 ))};
     ilks=${data:(-$size)}
-    for i in `seq 64 64 $(( ${#cdps} - 64 ))`; do
+    for i in $(seq 64 64 $(( ${#cdps} - 64 ))); do
       id=$(( 16#${cdps:$i:64} ))
       echo "cdp $id"
-      echo "urn 0x${urns:$(( $i+24)):40}"
-      echo "ilk $(mcd --to-ascii ${ilks:$i:64})"
+      echo "urn 0x${urns:$(( "$i"+24)):40}"
+      echo "ilk $(mcd --to-ascii "${ilks:$i:64}")"
       echo
     done
   };;
   count) {
     sig="count(address)"
-    hex=$(seth call ${CDP_MANAGER?} $sig ${2:-MCD_PROXY})
-    seth --to-dec $hex
+    hex=$(seth call "${CDP_MANAGER?}" $sig "${2:-MCD_PROXY}")
+    seth --to-dec "$hex"
   };;
   open) {
     mcd cdp-open "${@:2}";
