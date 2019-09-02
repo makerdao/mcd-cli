@@ -2,18 +2,21 @@
 ### mcd-cdp -- CDP managerment
 ### Usage: mcd cdp [<id>] [<command>]
 ###
-### Commands: ls [<owner>]              List Cdps
-###           count [<owner>]           Cdp count
-###           open                      Open a new Cdp
-###           <id> urn                  Cdp state
-###           <id> lock <wad>           Join & lock standard gem collateral
-###           <id> safe-lock <wad>      Join & safely lock standard gem collateral (checks it is your CDP)
-###           <id> free <wad>           Free & exit standard gem collateral
-###           <id> draw <wad>           Draw & exit dai
-###           <id> wipe <wad>           Join & wipe dai
-###           <id> safe-wipe <wad>      Join & wipe dai
-###           <id> give <address>       Give a Cdp to another owner
-###           <id> quit <address>       Convert a Cdp to native Urn
+### Commands: ls [<owner>]                    List Cdps
+###           count [<owner>]                 Cdp count
+###           open                            Open a new Cdp
+###           <id> urn                        Cdp state
+###           <id> lock <wad>                 Join & lock standard gem collateral
+###           <id> safe-lock <wad>            Join & safely lock standard gem collateral (checks it is your CDP)
+###           <id> free <wad>                 Free & exit standard gem collateral
+###           <id> draw <wad>                 Draw & exit dai
+###           <id> wipe <wad>                 Join & wipe dai
+###           <id> safe-wipe <wad>            Join & wipe dai (checks it is your CDP)
+###           <id> wipe-all                   Join & wipe dai to leave debt=0
+###           <id> safe-wipe-all              Join & wipe dai to leave debt=0 (checks it is your CDP)
+###           <id> give <address>             Give a Cdp to another owner
+###           <id> give-to-proxy <address>    Give a Cdp to the proxy of another owner (it will create the proxy if doesn't exist)
+###           <id> quit <address>             Convert a Cdp to native Urn
 set -e
 shopt -s extglob
 

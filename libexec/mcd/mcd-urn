@@ -9,12 +9,12 @@
 ### With `<arg>` get a specified Urn parameter
 set -e
 
-URN=$(mcd --get-urn $0)
+URN=$(mcd --get-urn "$0")
 ILK=$(mcd --get-ilk)
 
-vat() { mcd --vat-urn $ILK $URN; }
+vat() { mcd --vat-urn "$ILK" "$URN"; }
 
-p() { printf "%-4s %-42s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-4s %-48s %-10s\n" "$1" "$2" "$3"; }
 
 calc() {
   exec 3< <(mcd ilk spot)
@@ -22,32 +22,34 @@ calc() {
   spot=$(cat <&3);
   rate=$(cat <&4);
   rat=0; rap=0; tab=0
-  if [ ${art:0:1} -gt 0 ]; then
-    tab=$(printf '%.27f\n' $(bc <<< "$art*$rate"))
-    rap=$(printf '%.27f\n' $(bc <<< "$tab - $art"))
+  if [ "${art:0:1}" -gt 0 ]; then
+    tab=$(printf '%.27f\n' "$(bc <<< "$art*$rate")")
+    rap=$(printf '%.27f\n' "$(bc <<< "$tab - $art")")
     rat=$(bc <<< "scale=2; (($ink*$spot)/$tab)")
   fi
 }
 
 mcd-urn() {
-  p "ilk"  $MCD_ILK "Collateral type"
-  p "urn"  $URN "Urn handler"
+  p "ilk"  "$MCD_ILK" "Collateral type"
+  p "urn"  "$URN" "Urn handler"
   ink=$(mcd urn ink)
   art=$(mcd urn art)
-  p "ink"  $ink "Locked collateral ($(mcd gem symbol))"
-  p "art"  $art "Issued debt (Dai)"
+  dai=$(mcd dai balance vat --urn="$URN")
+  p "ink"  "$ink" "Locked collateral ($(mcd gem symbol))"
+  p "art"  "$art" "Issued debt (Dai)"
+  p "dai"  "$dai" "Free Dai (in Vat)"
   calc
-  p "tab"  $tab      "Outstanding debt (Dai)"
-  p "rap"  $rap      "Accumulated stability fee (Dai)"
-  p "-->"  $rat      "Collateralization ratio"
+  p "tab"  "$tab" "Outstanding debt (Dai)"
+  p "rap"  "$rap" "Accumulated stability fee (Dai)"
+  p "-->"  "$rat" "Collateralization ratio"
   echo
-  p "spot" $spot "$(mcd gem symbol) price with safety mat (USD)"
-  p "rate" $rate "$(mcd gem symbol) DAI exchange rate"
+  p "spot" "$spot" "$(mcd gem symbol) price with safety mat (USD)"
+  p "rate" "$rate" "$(mcd gem symbol) DAI exchange rate"
 }
 
 case $1 in
-  ink)  vat | mcd --to-wad $(awk '{print $1}'); ;;
-  art)  vat | mcd --to-wad $(awk '{print $2}'); ;;
+  ink)  vat | mcd --to-wad "$(awk '{print $1}')"; ;;
+  art)  vat | mcd --to-wad "$(awk '{print $2}')"; ;;
   spot) mcd urn spot;                           ;; # alias for consistency
   rate) mcd urn rate;                           ;; # alias for consistency
   "")   mcd-urn;                                ;;

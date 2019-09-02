@@ -8,7 +8,6 @@ act=$1; shift;
 
 MCD_ILK=$(mcd --to-ascii "$ilk")
 export MCD_ILK
-export ETH_GAS=${ETH_GAS:-500000}
 
 require-wad() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
@@ -17,6 +16,7 @@ require-wad() {
 
 case $act in
   lock) {
+    export ETH_GAS=${ETH_GAS:-300000}
     require-wad "$1"
     mcd --gem-approve "$MCD_PROXY" "$1"
     sig="lockGem(address,address,uint,uint,bool)"
@@ -25,6 +25,7 @@ case $act in
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-lock) {
+    export ETH_GAS=${ETH_GAS:-300000}
     require-wad "$1"
     mcd --gem-approve "$MCD_PROXY" "$1"
     sig="safeLockGem(address,address,uint,uint,bool)"
@@ -33,6 +34,7 @@ case $act in
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   free) {
+    export ETH_GAS=${ETH_GAS:-200000}
     require-wad "$1"
     sig="freeGem(address,address,uint,uint)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$hex" "$wad"
@@ -40,6 +42,7 @@ case $act in
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   draw) {
+    export ETH_GAS=${ETH_GAS:-400000}
     require-wad "$1"
     sig="draw(address,address,address,uint,uint)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JUG" "$MCD_JOIN_DAI" "$hex" "$wad"
@@ -47,6 +50,7 @@ case $act in
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   wipe) {
+    export ETH_GAS=${ETH_GAS:-250000}
     require-wad "$1"
     export MCD_TOKEN=$MCD_DAI
     mcd --dai-approve "$MCD_PROXY"
@@ -56,6 +60,7 @@ case $act in
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-wipe) {
+    export ETH_GAS=${ETH_GAS:-250000}
     require-wad "$1"
     export MCD_TOKEN=$MCD_DAI
     mcd --dai-approve "$MCD_PROXY"
@@ -64,7 +69,26 @@ case $act in
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
+  wipe-all) {
+    export ETH_GAS=${ETH_GAS:-250000}
+    export MCD_TOKEN=$MCD_DAI
+    mcd --dai-approve "$MCD_PROXY"
+    sig="wipeAll(address,address,uint)"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex"
+
+    [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
+  };;
+  safe-wipe-all) {
+    export ETH_GAS=${ETH_GAS:-250000}
+    export MCD_TOKEN=$MCD_DAI
+    mcd --dai-approve "$MCD_PROXY"
+    sig="safeWipeAll(address,address,uint)"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex"
+
+    [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
+  };;
   give) {
+    export ETH_GAS=${ETH_GAS:-200000}
     lad=$(seth --to-address "$1")
     echo "from: $(mcd cdp "$cdp" lad) to: $lad"
     echo "Warning: only give to a proxy that you control!"
@@ -77,19 +101,40 @@ case $act in
       *) { exit 1; };;
     esac
   };;
+  give-to-proxy) {
+    export ETH_GAS=${ETH_GAS:-800000}
+    lad=$(seth --to-address "$1")
+    echo "from: $(mcd cdp "$cdp" lad) to: $lad's proxy"
+    echo "Warning: only give to a wallet that you control and can handle proxies!"
+    read -r -p "Continue? [Y/n]: " response
+    case $response in
+      [yY]) {
+        sig="giveToProxy(address,address,uint,address)"
+        mcd --proxy-exec $sig "${PROXY_REGISTRY?}" "${CDP_MANAGER?}" "$hex" "$lad"
+      };;
+      *) { exit 1; };;
+    esac
+  };;
   quit) {
+    export ETH_GAS=${ETH_GAS:-300000}
     dst=$(seth --to-address "$1")
-    urn=$(seth call "${CDP_MANAGER?}" 'urns(uint)(address)' "$hex")
-    sig="can(address,address)(uint)"
-    can=$(seth call "$MCD_VAT" "$sig" "$urn" "$dst")
-    if [[ $(seth --to-dec "$can") -eq 1 ]]; then
-      mcd --proxy-exec 'quit(uint,address)' "$hex" "$dst"
-    else
-      echo >&2 "Error: destination urn must be trusted"
+    can=$(seth call "$MCD_VAT" "can(address,address)(uint)" "$dst" "${CDP_MANAGER?}")
+    if [[ $(seth --to-dec "$can") -eq 0 ]]; then
+      echo >&2 "Error: Cdp Manager must be trusted for dst urn (in the Vat)"
+      exit 1
     fi
+    proxy=$(mcd --proxy-address)
+    if [[ "$dst" != "$proxy" ]]; then
+      canUrn=$(seth call "$CDP_MANAGER" "urnCan(address,address)(uint)" "$dst" "$proxy")
+      if [[ $(seth --to-dec "$canUrn") -eq 0 ]]; then
+        echo >&2 "Error: Sender must be trusted for dst urn (in the Cdp Manager)"
+        exit 1
+      fi
+    fi
+    mcd --proxy-exec 'quit(address,uint,address)' "${CDP_MANAGER?}" "$hex" "$dst"
   };;
   lad) {
-    sig="lads(uint)(address)"
+    sig="owns(uint)(address)"
     echo "0x$(seth call "${CDP_MANAGER?}" "$sig" "$hex")"
   };;
   owner) {

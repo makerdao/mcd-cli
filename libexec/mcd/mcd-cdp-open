@@ -3,11 +3,11 @@ set -e
 ilk=$(mcd --get-ilk)
 
 export SETH_ASYNC=yes
-export ETH_GAS=${ETH_GAS:-250000}
+export ETH_GAS=${ETH_GAS:-300000}
 
 usr=$(mcd --proxy-address)
 sig="open(address,bytes32)"
-tx=$(mcd --proxy-exec $sig ${CDP_MANAGER?} $ilk)
+tx=$(mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$ilk")
 
 echo >&2 -n "${0##*/}: Waiting for transaction receipt..."
 block=$(SETH_ASYNC=no SETH_TICK=true seth receipt "$tx" blockNumber)
@@ -22,7 +22,7 @@ logs=$(seth rpc eth_getLogs -- \
     -s "$block"          -i toBlock \
     -n [] \
     -s "$sig"  -i append \
-    -s "0x$(seth --to-word $usr)" -i append \
+    -s "0x$(seth --to-word "$usr")" -i append \
     -i topics \
     -i append | echo "[$(paste -sd , -)]")
 hex=$(echo "$logs" | jshon -a -e data -u)
@@ -30,7 +30,7 @@ hash=$(echo "$logs" | jshon -a -e transactionHash -u)
 
 if [ "$hash" == "$tx" ]; then
   echo "$tx"
-  echo "Opened: cdp $(seth --to-dec $hex)"
+  echo "Opened: cdp $(seth --to-dec "$hex")"
 else
   echo >&2 "${0##*/}: Transaction failed."
   seth >&2 receipt "$tx"
