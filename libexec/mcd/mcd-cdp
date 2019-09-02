@@ -27,12 +27,12 @@ case $1 in
     data=${data:194:${#data}}
     size=$(( ${#data} / 3))
     cdps=${data::$size};
-    urns=${data:$size:$(( "$size" * 2 ))};
+    urns=${data:$size:$(( size * 2 ))};
     ilks=${data:(-$size)}
     for i in $(seq 64 64 $(( ${#cdps} - 64 ))); do
       id=$(( 16#${cdps:$i:64} ))
       echo "cdp $id"
-      echo "urn 0x${urns:$(( "$i"+24)):40}"
+      echo "urn 0x${urns:$(( i + 24 )):40}"
       echo "ilk $(mcd --to-ascii "${ilks:$i:64}")"
       echo
     done
