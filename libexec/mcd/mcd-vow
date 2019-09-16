@@ -9,40 +9,43 @@
 ###          mcd vow Sin
 set -e
 
-p() { printf "%-4s %-20s %-10s\n" "$1" "$2" "$3"; }
+p() { printf "%-4s %-48s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-vow() {
   exec 3< <(mcd vow Sin)
   exec 4< <(mcd vow Ash)
   exec 5< <(mcd vow wait)
-  exec 6< <(mcd vow sump)
-  exec 7< <(mcd vow bump)
-  exec 8< <(mcd vow hump)
-  exec 9< <(mcd vow Awe)
-  exec 10< <(mcd vow Joy)
-  exec 11< <(mcd vow Woe)
-  p "Sin"  $(cat <&3)  "Queued debt"
-  p "Ash"  $(cat <&4)  "On-auction debt"
-  p "wait" $(cat <&5)  "Flop delay"
-  p "sump" $(cat <&6)  "Flop lot size"
-  p "bump" $(cat <&7)  "Flap lot size"
-  p "hump" $(cat <&8)  "Surplus buffer size"
-  p "Awe"  $(cat <&9)  "Total deficit"
-  p "Joy"  $(cat <&10) "Total surplus"
-  p "Woe"  $(cat <&11) "Un-queued pre-auction debt"
+  exec 6< <(mcd vow dump)
+  exec 7< <(mcd vow sump)
+  exec 8< <(mcd vow bump)
+  exec 9< <(mcd vow hump)
+  exec 10< <(mcd vow Awe)
+  exec 11< <(mcd vow Joy)
+  exec 12< <(mcd vow Woe)
+  p "Sin"  "$(cat <&3)"  "Queued debt"
+  p "Ash"  "$(cat <&4)"  "On-auction debt"
+  p "wait" "$(cat <&5)"  "Flop delay"
+  p "dump" "$(cat <&6)"  "Flop initial lot size"
+  p "sump" "$(cat <&7)"  "Flop fixed bid size"
+  p "bump" "$(cat <&8)"  "Flap lot size"
+  p "hump" "$(cat <&9)"  "Surplus buffer size"
+  p "Awe"  "$(cat <&10)"  "Total deficit"
+  p "Joy"  "$(cat <&11)" "Total surplus"
+  p "Woe"  "$(cat <&12)" "Un-queued pre-auction debt"
 }
 
 case $1 in
-  Sin)  mcd --to-rad $(seth call "${MCD_VOW}" 'Sin()(uint256)' ); ;;
-  Ash)  mcd --to-rad $(seth call "${MCD_VOW}" 'Ash()(uint256)' ); ;;
-  wait) mcd --to-rad $(seth call "${MCD_VOW}" 'wait()(uint256)'); ;;
-  sump) mcd --to-rad $(seth call "${MCD_VOW}" 'sump()(uint256)'); ;;
-  bump) mcd --to-rad $(seth call "${MCD_VOW}" 'bump()(uint256)'); ;;
-  hump) mcd --to-rad $(seth call "${MCD_VOW}" 'hump()(uint256)'); ;;
-  Awe)  mcd --to-rad $(seth call "${MCD_VAT}" 'sin(address)' $MCD_VOW ); ;;
-  Joy)  mcd --to-rad $(seth call "${MCD_VAT}" 'dai(address)' $MCD_VOW ); ;;
-  Woe)  printf '%.45f\n' $(bc <<< "$(mcd vow Awe) - $(mcd vow Sin) - $(mcd vow Ash)") ;;
-  sin)  mcd vow-sin $2;                                           ;;
-  "")   mcd-vow;                                                  ;;
+  Sin)  mcd --to-rad "$(seth call "${MCD_VOW}" 'Sin()(uint256)' )"; ;;
+  Ash)  mcd --to-rad "$(seth call "${MCD_VOW}" 'Ash()(uint256)' )"; ;;
+  wait) mcd --to-rad "$(seth call "${MCD_VOW}" 'wait()(uint256)')"; ;;
+  dump) mcd --to-wad "$(seth call "${MCD_VOW}" 'dump()(uint256)')"; ;;
+  sump) mcd --to-rad "$(seth call "${MCD_VOW}" 'sump()(uint256)')"; ;;
+  bump) mcd --to-rad "$(seth call "${MCD_VOW}" 'bump()(uint256)')"; ;;
+  hump) mcd --to-rad "$(seth call "${MCD_VOW}" 'hump()(uint256)')"; ;;
+  Awe)  mcd --to-rad "$(seth call "${MCD_VAT}" 'sin(address)' "$MCD_VOW" )"; ;;
+  Joy)  mcd --to-rad "$(seth call "${MCD_VAT}" 'dai(address)' "$MCD_VOW" )"; ;;
+  Woe)  printf '%.45f\n' "$(bc <<< "$(mcd vow Awe) - $(mcd vow Sin) - $(mcd vow Ash)")" ;;
+  sin)  mcd vow-sin "$2";                                           ;;
+  "")   mcd-vow;                                                    ;;
   *)    mcd help vow;
 esac
