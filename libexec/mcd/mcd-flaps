@@ -16,35 +16,33 @@ shopt -s extglob
 case $1 in
   ls) {
     export ETH_BLOCK=${ETH_BLOCK:-$(mcd --from-block)}
-    sig="Kick(uint256,uint256,uint256,address)"
+    sig="Kick(uint256,uint256,uint256)"
     sig=$(seth keccak "$(seth --from-ascii $sig)")
-    seth logs ${MCD_FLAP?} $sig |
+    seth logs "${MCD_FLAP?}" "$sig" |
       while read -r log; do
         tx=$(jshon -e transactionHash -u <<<"$log")
-        block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$log"))
-        topics=($(jshon -e topics -a -u <<<"$log"))
+        block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
         data=$(jshon -e data -u <<<"$log")
 
-        echo "id $(seth --to-dec ${data:2:64})"
-        echo "lot $(mcd --to-wad ${data:66:64})"
-        echo "bid $(mcd --to-rad ${data:130:64})"
-        echo "gal 0x${topics[1]:26:64}"
+        echo "id $(seth --to-dec "${data:2:64}")"
+        echo "lot $(mcd --to-wad "${data:66:64}")"
+        echo "bid $(mcd --to-rad "${data:130:64}")"
         echo "tx: $tx";
         echo "block: $block";
         echo
       done
   };;
   beg) {
-    mcd --to-ray $(seth call ${MCD_FLAP?} 'beg()(uint)')
+    mcd --to-ray "$(seth call "${MCD_FLAP?}" 'beg()(uint)')"
   };;
   ttl) {
-    seth --to-dec $(seth call ${MCD_FLAP?} 'ttl()(uint48)')
+    seth --to-dec "$(seth call "${MCD_FLAP?}" 'ttl()(uint48)')"
   };;
   tau) {
-    seth --to-dec $(seth call ${MCD_FLAP?} 'tau()(uint48)')
+    seth --to-dec "$(seth call "${MCD_FLAP?}" 'tau()(uint48)')"
   };;
   count) {
-    seth --to-dec $(seth call ${MCD_FLAP?} 'kicks()(uint48)')
+    seth --to-dec "$(seth call "${MCD_FLAP?}" 'kicks()(uint48)')"
   };;
   +([[:digit:]]) ) {
     mcd-flaps-cmd "${@}"
