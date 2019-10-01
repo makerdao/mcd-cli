@@ -33,7 +33,7 @@ case $1 in
       done
   };;
   beg) {
-    mcd --to-ray "$(seth call "${MCD_FLAP?}" 'beg()(uint)')"
+    mcd --to-wad "$(seth call "${MCD_FLAP?}" 'beg()(uint)')"
   };;
   ttl) {
     seth --to-dec "$(seth call "${MCD_FLAP?}" 'ttl()(uint48)')"

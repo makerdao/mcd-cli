@@ -14,6 +14,8 @@ require-wad() {
   wad=$(seth --to-uint256 "$(seth --to-wei "$1" eth)")
 }
 
+proxy=$(mcd --proxy-address)
+
 case $act in
   lock) {
     export ETH_GAS=${ETH_GAS:-300000}
@@ -28,8 +30,8 @@ case $act in
     export ETH_GAS=${ETH_GAS:-300000}
     require-wad "$1"
     mcd --gem-approve "$MCD_PROXY" "$1"
-    sig="safeLockGem(address,address,uint,uint,bool)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$hex" "$wad" 1
+    sig="safeLockGem(address,address,uint,uint,bool,address)"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$hex" "$wad" 1 "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
@@ -64,8 +66,8 @@ case $act in
     require-wad "$1"
     export MCD_TOKEN=$MCD_DAI
     mcd --dai-approve "$MCD_PROXY"
-    sig="safeWipe(address,address,uint,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex" "$wad"
+    sig="safeWipe(address,address,uint,uint,address)"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex" "$wad" "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
@@ -82,8 +84,8 @@ case $act in
     export ETH_GAS=${ETH_GAS:-250000}
     export MCD_TOKEN=$MCD_DAI
     mcd --dai-approve "$MCD_PROXY"
-    sig="safeWipeAll(address,address,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex"
+    sig="safeWipeAll(address,address,uint,address)"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex" "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;

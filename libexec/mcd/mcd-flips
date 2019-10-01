@@ -22,36 +22,36 @@ case $1 in
     export ETH_BLOCK=${ETH_BLOCK:-$(mcd --from-block)}
     sig="Kick(uint256,uint256,uint256,uint256,address,address)"
     sig=$(seth keccak "$(seth --from-ascii $sig)")
-    seth logs $FLIPPER $sig |
+    seth logs "$FLIPPER" "$sig" |
       while read -r log; do
         tx=$(jshon -e transactionHash -u <<<"$log")
-        block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$log"))
-        topics=($(jshon -e topics -a -u <<<"$log"))
+        block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
+        topics=("$(jshon -e topics -a -u <<<"$log")")
         data=$(jshon -e data -u <<<"$log")
 
-        echo "id $(seth --to-dec ${data:2:64})"
+        echo "id $(seth --to-dec "${data:2:64}")"
         echo "urn 0x${topics[1]:26:64}"
-        echo "lot $(mcd --to-wad ${data:66:64})"
-        echo "tab $(mcd --to-rad ${data:218:64})"
+        echo "lot $(mcd --to-wad "${data:66:64}")"
+        echo "tab $(mcd --to-rad "${data:218:64}")"
         echo "tx: $tx";
         echo "block: $block";
         echo
       done
   };;
   beg) {
-    mcd --to-ray $(seth call $FLIPPER 'beg()(uint)')
+    mcd --to-wad "$(seth call "$FLIPPER" 'beg()(uint)')"
   };;
   ttl) {
-    seth --to-dec $(seth call $FLIPPER 'ttl()(uint48)')
+    seth --to-dec "$(seth call "$FLIPPER" 'ttl()(uint48)')"
   };;
   tau) {
-    seth --to-dec $(seth call $FLIPPER 'tau()(uint48)')
+    seth --to-dec "$(seth call "$FLIPPER" 'tau()(uint48)')"
   };;
   count) {
-    seth --to-dec $(seth call $FLIPPER 'kicks()(uint48)')
+    seth --to-dec "$(seth call "$FLIPPER" 'kicks()(uint48)')"
   };;
   +([[:digit:]]) ) {
-    mcd-flips-cmd $FLIPPER "${@}"
+    mcd-flips-cmd "$FLIPPER" "${@}"
   };;
   *) {
     mcd help flips
