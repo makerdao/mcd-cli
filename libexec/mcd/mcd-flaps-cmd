@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
 set -e
 
-ID=$(seth --to-word $(seth --to-hex $1)); shift
+ID=$(seth --to-word "$(seth --to-hex "$1")"); shift
 
 p() { printf "%-4s %-52s %-10s\n" "$1" "$2" "$3"; }
 
 case $1 in
   tend) {
     [ $# = 3 ] || mcd --fail "mcd-flips: Incorrect arguments"
-    mcd --vat-hope ${MCD_FLAP?}
-    lot=$(seth --to-uint256 $(seth --to-wei $2 eth))     # [wad]
-    bid=$(seth --to-uint256 $(bc <<<"$3 * 10 ^ 45 / 1")) # [rad]
-    seth send ${MCD_FLAP?} 'tend(uint id, uint lot, uint bid)' $ID $lot $bid
-    [[ $SETH_ASYNC != yes ]] && mcd flips $(seth --to-dec $ID)
+    mcd --vat-hope "${MCD_FLAP?}"
+    lot=$(seth --to-uint256 "$(seth --to-wei "$2" eth)")     # [wad]
+    bid=$(seth --to-uint256 "$(bc <<<"$3 * 10 ^ 45 / 1")") # [rad]
+    seth send "${MCD_FLAP?}" 'tend(uint id, uint lot, uint bid)' "$ID" "$lot" "$bid"
+    [[ $SETH_ASYNC != yes ]] && mcd flips "$(seth --to-dec "$ID")"
   };;
   deal) {
-    seth send ${MCD_FLAP?} 'deal(uint256)' $ID
+    seth send "${MCD_FLAP?}" 'deal(uint256)' "$ID"
   };;
   *) {
-    bid=$(seth call ${MCD_FLAP?} 'bids(uint)' $ID)
-    p "bid" $(mcd --to-rad ${bid:2:64})    "Last bid amount"
-    p "lot" $(mcd --to-wad ${bid:66:64})   "Lot amount"
-    p "guy" 0x${bid:154:40}                "Highest bidder"
-    p "tic" $(seth --to-dec ${bid:194:64}) "Bid expiry"
-    p "end" $(seth --to-dec ${bid:258:64}) "Auction end"
-    p "gal" 0x${bid:346:40}                "Dai recipient (vow)"
+    bid=$(seth call "${MCD_FLAP?}" 'bids(uint)' "$ID")
+    p "bid" "$(mcd --to-rad "${bid:2:64}")"     "Last bid amount"
+    p "lot" "$(mcd --to-wad "${bid:66:64}")"    "Lot amount"
+    p "guy" "0x${bid:154:40}"                   "Highest bidder"
+    p "tic" "$(seth --to-dec "${bid:194:64}")"  "Bid expiry"
+    p "end" "$(seth --to-dec "${bid:258:64}")"  "Auction end"
+    p "gal" "0x${bid:346:40}"                   "Dai recipient (vow)"
   };;
 esac
