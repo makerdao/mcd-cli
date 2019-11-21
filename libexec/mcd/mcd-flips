@@ -32,7 +32,7 @@ case $1 in
         echo "id $(seth --to-dec "${data:2:64}")"
         echo "urn 0x${topics[1]:26:64}"
         echo "lot $(mcd --to-wad "${data:66:64}")"
-        echo "tab $(mcd --to-rad "${data:218:64}")"
+        echo "tab $(mcd --to-rad "${data:194:64}")"
         echo "tx: $tx";
         echo "block: $block";
         echo
