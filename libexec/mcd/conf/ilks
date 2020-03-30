@@ -1,4 +1,5 @@
-ILK   | GEM  | DESC
-      |      |
-ETH-A | WETH | Ethereum
-BAT-A | BAT  | Basic Attention Token
+ILK    | GEM  | DESC
+       |      |
+ETH-A  | WETH | Ethereum
+BAT-A  | BAT  | Basic Attention Token
+USDC-A | USDC | USD Coin
