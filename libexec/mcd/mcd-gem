@@ -32,7 +32,7 @@ case $1 in
   ;;
   gem|address)
     gem=$(seth call $(mcd gem adapter) 'gem()')
-    echo "0x$(seth --abi-decode 'f()(address)' $gem)"
+    echo "$(seth --abi-decode 'f()(address)' $gem)"
   ;;
   symbol)
     mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
