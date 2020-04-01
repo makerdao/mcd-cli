@@ -42,7 +42,7 @@ case $1 in
   dust)    vat  | mcd --to-rad $(seth --to-hex $(awk '{print $5}')); ;;
   flip)    cat  | echo $(awk '{print $1}');       ;;
   chop)    cat  | mcd --to-ray $(seth --to-hex $(awk '{print $2}')); ;;
-  lump)    cat  | mcd --to-rad $(seth --to-hex $(awk '{print $3}')); ;;
+  lump)    cat  | mcd --to-wad $(seth --to-hex $(awk '{print $3}')); ;;
   duty)    jug  | mcd --to-ray $(seth --to-hex $(awk '{print $1}')); ;;
   rho)     jug  | mcd --to-dec $(seth --to-hex $(awk '{print $2}')); ;;
   pip)     spot | echo $(awk '{print $1}');       ;;
