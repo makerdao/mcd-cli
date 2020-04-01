@@ -8,6 +8,7 @@ case $MCD_ILK in
   *) {
     gem=$(seth call $(mcd gem adapter) 'gem()')
     sig="balanceOf(address)(uint)"
-    mcd --to-wad $(seth call ${gem:(-40)} $sig $(mcd gem adapter))
+    addr=$(seth --to-address ${gem:(-40)})
+    mcd --to-wad "$(seth --to-hex $(seth call $addr $sig $(mcd gem adapter)))"
   };;
 esac
