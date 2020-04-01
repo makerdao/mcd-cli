@@ -5,8 +5,8 @@ build() {
   export ETH_GAS=${ETH_GAS:-1200000}
   seth send ${PROXY_REGISTRY?} 'build()'
 
-  reg=0x$(seth --to-word $PROXY_REGISTRY)
-  usr=0x$(seth --to-word $ETH_FROM)
+  reg=$(seth --to-word $PROXY_REGISTRY)
+  usr=$(seth --to-word $ETH_FROM)
   sig="Created(address,address,address,address)"
   sig=$(seth keccak "$(seth --from-ascii $sig)")
   seth logs ${PROXY_FACTORY?} $sig $reg $usr |
