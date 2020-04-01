@@ -23,7 +23,7 @@ logs=$(seth rpc eth_getLogs -- \
     -s "$block"          -i toBlock \
     -n [] \
     -s "$sig"  -i append \
-    -s "0x$(seth --to-word "$usr")" -i append \
+    -s "$(seth --to-word "$usr")" -i append \
     -i topics \
     -i append | echo "[$(paste -sd , -)]")
 hex=$(echo "$logs" | jshon -a -e topics | jq -r ".[3]")
