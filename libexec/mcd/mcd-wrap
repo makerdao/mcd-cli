@@ -9,7 +9,7 @@ seth send "${ETH?}" --value "$(seth --to-wei "$1 eth")"
 [[ $SETH_ASYNC == yes ]] && exit 1
 
 sig="balanceOf(address)(uint)"
-weth=$(mcd --to-wad "$(seth call "${ETH?}" "$sig" "$ETH_FROM")")
+weth=$(mcd --to-wad "$(seth --to-hex $(seth call "${ETH?}" "$sig" "$ETH_FROM"))")
 eth=$(seth --to-fix 18 "$(seth balance "$ETH_FROM")")
 
 echo "eth  $eth"
