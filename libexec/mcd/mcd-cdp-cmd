@@ -137,7 +137,7 @@ case $act in
   };;
   lad) {
     sig="owns(uint)(address)"
-    echo "0x$(seth call "${CDP_MANAGER?}" "$sig" "$hex")"
+    echo "$(seth call "${CDP_MANAGER?}" "$sig" "$hex")"
   };;
   owner) {
     lad=$(mcd cdp "$cdp" lad)
