@@ -25,11 +25,11 @@ case $1 in
       vat)   {
         urn=$(mcd --get-urn $0)
         sig="dai(address)(uint256)"
-        mcd --to-rad $(seth call ${MCD_VAT?} $sig $urn)
+        mcd --to-rad $(seth --to-hex $(seth call ${MCD_VAT?} $sig $urn))
       };;
       ext) {
         sig="balanceOf(address)(uint)"
-        mcd --to-wad $(seth call ${MCD_DAI?} $sig $ETH_FROM)
+        mcd --to-wad $(seth --to-hex $(seth call ${MCD_DAI?} $sig $ETH_FROM))
       };;
       "")  { mcd-dai-cmd balance; };;
       *)   { mcd dai balance;     };;
@@ -40,7 +40,7 @@ case $1 in
       vat)   { echo $(mcd debt); };;
       ext) {
         sig="totalSupply()(uint)"
-        mcd --to-wad $(seth call "$MCD_DAI" $sig)
+        mcd --to-wad $(seth --to-hex $(seth call "$MCD_DAI" $sig))
       };;
       "")  { mcd-dai-cmd supply; };;
       *)   { mcd dai supply;     };;
