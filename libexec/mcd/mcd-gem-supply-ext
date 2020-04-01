@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -e
 case $MCD_ILK in
-  "ETH") {
-    curl -sS 'http://api.etherscan.io/api?module=stats&action=ethsupply' |
+  "ETH"*) {
+    curl -sS "http://api.etherscan.io/api?module=stats&action=ethsupply${ETHERSCAN_API_KEY:+&apikey=$ETHERSCAN_API_KEY}" |
       seth --to-fix 18 $(jq -r '.result')
   };;
   *) {
     gem=$(seth call $(mcd gem adapter) 'gem()')
     sig="totalSupply()(uint)"
-    mcd --to-wad $(seth call "${gem:(-40)}" $sig)
+    addr=$(seth --to-address ${gem:(-40)})
+    echo $(seth call $addr $sig)
   };;
 esac
