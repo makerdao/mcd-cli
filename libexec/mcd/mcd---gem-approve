@@ -22,8 +22,8 @@ prompt() {
 }
 
 sig="allowance(address,address)(uint)"
-wad=$(seth call "$gem" "$sig" $ETH_FROM $dst)
-wad=$(mcd --to-wad $(seth --to-dec $wad))
+wadhex=$(seth --to-hex $(seth call "$gem" "$sig" $ETH_FROM $dst))
+wad=$(mcd --to-wad $wadhex)
 if (( $(echo "$amt > $wad" | bc -l) )); then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi

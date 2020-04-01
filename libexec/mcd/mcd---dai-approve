@@ -19,7 +19,7 @@ prompt() {
 }
 
 sig="allowance(address,address)"
-wad=$(seth call "${MCD_DAI?}" "$sig" $ETH_FROM $dst)
+wad=$(seth --to-hex $(seth call "${MCD_DAI?}" "$sig" $ETH_FROM $dst))
 if [[ $wad != $max ]]; then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi
