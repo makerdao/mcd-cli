@@ -3,7 +3,7 @@ set -e
 
 if [[ -z "$MCD_PROXY_ADDRESS" ]]; then
   sig="proxies(address)(address)"
-  proxy=0x$(seth call "${PROXY_REGISTRY?}" $sig "$ETH_FROM")
+  proxy=$(seth call "${PROXY_REGISTRY?}" $sig "$ETH_FROM")
 else
   proxy=$MCD_PROXY_ADDRESS
 fi
