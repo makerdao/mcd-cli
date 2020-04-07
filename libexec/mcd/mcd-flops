@@ -36,19 +36,19 @@ case $1 in
       done
   };;
   beg) {
-    mcd --to-wad "$(seth call "${MCD_FLOP?}" 'beg()(uint)')"
+    mcd --to-wad "$(seth --to-hex $(seth call "${MCD_FLOP?}" 'beg()(uint)'))"
   };;
   pad) {
-    mcd --to-wad "$(seth call "${MCD_FLOP?}" 'pad()(uint)')"
+    mcd --to-wad "$(seth --to-hex $(seth call "${MCD_FLOP?}" 'pad()(uint)'))"
   };;
   ttl) {
-    seth --to-dec "$(seth call "${MCD_FLOP?}" 'ttl()(uint48)')"
+    seth --to-dec "$(seth --to-hex $(seth call "${MCD_FLOP?}" 'ttl()(uint48)'))"
   };;
   tau) {
-    seth --to-dec "$(seth call "${MCD_FLOP?}" 'tau()(uint48)')"
+    seth --to-dec "$(seth --to-hex $(seth call "${MCD_FLOP?}" 'tau()(uint48)'))"
   };;
   count) {
-    seth --to-dec "$(seth call "${MCD_FLOP?}" 'kicks()(uint48)')"
+    seth --to-dec "$(seth --to-hex $(seth call "${MCD_FLOP?}" 'kicks()(uint48)'))"
   };;
   +([[:digit:]]) ) {
     mcd-flops-cmd "${@}"
