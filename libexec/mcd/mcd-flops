@@ -23,7 +23,7 @@ case $1 in
       while read -r log; do
         tx=$(jshon -e transactionHash -u <<<"$log")
         block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
-        topics=(`echo "$(jshon -e topics -a -u <<<"$log")"`)
+        topics=($(jshon -e topics -a -u <<<"$log"))
         data=$(jshon -e data -u <<<"$log")
 
         echo "id $(seth --to-dec "${data:2:64}")"
