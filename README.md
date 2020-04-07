@@ -109,8 +109,8 @@ $ mcd ilks
 ILK      GEM    DESC
 
 ETH-A    WETH   Ethereum
-ETH-B    WETH   Ethereum
-REP-A    REP    Augur
+BAT-A    BAT    Basic Attention Token
+USDC-A   USDC   USD Coin
 ```
 
 Each Ilk has its own set of configuration parameters which can be viewed via the `ilk` command. The `I, --ilk=<id>` option is used to scope commands to a particular Ilk:
