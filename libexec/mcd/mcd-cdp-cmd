@@ -120,14 +120,14 @@ case $act in
   quit) {
     export ETH_GAS=${ETH_GAS:-300000}
     dst=$(seth --to-address "$1")
-    can=$(seth call "$MCD_VAT" "can(address,address)(uint)" "$dst" "${CDP_MANAGER?}")
+    can=$(seth --to-hex $(seth call "$MCD_VAT" "can(address,address)(uint)" "$dst" "${CDP_MANAGER?}"))
     if [[ $(seth --to-dec "$can") -eq 0 ]]; then
       echo >&2 "Error: Cdp Manager must be trusted for dst urn (in the Vat)"
       exit 1
     fi
     proxy=$(mcd --proxy-address)
     if [[ "$dst" != "$proxy" ]]; then
-      canUrn=$(seth call "$CDP_MANAGER" "urnCan(address,address)(uint)" "$dst" "$proxy")
+      canUrn=$(seth --to-hex $(seth call "$CDP_MANAGER" "urnCan(address,address)(uint)" "$dst" "$proxy"))
       if [[ $(seth --to-dec "$canUrn") -eq 0 ]]; then
         echo >&2 "Error: Sender must be trusted for dst urn (in the Cdp Manager)"
         exit 1
