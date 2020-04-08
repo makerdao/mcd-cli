@@ -10,8 +10,8 @@ join=$(mcd gem adapter)
 mcd --gem-approve $join $1
 
 urn=$(mcd --get-urn gem)
-dec=$(seth call $(mcd gem address) "decimals()(uint256)")
-wad=$(seth --to-uint256 $(seth --to-fix ${dec?18} $1))
-seth send "$join" "join(address, uint)" $urn $wad
+# FIXME: Update to handle variable decimals
+wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
+seth send "$join" "join(address, uint256)" $urn $wad
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance
