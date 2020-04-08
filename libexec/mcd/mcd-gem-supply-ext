@@ -7,7 +7,7 @@ case $MCD_ILK in
   };;
   *) {
     gem=$(seth call $(mcd gem adapter) 'gem()')
-    sig="totalSupply()(uint)"
+    sig="totalSupply()(uint256)"
     addr=$(seth --to-address ${gem:(-40)})
     echo $(seth call $addr $sig)
   };;
