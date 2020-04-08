@@ -4,8 +4,9 @@ set -e
 
 usr=$(mcd --get-from gem)
 
-wad=$(seth --to-word $(seth --to-wei $1 eth))
-sig="exit(address, uint)"
+dec=$(seth call $(mcd gem address) "decimals()(uint256)")
+wad=$(seth --to-uint256 $(seth --to-fix ${dec?18} $1))
+sig="exit(address, uint256)"
 seth send $(mcd gem adapter) "$sig" "$usr" "$wad"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance
