@@ -5,8 +5,8 @@ set -e
 usr=$(mcd --get-from gem)
 
 dec=$(seth call $(mcd gem address) "decimals()(uint256)")
-# FIXME: Update to handle variable decimals
-wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
+# FIXME: Update to handle gem decimals
+wad=$(seth --to-uint256 $(seth --to-wei $1))
 sig="exit(address, uint256)"
 seth send $(mcd gem adapter) "$sig" "$usr" "$wad"
 
