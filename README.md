@@ -145,6 +145,7 @@ Gems are collateral tokens. Collateral is added and removed from the via adapter
 
 ```sh
 gem --ilk=<id> symbol             Gem symbol e.g. WETH
+gem --ilk=<id> decimals           Number of decimals on gem e.g. 18
 gem --ilk=<id> balance            Print balances for a given urn (default: ETH_FROM)
 gem --ilk=<id> join <wad>         Add collateral to a given Urn (default: ETH_FROM)
 gem --ilk=<id> exit <wad> [<guy>] Remove collateral from an Urn (default: ETH_FROM)
