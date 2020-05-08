@@ -25,6 +25,7 @@ assertBalanceChanged() {
 }
 
 testChange() {
+  sleep 1s      # sleep for a second to avoid nonce collision
   cmd=$1; amt=$2; bal=$3; dir=$4;
   echo "$MCD_ILK: mcd $cmd $amt"
   lt=$(eval "mcd $bal")
