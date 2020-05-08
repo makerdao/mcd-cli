@@ -3,6 +3,7 @@
 ### Usage: mcd --ilk=<id> [--urn=<address>] gem [<command>]
 ###
 ### Commands: gem symbol             Gem id e.g WETH
+###           gem decimals           Number of decimals in gem
 ###           gem balance            Print balances for a given urn (default: ETH_FROM)
 ###           gem join <wad>         Add collateral to an urn
 ###           gem exit <wad> [<guy>] Remove collateral from an urn
@@ -36,6 +37,9 @@ case $1 in
   ;;
   symbol)
     mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
+  ;;
+  decimals)
+    mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $3}'
   ;;
   balance)
     mcd-gem-balance $2;
