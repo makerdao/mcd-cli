@@ -106,11 +106,12 @@ Ilks are collateral types with corresponding risk parameters which have been app
 
 ```sh
 $ mcd ilks
-ILK      GEM    DESC
+ILK      GEM    DEC   DESC
 
-ETH-A    WETH   Ethereum
-BAT-A    BAT    Basic Attention Token
-USDC-A   USDC   USD Coin
+ETH-A    WETH   18    Ethereum
+BAT-A    BAT    18    Basic Attention Token
+WBTC-A   WBTC   8     Wrapped Bitcoin
+USDC-A   USDC   6     USD Coin
 ```
 
 Each Ilk has its own set of configuration parameters which can be viewed via the `ilk` command. The `I, --ilk=<id>` option is used to scope commands to a particular Ilk:
