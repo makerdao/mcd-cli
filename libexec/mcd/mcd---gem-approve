@@ -5,7 +5,7 @@ dst=$(seth --to-address $1)
 amt=$2
 
 approve() {
-  max="0x$(printf "f"'%.0s' {1..64})"
+  max="0x$(printf "f"'%.0s' {1..64})"  # uint(-1)
   (set -x; seth send "$gem" "approve(address,uint)" $dst $max)
 }
 
