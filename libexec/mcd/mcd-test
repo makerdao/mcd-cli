@@ -4,6 +4,8 @@ if [[ $MCD_CHAIN == "mainnet" ]]; then
   exit 1
 fi
 
+set -v # Echo commands
+
 export SETH_ASYNC=yes
 export ETH_GAS=700000
 
@@ -25,12 +27,12 @@ assertBalanceChanged() {
 }
 
 testChange() {
-  sleep 1s      # sleep for a second to avoid nonce collision
   cmd=$1; amt=$2; bal=$3; dir=$4;
+  dec=$(mcd gem decimals)
   echo "$MCD_ILK: mcd $cmd $amt"
   lt=$(eval "mcd $bal")
   eval "mcd $cmd -- $amt"
-  gt=$(eval "mcd $bal")
+  gt=$(sleep 3 && eval "mcd $bal")
   if [[ $dir == "+" ]]; then
     assertBalanceChanged $gt $lt $amt
   else
@@ -98,6 +100,8 @@ testCdp() {
   testInc "cdp $id free" "10" "gem balance ext"
 }
 testCdp
+
+set +v # Disable command echo
 
 # testFlap() {
 #   amt=1000
