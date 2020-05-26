@@ -6,12 +6,14 @@ mcd --require-ilk
 
 gem=$(mcd gem address)
 join=$(mcd gem adapter)
+decimals=$(mcd gem decimals)
+amount=$(echo "$1 * 10^$decimals" | bc)
 
-mcd --gem-approve $join $1
+mcd --gem-approve $join $amount
 
 urn=$(mcd --get-urn gem)
 # FIXME: Update to handle gem decimals
-wad=$(seth --to-uint256 $(seth --to-wei $1))
+wad=$(seth --to-uint256 $(seth --to-wei $amount))
 seth send "$join" "join(address, uint256)" $urn $wad
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance

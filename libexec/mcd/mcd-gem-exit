@@ -3,10 +3,11 @@ set -e
 [ -n "$1" ] || mcd --fail "mcd-gem: Please specify an exit amount"
 
 usr=$(mcd --get-from gem)
+decimals=$(mcd gem decimals)
 
-dec=$(seth call $(mcd gem address) "decimals()(uint256)")
-# FIXME: Update to handle gem decimals
-wad=$(seth --to-uint256 $(seth --to-wei $1))
+amount=$(echo "$1 * 10^$decimals" | bc)
+
+wad=$(seth --to-uint256 $(seth --to-wei $amount))
 sig="exit(address, uint256)"
 seth send $(mcd gem adapter) "$sig" "$usr" "$wad"
 
