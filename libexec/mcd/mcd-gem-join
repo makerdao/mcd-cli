@@ -12,7 +12,6 @@ amount=$(echo "$1 * 10^$decimals" | bc)
 mcd --gem-approve $join $amount
 
 urn=$(mcd --get-urn gem)
-# FIXME: Update to handle gem decimals
 wad=$(seth --to-uint256 $(seth --to-wei $amount))
 seth send "$join" "join(address, uint256)" $urn $wad
 
