@@ -9,7 +9,7 @@ case $MCD_ILK in
     gem=$(seth call $(mcd gem adapter) 'gem()')
     sig="balanceOf(address)(uint256)"
     addr=$(seth --to-address ${gem:(-40)})
-    decimals=$(seth call $(mcd gem address) "decimals()(uint256)")
+    decimals=$(mcd gem decimals)
     balance=$(seth call $addr $sig $(mcd gem adapter))
     seth --to-fix ${decimals?18} $balance
   };;

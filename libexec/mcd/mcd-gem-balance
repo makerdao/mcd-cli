@@ -11,7 +11,7 @@ case $1 in
   ink) { mcd --ilk=${MCD_ILK} urn ink; };;
   ext) {
     sig="balanceOf(address)(uint256)"
-    decimals=$(seth call $(mcd gem address) "decimals()(uint256)")
+    decimals=$(mcd gem decimals)
     balance=$(seth call $(mcd gem address) "$sig" "$ETH_FROM")
     seth --to-fix ${decimals?18} $balance
   };;
