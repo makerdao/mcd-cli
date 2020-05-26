@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 dst=$1
-max="0x$(printf "f"'%.0s' {1..64})"
+max="0x$(printf "f"'%.0s' {1..64})" # uint(-1)
 
 approve() {
   (set -x; seth send "$MCD_DAI" "approve(address,uint)" $dst $max)
