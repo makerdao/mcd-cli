@@ -49,7 +49,7 @@ $ dapp pkg install mcd
 
 ## Configuration
 
-Mcd is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
+`mcd` is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
 
 Similar to Seth, `mcd` also supports transaction signing with Ledger hardware wallets and can run against both local and remote nodes.
 
@@ -191,7 +191,7 @@ By default, `ETH_FROM` is used to determine which Urn to query. Use the `U, --ur
 Urn state (`urn.ink` and `urn.art`) is managed via the `frob <dink> <dart>` command, where `dink` and `dart` are delta amounts by which `ink` (Locked collateral) and `art` (Outstanding debt) should be changed. For example, to lock 100 WETH and draw 400 Dai on the ETH-A Ilk:
 
 ```sh
-$ mcd --ilk=ETH-A frob 100 400
+$ mcd --ilk=ETH-A frob -- 100 400
 ```
 
 To reduce outstanding debt by 200 Dai whilst keeping the amount of locked collateral constant:
