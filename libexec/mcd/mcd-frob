@@ -14,10 +14,10 @@ dart=$(seth --to-int256 $(seth --to-wei "$2 eth"))
 
 # "frob(bytes32, address, address, address, int256, int256)"
 sigBytes="0x76088703"
-urnAddress="$(seth --to-word ${urn})"
+urnPacked="$(seth --to-word ${urn})"
 
 ilkRaw="${ilk:2}"
-urnRaw="${urnAddress:2}"
+urnRaw="${urnPacked:2}"
 dinkRaw="${dink:2}"
 dartRaw="${dart:2}"
 
