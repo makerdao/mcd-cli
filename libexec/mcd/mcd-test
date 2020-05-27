@@ -4,7 +4,7 @@ if [[ $MCD_CHAIN == "mainnet" ]]; then
   exit 1
 fi
 
-set -v # Echo commands
+# set -v # Echo commands
 
 export SETH_ASYNC=yes
 export ETH_GAS=700000
@@ -58,12 +58,12 @@ updatePrice() {
 testEthFrob() {
   export MCD_ILK=ETH-A
   mcd wrap 10
-  testInc "gem join" "10"    "gem balance vat" # Gem join
-  testInc "frob"     "1 4"   "gem balance ink" # Lock & draw
-  testDec "dai exit" "4"     "dai balance vat" # Dai exit
-  testInc "dai join" "4"     "dai balance vat" # Dai join
-  testDec "frob"     "-1 -4" "gem balance ink" # Wipe & free
-  testDec "gem exit" "10"    "gem balance vat" # Gem exit
+  testInc "gem join" "10"     "gem balance vat" # Gem join
+  testInc "frob"     "1 20"   "gem balance ink" # Lock & draw
+  testDec "dai exit" "20"     "dai balance vat" # Dai exit
+  testInc "dai join" "20"     "dai balance vat" # Dai join
+  testDec "frob"     "-1 -20" "gem balance ink" # Wipe & free
+  testDec "gem exit" "10"     "gem balance vat" # Gem exit
   mcd unwrap 10
 }
 testEthFrob
@@ -81,7 +81,7 @@ testBite() {
   updatePrice $(echo "($spot * $mat) * 1" | bc -l) # safe
   assertBalanceChanged $ink 0 $ink
 }
-testBite
+#testBite
 
 testCdpOpen() {
   cdp=$(mcd cdp open)
@@ -99,9 +99,9 @@ testCdp() {
   testDec "cdp $id wipe" "10" "dai balance ext"
   testInc "cdp $id free" "10" "gem balance ext"
 }
-testCdp
+#testCdp
 
-set +v # Disable command echo
+# set +v # Disable command echo
 
 # testFlap() {
 #   amt=1000
