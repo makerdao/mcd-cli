@@ -28,11 +28,13 @@ assertBalanceChanged() {
 
 testChange() {
   cmd=$1; amt=$2; bal=$3; dir=$4;
+  sleep 2 # to avoid tripping over nonces
   dec=$(mcd gem decimals)
   echo "$MCD_ILK: mcd $cmd $amt"
   lt=$(eval "mcd $bal")
   eval "mcd $cmd -- $amt"
-  gt=$(sleep 3 && eval "mcd $bal")
+  sleep 10 # balances don't always update right away when using remote node
+  gt=$(eval "mcd $bal")
   if [[ $dir == "+" ]]; then
     assertBalanceChanged $gt $lt $amt
   else
@@ -49,7 +51,7 @@ testDec() { testChange "${@}"; }
 #====================================================================
 
 updatePrice() {
-  lad=$(eval echo "\${VAL_$MCD_ILK?}")
+  lad=$(eval echo "\${PIP_${MCD_ILK%??}}")
   amt=$(seth --to-uint256 $(seth --to-wei "$1" ETH))
   seth send "$lad" "poke(bytes32)" "$amt"
   mcd poke
@@ -57,30 +59,40 @@ updatePrice() {
 
 testEthFrob() {
   export MCD_ILK=ETH-A
-  mcd wrap 10
-  testInc "gem join" "10"     "gem balance vat" # Gem join
+  mcd wrap 1
+  testInc "gem join" "1"     "gem balance vat" # Gem join
   testInc "frob"     "1 20"   "gem balance ink" # Lock & draw
   testDec "dai exit" "20"     "dai balance vat" # Dai exit
   testInc "dai join" "20"     "dai balance vat" # Dai join
   testDec "frob"     "-1 -20" "gem balance ink" # Wipe & free
-  testDec "gem exit" "10"     "gem balance vat" # Gem exit
-  mcd unwrap 10
+  testDec "gem exit" "1"     "gem balance vat" # Gem exit
+  mcd unwrap 1
 }
-testEthFrob
+#testEthFrob
 
 testBite() {
   export MCD_ILK=ETH-A
-  dink=10
+  dink=1
+  mcd wrap $dink
+  sleep 10
   spot=$(mcd ilk spot); mat=$(mcd ilk mat)
   dart=$(echo "($dink * $spot) - 1" | bc -l)
   mcd gem join $dink
   mcd frob $dink $dart
+  sleep 10
   ink=$(mcd gem balance ink)
   updatePrice $(echo "($spot * $mat) * 0.9" | bc -l) # unsafe
+  sleep 10
   mcd --urn=$ETH_FROM bite
+  sleep 10
   updatePrice $(echo "($spot * $mat) * 1" | bc -l) # safe
+  sleep 10
   assertBalanceChanged $ink 0 $ink
+  sleep 10
+  mcd unwrap $dink
 }
+# This test requires auth on the PIP
+# TODO: User will likely not have this access. Update test to max out vault and wait/drip.
 #testBite
 
 testCdpOpen() {
