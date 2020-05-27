@@ -93,13 +93,17 @@ testCdpOpen() {
 
 testCdp() {
   export MCD_ILK=ETH-A
+  bal=$(mcd gem balance ext)
+  if [ "$bal" -lt "1" ]; then
+    mcd wrap 1
+  fi
   id=$(testCdpOpen)
-  testDec "cdp $id lock" "10" "gem balance ext"
-  testInc "cdp $id draw" "10" "dai balance ext"
-  testDec "cdp $id wipe" "10" "dai balance ext"
-  testInc "cdp $id free" "10" "gem balance ext"
+  testDec "cdp $id lock" "1" "gem balance ext"
+  testInc "cdp $id draw" "20" "dai balance ext"
+  testDec "cdp $id wipe" "20" "dai balance ext"
+  testInc "cdp $id free" "1" "gem balance ext"
 }
-#testCdp
+testCdp
 
 # set +v # Disable command echo
 
