@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -e
 SCRIPT_PATH=$(realpath $0)
-echo $SCRIPT_PATH
 BIN_PATH="$(dirname $(dirname $SCRIPT_PATH))/libexec/mcd"
 PATH=$BIN_PATH:$PATH mcd "$@"
