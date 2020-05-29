@@ -5,8 +5,8 @@
 ### Commands: gem symbol             Gem id e.g WETH
 ###           gem decimals           Number of decimals in gem
 ###           gem balance            Print balances for a given urn (default: ETH_FROM)
-###           gem join <wad>         Add collateral to an urn
-###           gem exit <wad> [<guy>] Remove collateral from an urn
+###           gem join <amt>         Add collateral to an urn
+###           gem exit <amt> [<guy>] Remove collateral from an urn
 ###
 ### Example:  mcd --ilk=ETH-A gem balance
 ###           mcd --ilk=ETH-A gem join 42

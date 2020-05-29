@@ -4,8 +4,8 @@
 ###
 ### Commands: dai balance                Print balances for a given urn (default: ETH_FROM)
 ###           dai supply                 Get the total supply
-###           dai join <wad>             Exchange DSToken Dai for Vat Dai
-###           dai exit <wad> [<address>] Exchange Vat Dai for DSToken Dai
+###           dai join <amt>             Exchange DSToken Dai for Vat Dai
+###           dai exit <amt> [<address>] Exchange Vat Dai for DSToken Dai
 ###
 ### Example:  mcd dai balance
 ###           mcd dai join 72.50
