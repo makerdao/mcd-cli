@@ -7,13 +7,13 @@ set -e
 # Seth uses ethers.js, which throws an error on negative int param,
 #  so we build a raw transaction here instead.
 ilk=$(mcd --get-ilk)
-urn=$(mcd --get-urn $0)
+urn=$(mcd --get-urn "$0")
 
 dink=$(seth --to-int256 $(seth --to-wei "$1 eth"))
 dart=$(seth --to-int256 $(seth --to-wei "$2 eth"))
 
 sig="frob(bytes32, address, address, address, int256, int256)"
-sigBytes="$(seth sig $sig)" # 0x76088703
+sigBytes="$(seth sig "$sig")" # 0x76088703
 urnPacked="$(seth --to-word ${urn})"
 
 ilkRaw="${ilk:2}"
@@ -21,7 +21,7 @@ urnRaw="${urnPacked:2}"
 dinkRaw="${dink:2}"
 dartRaw="${dart:2}"
 
-rawData=${sigBytes}${ilkRaw}${urnRaw}${urnRaw}${urnRaw}${dinkRaw}${dartRaw}
-seth send ${MCD_VAT} $rawData
+rawData="${sigBytes}${ilkRaw}${urnRaw}${urnRaw}${urnRaw}${dinkRaw}${dartRaw}"
+seth send "${MCD_VAT}" "$rawData"
 
 [[ $SETH_ASYNC != yes ]] && mcd urn
