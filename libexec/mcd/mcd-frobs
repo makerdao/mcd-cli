@@ -4,20 +4,27 @@
 set -e
 export ETH_BLOCK=${ETH_BLOCK:-$(mcd --from-block)}
 sig=$(seth --to-bytes32 "7cdd3fde")
-[[ "$MCD_ILK" ]] && ilk=$(seth --to-bytes32 $(seth --from-ascii "$MCD_ILK"))
+[[ "$MCD_ILK" ]] && ilk=$(seth --to-bytes32 "$(seth --from-ascii "$MCD_ILK")")
 [[ "$MCD_URN" ]] && urn=$(seth --to-bytes32 "$MCD_URN")
-seth logs ${MCD_VAT?} $sig $ilk $urn |
+seth logs "${MCD_VAT?}" "$sig" "$ilk" "$urn" |
   while read -r log; do
     tx=$(jshon -e transactionHash -u <<<"$log")
-    block=$(seth --to-dec $(jshon -e blockNumber -u <<<"$log"))
+    block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
     topics=($(jshon -e topics -a -u <<<"$log"))
     data=$(jshon -e data -u <<<"$log")
     data=${data:138:256} # ilk, usr, dink, dart
 
-    echo "ilk $(mcd --to-ascii ${topics[1]})"
-    echo "urn 0x${topics[2]:(-40)}"
-    echo "dink $(mcd --to-wad ${data:128:64})"
-    echo "dart $(mcd --to-wad ${data:192:64})"
+    urnAddress="0x${topics[2]:(-40)}"
+
+    # If urn flag is set, only show data for that urn
+    if [[ "$MCD_URN" && "$MCD_URN" != "$urnAddress" ]]; then
+      continue
+    fi
+
+    echo "ilk $(mcd --to-ascii "${topics[1]}")"
+    echo "urn $urnAddress"
+    echo "dink $(mcd --to-wad "${data:128:64}")"
+    echo "dart $(mcd --to-wad "${data:192:64}")"
     echo "tx: $tx";
     echo "block: $block";
     echo

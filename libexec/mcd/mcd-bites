@@ -16,7 +16,7 @@ seth logs "${MCD_CAT?}" "$sig" "$ilk" "$urn" |
 
     urnAddress="0x${topics[2]:26:64}"
 
-    # If urn is set, only show data for that urn
+    # If urn flag is set, only show data for that urn
     if [[ "$MCD_URN" && "$MCD_URN" != "$urnAddress" ]]; then
       continue
     fi
