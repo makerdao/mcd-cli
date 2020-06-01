@@ -2,7 +2,7 @@
 set -e
 
 cdp=$1; shift
-hex=$(seth --to-word "$(seth --to-hex "$cdp")")
+hex=$(seth --to-uint256 "$cdp")
 ilk=$(seth call "${CDP_MANAGER?}" 'ilks(uint)(bytes32)' "$hex")
 act=$1; shift;
 
@@ -132,8 +132,8 @@ case $act in
     fi
     proxy=$(mcd --proxy-address)
     if [[ "$dst" != "$proxy" ]]; then
-      canUrn=$(seth --to-hex $(seth call "$CDP_MANAGER" "urnCan(address,address)(uint)" "$dst" "$proxy"))
-      if [[ $(seth --to-dec "$canUrn") -eq 0 ]]; then
+      canUrn=$(seth call "$CDP_MANAGER" "urnCan(address,address)(uint)" "$dst" "$proxy")
+      if [[ "$canUrn" -eq 0 ]]; then
         echo >&2 "Error: Sender must be trusted for dst urn (in the Cdp Manager)"
         exit 1
       fi
@@ -142,7 +142,7 @@ case $act in
   };;
   lad) {
     sig="owns(uint)(address)"
-    echo "$(seth call "${CDP_MANAGER?}" "$sig" "$hex")"
+    #seth call "${CDP_MANAGER?}" "$sig" "$hex"
   };;
   owner) {
     lad=$(mcd cdp "$cdp" lad)
