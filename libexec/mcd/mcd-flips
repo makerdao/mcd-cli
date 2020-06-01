@@ -40,16 +40,16 @@ case $1 in
       done
   };;
   beg) {
-    mcd --to-wad "$(seth --to-hex $(seth call "$FLIPPER" 'beg()(uint)'))"
+    mcd --to-wad "$(seth call "$FLIPPER" 'beg()')"
   };;
   ttl) {
-    seth --to-dec "$(seth --to-hex $(seth call "$FLIPPER" 'ttl()(uint48)'))"
+    seth --to-dec "$(seth call "$FLIPPER" 'ttl()')"
   };;
   tau) {
-    seth --to-dec "$(seth --to-hex $(seth call "$FLIPPER" 'tau()(uint48)'))"
+    seth --to-dec "$(seth call "$FLIPPER" 'tau()')"
   };;
   count) {
-    seth --to-dec "$(seth --to-hex $(seth call "$FLIPPER" 'kicks()(uint48)'))"
+    seth --to-dec "$(seth call "$FLIPPER" 'kicks()')"
   };;
   +([[:digit:]]) ) {
     mcd-flips-cmd "$FLIPPER" "${@}"

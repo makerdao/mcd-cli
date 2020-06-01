@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 offset=1000
-echo "fromblock"
 latest=$(seth block latest number)
 (( latest > offset )) && earliest=$(( latest - offset ))
 seth --to-hex ${earliest:-1}
