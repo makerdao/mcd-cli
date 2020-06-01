@@ -13,8 +13,8 @@ set -e
 
 mcd-dai-cmd() {
   mcd --require-urn
-  exec 5< <(mcd dai $1 vat)
-  exec 6< <(mcd dai $1 ext)
+  exec 5< <(mcd dai "$1" vat)
+  exec 6< <(mcd dai "$1" ext)
   echo "vat $(cat <&5) Vat Dai $1"
   echo "ext $(cat <&6) ERC20 Dai $1"
 }
@@ -23,13 +23,13 @@ case $1 in
   balance) {
     case $2 in
       vat)   {
-        urn=$(mcd --get-urn $0)
-        sig="dai(address)(uint256)"
-        mcd --to-rad $(seth --to-hex $(seth call ${MCD_VAT?} $sig $urn))
+        urn=$(mcd --get-urn "$0")
+        sig="dai(address)"
+        mcd --to-rad "$(seth call "${MCD_VAT?}" "$sig" "$urn")"
       };;
       ext) {
-        sig="balanceOf(address)(uint)"
-        mcd --to-wad $(seth --to-hex $(seth call ${MCD_DAI?} $sig $ETH_FROM))
+        sig="balanceOf(address)"
+        mcd --to-wad "$(seth call "${MCD_DAI?}" "$sig" "$ETH_FROM")"
       };;
       "")  { mcd-dai-cmd balance; };;
       *)   { mcd dai balance;     };;
@@ -37,16 +37,16 @@ case $1 in
   };;
   supply) {
     case $2 in
-      vat)   { echo $(mcd debt); };;
+      vat)   { echo "$(mcd debt)"; };;
       ext) {
-        sig="totalSupply()(uint)"
-        mcd --to-wad "$(seth --to-hex $(seth call "$MCD_DAI" $sig))"
+        sig="totalSupply()"
+        mcd --to-wad "$(seth call "$MCD_DAI" "$sig")"
       };;
       "")  { mcd-dai-cmd supply; };;
       *)   { mcd dai supply;     };;
     esac
   };;
-  join) { exec mcd-dai-join $2;    };;
-  exit) { exec mcd-dai-exit $2 $3; };;
+  join) { exec mcd-dai-join "$2";    };;
+  exit) { exec mcd-dai-exit "$2" "$3"; };;
   *)    { mcd help dai;            }
 esac
