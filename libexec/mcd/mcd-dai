@@ -40,7 +40,7 @@ case $1 in
       vat)   { echo $(mcd debt); };;
       ext) {
         sig="totalSupply()(uint)"
-        mcd --to-wad $(seth --to-hex $(seth call "$MCD_DAI" $sig))
+        mcd --to-wad "$(seth --to-hex $(seth call "$MCD_DAI" $sig))"
       };;
       "")  { mcd-dai-cmd supply; };;
       *)   { mcd dai supply;     };;
