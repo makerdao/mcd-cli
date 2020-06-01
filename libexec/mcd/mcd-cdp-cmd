@@ -59,7 +59,7 @@ case $act in
     export ETH_GAS=${ETH_GAS:-250000}
     require-wad "$1"
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="wipe(address,address,uint,uint)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad"
 
@@ -69,7 +69,7 @@ case $act in
     export ETH_GAS=${ETH_GAS:-250000}
     require-wad "$1"
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="safeWipe(address,address,uint,uint,address)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad" "$proxy"
 
@@ -78,7 +78,7 @@ case $act in
   wipe-all) {
     export ETH_GAS=${ETH_GAS:-250000}
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="wipeAll(address,address,uint)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp"
 
@@ -87,7 +87,7 @@ case $act in
   safe-wipe-all) {
     export ETH_GAS=${ETH_GAS:-250000}
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="safeWipeAll(address,address,uint,address)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$proxy"
 
