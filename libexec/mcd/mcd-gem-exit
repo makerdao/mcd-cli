@@ -6,7 +6,6 @@ mcd --require-ilk
 
 gem="$(mcd gem address)"
 exit="$(mcd gem adapter)"
-usr="$(mcd --get-from gem)"
 decimals="$(mcd gem decimals)"
 
 amount="$(echo "$1 * 10^$decimals" | bc)"
@@ -15,6 +14,6 @@ urn="$(mcd --get-urn "$gem")"
 
 wad="$(seth --to-uint256 "$amount")"
 sig="exit(address, uint256)"
-seth send "$exit" "$sig" "$usr" "$wad"
+seth send "$exit" "$sig" "$urn" "$wad"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance
