@@ -6,9 +6,9 @@ case $MCD_ILK in
       seth --to-fix 18 "$(jq -r '.result')"
   };;
   *) {
-    gem=$(seth call "$(mcd gem adapter)" 'gem()')
+    gem=$(seth call "$(mcd gem adapter)" 'gem()(address)')
+    decimals=$(mcd gem decimals)
     sig="totalSupply()(uint256)"
-    addr="$(seth --to-address "${gem:(-40)}")"
-    seth call "$addr" "$sig"
+    seth --to-fix "${decimals?18}" "$(seth call "$gem" "$sig")"
   };;
 esac
