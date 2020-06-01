@@ -2,13 +2,19 @@
 set -e
 [ -n "$1" ] || mcd --fail "mcd-gem: Please specify an exit amount"
 
-usr=$(mcd --get-from gem)
-decimals=$(mcd gem decimals)
+mcd --require-ilk
 
-amount=$(echo "$1 * 10^$decimals" | bc)
+gem="$(mcd gem address)"
+exit="$(mcd gem adapter)"
+usr="$(mcd --get-from gem)"
+decimals="$(mcd gem decimals)"
 
-wad=$(seth --to-uint256 $amount)
+amount="$(echo "$1 * 10^$decimals" | bc)"
+
+urn="$(mcd --get-urn "$gem")"
+
+wad="$(seth --to-uint256 "$amount")"
 sig="exit(address, uint256)"
-seth send $(mcd gem adapter) "$sig" "$usr" "$wad"
+seth send "$exit" "$sig" "$usr" "$wad"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance
