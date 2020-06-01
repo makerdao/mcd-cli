@@ -7,7 +7,7 @@ decimals=$(mcd gem decimals)
 
 amount=$(echo "$1 * 10^$decimals" | bc)
 
-wad=$(seth --to-uint256 $(seth --to-wei $amount))
+wad=$(seth --to-uint256 $amount)
 sig="exit(address, uint256)"
 seth send $(mcd gem adapter) "$sig" "$usr" "$wad"
 
