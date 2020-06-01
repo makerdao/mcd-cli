@@ -2,5 +2,5 @@
 ### mcd-vice -- Total bad debt
 ### Usage: mcd vice
 set -e
-vice=$(seth --to-hex $(seth call "${MCD_VAT}" 'vice()(uint256)'))
-echo $(mcd --to-rad "$vice")
+vice="$(seth call "${MCD_VAT}" 'vice()')"
+mcd --to-rad "$vice"

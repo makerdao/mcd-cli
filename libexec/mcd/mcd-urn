@@ -32,8 +32,8 @@ calc() {
 mcd-urn() {
   p "ilk"  "$MCD_ILK" "Collateral type"
   p "urn"  "$URN" "Urn handler"
-  ink=$(mcd urn ink)
-  art=$(mcd urn art)
+  ink="$(mcd urn ink)"
+  art="$(mcd urn art)"
   dai=$(mcd dai balance vat --urn="$URN")
   p "ink"  "$ink" "Locked collateral ($(mcd gem symbol))"
   p "art"  "$art" "Issued debt (Dai)"
@@ -48,8 +48,8 @@ mcd-urn() {
 }
 
 case $1 in
-  ink)  vat | mcd --to-wad "$(seth --to-hex $(awk '{print $1}'))"; ;;
-  art)  vat | mcd --to-wad "$(seth --to-hex $(awk '{print $2}'))"; ;;
+  ink)  vat | mcd --to-wad "$(seth --to-hex "$(awk '{print $1}')")"; ;;
+  art)  vat | mcd --to-wad "$(seth --to-hex "$(awk '{print $2}')")"; ;;
   spot) mcd urn spot;                           ;; # alias for consistency
   rate) mcd urn rate;                           ;; # alias for consistency
   "")   mcd-urn;                                ;;

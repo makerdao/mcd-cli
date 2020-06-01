@@ -35,15 +35,15 @@ mcd-vow() {
 }
 
 case $1 in
-  Sin)  mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VOW}" 'Sin()(uint256)' ))"; ;;
-  Ash)  mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VOW}" 'Ash()(uint256)' ))"; ;;
-  wait) mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VOW}" 'wait()(uint256)'))"; ;;
-  dump) mcd --to-wad "$(seth --to-hex $(seth call "${MCD_VOW}" 'dump()(uint256)'))"; ;;
-  sump) mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VOW}" 'sump()(uint256)'))"; ;;
-  bump) mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VOW}" 'bump()(uint256)'))"; ;;
-  hump) mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VOW}" 'hump()(uint256)'))"; ;;
-  Awe)  mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VAT}" 'sin(address)' "$MCD_VOW" ))"; ;;
-  Joy)  mcd --to-rad "$(seth --to-hex $(seth call "${MCD_VAT}" 'dai(address)' "$MCD_VOW" ))"; ;;
+  Sin)  mcd --to-rad "$(seth call "${MCD_VOW}" 'Sin()' )"; ;;
+  Ash)  mcd --to-rad "$(seth call "${MCD_VOW}" 'Ash()' )"; ;;
+  wait) mcd --to-rad "$(seth call "${MCD_VOW}" 'wait()')"; ;;
+  dump) mcd --to-wad "$(seth call "${MCD_VOW}" 'dump()')"; ;;
+  sump) mcd --to-rad "$(seth call "${MCD_VOW}" 'sump()')"; ;;
+  bump) mcd --to-rad "$(seth call "${MCD_VOW}" 'bump()')"; ;;
+  hump) mcd --to-rad "$(seth call "${MCD_VOW}" 'hump()')"; ;;
+  Awe)  mcd --to-rad "$(seth call "${MCD_VAT}" 'sin(address)' "$MCD_VOW" )"; ;;
+  Joy)  mcd --to-rad "$(seth call "${MCD_VAT}" 'dai(address)' "$MCD_VOW" )"; ;;
   Woe)  printf '%.45f\n' "$(bc <<< "$(mcd vow Awe) - $(mcd vow Sin) - $(mcd vow Ash)")" ;;
   sin)  mcd vow-sin "$2";                                           ;;
   "")   mcd-vow;                                                    ;;
