@@ -93,8 +93,8 @@ config-init() {
 }
 
 mcd-init() {
-  # If MCD_CHAIN is unset but ETH_CHAIN is, set to ETH_CHAIN
-  if [ -z "$MCD_CHAIN"]; then MCD_CHAIN="$ETH_CHAIN"; fi
+  # If MCD_CHAIN is unset but SETH_CHAIN is, set to SETH_CHAIN
+  if [ -z "$MCD_CHAIN"]; then MCD_CHAIN="$SETH_CHAIN"; fi
 
   case "$MCD_CHAIN" in
     mainnet)
