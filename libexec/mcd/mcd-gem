@@ -28,12 +28,12 @@ fi
 
 case $1 in
   adapter)
-    ilk=$(tr '-' '_' <<<$MCD_ILK)
-    echo $(eval echo "\$MCD_JOIN_$ilk")
+    ilk=$(tr '-' '_' <<<"$MCD_ILK")
+    eval echo "\$MCD_JOIN_$ilk"
   ;;
   gem|address)
-    gem=$(seth call $(mcd gem adapter) 'gem()')
-    echo "$(seth --abi-decode 'f()(address)' $gem)"
+    gem=$(seth call "$(mcd gem adapter)" 'gem()')
+    seth --abi-decode 'f()(address)' "$gem"
   ;;
   symbol)
     mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
@@ -42,7 +42,7 @@ case $1 in
     mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $3}'
   ;;
   balance)
-    mcd-gem-balance $2;
+    mcd-gem-balance "$2";
   ;;
   supply)
     ilk=$(mcd --get-ilk)
@@ -58,8 +58,8 @@ case $1 in
       *)   { mcd gem supply; };;
     esac
   ;;
-  join) mcd gem-join $2; ;;
-  exit) mcd gem-exit $2; ;;
+  join) mcd gem-join "$2"; ;;
+  exit) mcd gem-exit "$2"; ;;
     "") mcd-gem;         ;;
      *) mcd help gem;    ;;
 esac

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 hexdata=$(seth --to-hexdata "$@")
 format=$(sed 's/../\\x&/g' <<<"${hexdata#0x}")
-echo -e $format | tr -d "\r\n\0"
+echo -e "$format" | tr -d "\r\n\0"

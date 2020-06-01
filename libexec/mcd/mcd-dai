@@ -37,7 +37,7 @@ case $1 in
   };;
   supply) {
     case $2 in
-      vat)   { echo "$(mcd debt)"; };;
+      vat)   { mcd debt; };;
       ext) {
         sig="totalSupply()"
         mcd --to-wad "$(seth call "$MCD_DAI" "$sig")"

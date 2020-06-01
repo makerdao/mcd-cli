@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 [[ $MCD_JUG_ILK ]] ||
-  export MCD_JUG_ILK=$(seth call ${MCD_JUG?} 'ilks(bytes32)(uint256, uint48)' $1);
-echo $MCD_JUG_ILK
+  export MCD_JUG_ILK=$(seth call "${MCD_JUG?}" 'ilks(bytes32)(uint256, uint48)' "$1");
+echo "$MCD_JUG_ILK"

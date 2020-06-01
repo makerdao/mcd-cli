@@ -9,5 +9,5 @@ if [[ $1 = @* ]]; then
 else
   lad=${1#0x}
   lad=${lad::40}
-  seth --to-address $lad
+  seth --to-address "$lad"
 fi

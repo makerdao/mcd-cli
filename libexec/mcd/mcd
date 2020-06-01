@@ -63,8 +63,8 @@ while [[ $1 ]]; do
 done
 
 testnet-init() {
-  dir=$TESTNET/tmp/$1
-  conf=$dir/conf.json;
+  dir="$TESTNET/tmp/$1"
+  conf="$dir/conf.json";
 
   if [[ ! -d "$dir" ]]; then
     json=$(mcd testnet chain ${1} | jq '.')
@@ -72,10 +72,10 @@ testnet-init() {
       echo "Error: chain config not found for $1"
       exit 1
     else
-      mkdir -p $dir; echo $json > $conf
-      pk=$(cat $conf | jq -r .chain_details.accounts[0].priv_key)
-      geth --datadir=$dir --password=/dev/null \
-           account import <(echo $pk) &>/dev/null
+      mkdir -p "$dir"; echo "$json" > "$conf"
+      pk=$(cat "$conf" | jq -r .chain_details.accounts[0].priv_key)
+      geth --datadir="$dir" --password=/dev/null \
+           account import <(echo "$pk") &>/dev/null
     fi
   fi
   config-init $conf;
@@ -94,25 +94,25 @@ config-init() {
 
 mcd-init() {
   # If MCD_CHAIN is unset but SETH_CHAIN is, set to SETH_CHAIN
-  if [ -z "$MCD_CHAIN"]; then MCD_CHAIN="$SETH_CHAIN"; fi
+  if [ -z "$MCD_CHAIN" ]; then MCD_CHAIN="$SETH_CHAIN"; fi
 
   case "$MCD_CHAIN" in
     mainnet)
-      config-init ${0%/*}/conf/mainnet.json;
+      config-init "${0%/*}/conf/mainnet.json";
       export SETH_CHAIN=mainnet
       ;;
     kovan)
-      config-init ${0%/*}/conf/kovan.json;
+      config-init "${0%/*}/conf/kovan.json";
       export SETH_CHAIN=kovan
       ;;
     testnet) # local dapp testnet
       config-init "${MCD_CONFIG:-$TESTNET/8545/config/addresses.json}"
-      export ETH_RPC_URL=${ETH_RPC_URL:-http://127.0.0.1:8545}
-      export ETH_LOGS_API=${ETH_LOGS_API:-rpc}
-      export ETH_KEYSTORE=${ETH_KEYSTORE:-$TESTNET/8545/keystore}
-      export ETH_PASSWORD=${ETH_PASSWORD:-/dev/null}
-      from=$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')
-      export ETH_FROM=${ETH_FROM:-$from}
+      export ETH_RPC_URL="${ETH_RPC_URL:-http://127.0.0.1:8545}"
+      export ETH_LOGS_API="${ETH_LOGS_API:-rpc}"
+      export ETH_KEYSTORE="${ETH_KEYSTORE:-$TESTNET/8545/keystore}"
+      export ETH_PASSWORD="${ETH_PASSWORD:-/dev/null}"
+      from="$(seth accounts ls | sed 1q | awk '{print substr ($0, 0, 42)}')"
+      export ETH_FROM="${ETH_FROM:-$from}"
       ;;
     +([0-9])) # remote testnet id
       testnet-init "$MCD_CHAIN"
@@ -125,16 +125,16 @@ mcd-init() {
     *)
       if [[ "$@" != *"help"* ]]; then
         echo "Warning: \`--chain' option not specified. Defaulting to kovan"
-        config-init ${0%/*}/conf/kovan.json;
+        config-init "${0%/*}/conf/kovan.json";
         export SETH_CHAIN=kovan
       fi
   esac
 }
 
 if ! [[ $MCD_INIT ]]; then
-  TESTNET=${TESTNET:-~/.dapp/testnet}
+  TESTNET="${TESTNET:-~/.dapp/testnet}"
   export MCD_INIT=1
-  mcd-init
+  mcd-init 1
 fi
 
 "${0##*/}-${1-help}" "${@:2}"

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
-dst=$(seth --to-address $1)
+dst=$(seth --to-address "$1")
 
 approve() {
-  (set -x; seth send "$MCD_VAT" "hope(address)" $dst)
+  (set -x; seth send "$MCD_VAT" "hope(address)" "$dst")
 }
 
 prompt() {
@@ -18,7 +18,7 @@ prompt() {
 }
 
 sig="can(address,address)"
-can=$(seth call "${MCD_VAT?}" "$sig" $ETH_FROM $dst)
-if [[ $(seth --to-dec $can) -ne 1 ]]; then
+can=$(seth call "${MCD_VAT?}" "$sig" "$ETH_FROM" "$dst")
+if [[ $(seth --to-dec "$can") -ne 1 ]]; then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi

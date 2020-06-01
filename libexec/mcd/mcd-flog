@@ -9,12 +9,12 @@
 set -e
 [ $# = 1 ] || mcd --fail "$0: A timestamp is required"
 
-era=$(seth --to-uint256 $1)
-tab=$(seth call ${MCD_VOW?} 'sin(uint256)(uint256)' $era)
+era=$(seth --to-uint256 "$1")
+tab=$(seth call "${MCD_VOW?}" 'sin(uint256)(uint256)' "$era")
 
-if [[ $(seth --to-dec $tab) -eq 0 ]];then
+if [[ $(seth --to-dec "$tab") -eq 0 ]];then
   echo "Fail: No debt queued at timestamp: $1"
   exit 1
 fi
 
-seth send "${MCD_VOW}" "flog(uint256)" $era
+seth send "${MCD_VOW}" "flog(uint256)" "$era"

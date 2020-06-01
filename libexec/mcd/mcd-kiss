@@ -20,5 +20,5 @@ if (( $(echo "$1 > $joy" | bc -l) )); then
   exit 1
 fi
 
-rad=$(seth --to-uint256 $(bc <<<"$1 * 10 ^ 45 / 1"))
-seth send "${MCD_VOW}" "kiss(uint)" $rad
+rad="$(seth --to-uint256 "$(bc <<<"$1 * 10 ^ 45 / 1")")"
+seth send "${MCD_VOW}" "kiss(uint)" "$rad"

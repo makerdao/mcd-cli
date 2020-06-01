@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-mcd frob -- -$1 0
+mcd frob -- -"$1" 0

@@ -7,5 +7,5 @@
 set -e
 
 ilk=$(mcd --get-ilk)
-seth send ${MCD_SPOT?} 'poke(bytes32)' "$ilk"
-[[ $SETH_ASYNC != yes ]] && mcd --ilk=$MCD_ILK ilk spot
+seth send "${MCD_SPOT?}" 'poke(bytes32)' "$ilk"
+[[ $SETH_ASYNC != yes ]] && mcd --ilk="$MCD_ILK" ilk spot

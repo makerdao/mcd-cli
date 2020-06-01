@@ -5,10 +5,10 @@
 ### Specify the Ilk identifier and Urn address to bite.
 set -e
 
-export ETH_GAS=${ETH_GAS:-750000}
+export ETH_GAS="${ETH_GAS:-750000}"
 
 ilk=$(mcd --get-ilk)
-urn=$(mcd --get-urn $0)
+urn=$(mcd --get-urn "$0")
 
 p() { printf "%-7s %-50s %-10s\n" "$1" "$2" "$3"; }
 
@@ -29,7 +29,7 @@ logs=$(seth rpc eth_getLogs -- \
   -n [] \
     -s "$keccak" -i append \
     -s "0x$ilk"  -i append \
-    -s "0x$(seth --to-word $urn)" -i append \
+    -s "0x$(seth --to-word "$urn")" -i append \
   -i topics \
   -i append | echo "[$(paste -sd , -)]")
 data=$(echo "$logs" | jshon -a -e data -u)
@@ -37,11 +37,11 @@ hash=$(echo "$logs" | jshon -a -e transactionHash -u)
 
 if [ "$hash" == "$tx" ]; then
   echo "$tx"
-  p "ink"  $(mcd --to-wad ${data:2:64})      "Seized collateral ($MCD_ILK)"
-  p "art"  $(mcd --to-wad ${data:66:64})     "Seized debt (DAI)"
-  p "tab"  $(mcd --to-rad ${data:130:64})    "Debt sent to auction"
-  p "flipper" "0x${data:218:40}"             "Auction contract"
-  p "flip" $(seth --to-dec 0x${data:258:64}) "Bid identifier"
+  p "ink"  "$(mcd --to-wad "${data:2:64}")"      "Seized collateral ($MCD_ILK)"
+  p "art"  "$(mcd --to-wad "${data:66:64}")"     "Seized debt (DAI)"
+  p "tab"  "$(mcd --to-rad "${data:130:64}")"    "Debt sent to auction"
+  p "flipper" "0x${data:218:40}"                 "Auction contract"
+  p "flip" "$(seth --to-dec "0x${data:258:64}")" "Bid identifier"
 else
   echo >&2 "${0##*/}: Transaction failed."
   seth >&2 receipt "$tx"
