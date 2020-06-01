@@ -2,5 +2,5 @@
 ### mcd-debt -- Total dai issuance
 ### Usage: mcd debt
 set -e
-debt=$(seth --to-hex $(seth call "${MCD_VAT?}" 'debt()(uint256)'))
-echo $(mcd --to-rad "$debt")
+debt="$(seth call "${MCD_VAT?}" 'debt()')"
+mcd --to-rad "$debt"

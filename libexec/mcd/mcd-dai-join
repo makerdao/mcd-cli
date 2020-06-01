@@ -2,10 +2,11 @@
 set -e
 [ -n "$1" ] || mcd --fail "mcd-dai: Please specify a join amount"
 
-mcd --dai-approve $MCD_JOIN_DAI
-
 urn=$(mcd --get-urn dai)
-wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-seth send "$MCD_JOIN_DAI" "join(address, uint)" $urn $wad
+wad=$(seth --to-uint256 "$(seth --to-wei "$1" eth)")
+
+mcd --dai-approve "$MCD_JOIN_DAI" "$wad"
+
+seth send "$MCD_JOIN_DAI" "join(address, uint)" "$urn" "$wad"
 
 [[ $SETH_ASYNC != yes ]] && mcd dai balance
