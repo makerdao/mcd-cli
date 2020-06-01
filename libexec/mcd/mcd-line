@@ -2,5 +2,5 @@
 ### mcd-line -- Total debt ceiling
 ### Usage: mcd line
 set -e
-line=$(seth --to-hex $(seth call "${MCD_VAT}" 'Line()(uint256)'))
-echo $(mcd --to-rad "$line")
+line="$(seth call "${MCD_VAT}" 'Line()')"
+mcd --to-rad "$line"
