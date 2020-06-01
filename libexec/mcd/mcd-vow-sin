@@ -7,6 +7,6 @@
 set -e
 [ $# = 1 ] || mcd --fail "$0: Bad argument(s)"
 
-era=$(seth --to-word $(seth --to-hex "$1"))
-sin=$(seth call $MCD_VOW 'sin(uint256)(uint256)' $era)
-echo $(mcd --to-wad $sin)
+era="$1"
+sin=$(seth call $MCD_VOW 'sin(uint256)(uint256)' "$era")
+mcd --to-wad "$sin"
