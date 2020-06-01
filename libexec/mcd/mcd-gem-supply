@@ -2,15 +2,15 @@
 set -e
 case $MCD_ILK in
   "ETH") {
-    wei=$(seth balance $(mcd gem adapter))
-    mcd --to-wad $wei
+    wei=$(seth balance "$(mcd gem adapter)")
+    mcd --to-wad "$wei"
   };;
   *) {
-    gem=$(seth call $(mcd gem adapter) 'gem()')
+    gem=$(seth call "$(mcd gem adapter)" 'gem()')
     sig="balanceOf(address)(uint256)"
-    addr=$(seth --to-address ${gem:(-40)})
+    addr=$(seth --to-address "${gem:(-40)}")
     decimals=$(mcd gem decimals)
-    balance=$(seth call $addr $sig $(mcd gem adapter))
-    seth --to-fix ${decimals?18} $balance
+    balance=$(seth call "$addr" "$sig" "$(mcd gem adapter)")
+    seth --to-fix "${decimals?18}" "$balance"
   };;
 esac
