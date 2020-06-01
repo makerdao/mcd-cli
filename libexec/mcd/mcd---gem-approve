@@ -21,9 +21,8 @@ prompt() {
   esac
 }
 
-sig="allowance(address,address)(uint)"
-wadhex=$(seth --to-hex $(seth call "$gem" "$sig" $ETH_FROM $dst))
-wad=$(mcd --to-wad $wadhex)
-if (( $(echo "$amt > $wad" | bc -l) )); then
+sig="allowance(address,address)(uint256)"
+allowance="$(seth call "${MCD_DAI?}" "$sig" "$ETH_FROM" "$dst")"
+if (( $(echo "$amt > $allowance" | bc -l) )); then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi
