@@ -11,7 +11,12 @@ export MCD_ILK
 
 require-wad() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
-  wad=$(seth --to-uint256 "$(seth --to-wei "$1" eth)")
+  wad="$(seth --to-uint256 "$(seth --to-wei "$1" eth)")"
+}
+
+require-dst() {
+  [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an address to $act"
+  dst="$(seth --to-address "$1")"
 }
 
 proxy=$(mcd --proxy-address)
@@ -119,9 +124,9 @@ case $act in
   };;
   quit) {
     export ETH_GAS=${ETH_GAS:-300000}
-    dst=$(seth --to-address "$1")
-    can=$(seth --to-hex $(seth call "$MCD_VAT" "can(address,address)(uint)" "$dst" "${CDP_MANAGER?}"))
-    if [[ $(seth --to-dec "$can") -eq 0 ]]; then
+    require-dst $1
+    can=$(seth call "$MCD_VAT" "can(address,address)(uint)" "$dst" "${CDP_MANAGER?}")
+    if [[ "$can" -eq 0 ]]; then
       echo >&2 "Error: Cdp Manager must be trusted for dst urn (in the Vat)"
       exit 1
     fi
