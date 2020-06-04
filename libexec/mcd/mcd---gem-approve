@@ -22,7 +22,7 @@ prompt() {
 }
 
 sig="allowance(address,address)(uint256)"
-allowance="$(seth call "${MCD_DAI?}" "$sig" "$ETH_FROM" "$dst")"
+allowance="$(seth call "$gem" "$sig" "$ETH_FROM" "$dst")"
 if (( $(echo "$amt > $allowance" | bc -l) )); then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi
