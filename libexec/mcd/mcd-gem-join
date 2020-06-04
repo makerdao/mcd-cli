@@ -12,6 +12,7 @@ amount="$(echo "$1 * 10^$decimals" | bc)"
 mcd --gem-approve "$join" "$amount"
 
 urn="$(mcd --get-urn "$gem")"
+
 seth send "$join" "join(address, uint256)" "$urn" "$amount"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance
