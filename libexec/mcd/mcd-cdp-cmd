@@ -61,14 +61,14 @@ case $act in
     export MCD_TOKEN=$MCD_DAI
     mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="wipe(address,address,uint,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad"
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-wipe) {
-    export ETH_GAS=${ETH_GAS:-250000}
+    export ETH_GAS="${ETH_GAS:-250000}"
     require-wad "$1"
-    export MCD_TOKEN=$MCD_DAI
+    export MCD_TOKEN="$MCD_DAI"
     mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="safeWipe(address,address,uint,uint,address)"
     mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad" "$proxy"
