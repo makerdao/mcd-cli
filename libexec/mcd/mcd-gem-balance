@@ -6,7 +6,9 @@ gem=$(mcd gem symbol)
 case $1 in
   vat) {
     sig="gem(bytes32,address)(uint256)"
-    mcd --to-wad "$(seth --to-hex "$(seth call "${MCD_VAT?}" "$sig" "$ilk" "$urn")")"
+    gem="$(seth call "${MCD_VAT?}" "$sig" "$ilk" "$urn")"
+    decimals=$(mcd gem decimals)
+    seth --to-fix "${decimals?18}" "$gem"
   };;
   ink) { mcd --ilk="${MCD_ILK}" urn ink; };;
   ext) {
