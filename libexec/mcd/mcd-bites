@@ -11,7 +11,7 @@ seth logs "${MCD_CAT?}" "$sig" "$ilk" "$urn" |
   while read -r log; do
     tx=$(jshon -e transactionHash -u <<<"$log")
     block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
-    topics=($(jshon -e topics -a -u <<<"$log"))
+    topics=($(jshon -e topics -a -u <<<"$log"))  # no shellcheck
     data=$(jshon -e data -u <<<"$log")
 
     urnAddress="0x${topics[2]:26:64}"

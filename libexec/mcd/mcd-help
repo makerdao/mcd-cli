@@ -24,7 +24,7 @@ for file in ${0%/*}/$name-*; do
   if [[ -L $file ]]; then
     continue
   else
-    commands+=("$file")
+    commands+=("$file")  # no shellcheck
   fi
 done
 

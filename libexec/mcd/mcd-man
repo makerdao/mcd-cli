@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 for file in ${0%/*}/mcd-*; do
-  commands+=("$file")
+  commands+=("$file")  # no shellcheck
 done
 
 cat "${commands[@]}" |

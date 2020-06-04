@@ -10,7 +10,7 @@ seth logs "${MCD_VAT?}" "$sig" "$ilk" "$urn" |
   while read -r log; do
     tx=$(jshon -e transactionHash -u <<<"$log")
     block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
-    topics=($(jshon -e topics -a -u <<<"$log"))
+    topics=($(jshon -e topics -a -u <<<"$log"))  # no shellcheck
     data=$(jshon -e data -u <<<"$log")
     data=${data:138:256} # ilk, usr, dink, dart
 

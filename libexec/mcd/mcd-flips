@@ -26,7 +26,7 @@ case $1 in
       while read -r log; do
         tx=$(jshon -e transactionHash -u <<<"$log")
         block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
-        topics=($(jshon -e topics -a -u <<<"$log"))
+        topics=($(jshon -e topics -a -u <<<"$log"))  # no shellcheck
 
         data=$(jshon -e data -u <<<"$log")
 
