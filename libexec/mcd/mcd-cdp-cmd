@@ -13,7 +13,7 @@ require-wad() {
   wad="$(seth --to-uint256 "$(seth --to-wei "$1" eth)")"
 }
 
-require-decimals() {
+require-amount() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
   decimals=$(mcd gem decimals)
   amount="$(echo "$1 * 10^$decimals" | bc)"
@@ -29,27 +29,27 @@ proxy=$(mcd --proxy-address)
 case $act in
   lock) {
     export ETH_GAS=${ETH_GAS:-300000}
-    require-decimals "$1"
+    require-amount "$1"
     mcd --gem-approve "$MCD_PROXY" "$amount"
     sig="lockGem(address,address,uint,uint,bool)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount" 1
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount" 1
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-lock) {
     export ETH_GAS=${ETH_GAS:-300000}
-    require-wad "$1"
-    mcd --gem-approve "$MCD_PROXY" "$wad"
+    require-amount "$1"
+    mcd --gem-approve "$MCD_PROXY" "$amount"
     sig="safeLockGem(address,address,uint,uint,bool,address)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$wad" 1 "$proxy"
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount" 1 "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   free) {
     export ETH_GAS=${ETH_GAS:-200000}
-    require-wad "$1"
+    require-amount "$1"
     sig="freeGem(address,address,uint,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$wad"
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
