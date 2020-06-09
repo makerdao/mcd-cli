@@ -42,13 +42,13 @@ case $1 in
     mcd --to-wad "$(seth call "${MCD_FLOP?}" 'pad()')"
   };;
   ttl) {
-    seth --to-dec "$(seth call "${MCD_FLOP?}" 'ttl()')"
+    seth call "${MCD_FLOP?}" 'ttl()(uint48)'
   };;
   tau) {
-    seth --to-dec "$(seth call "${MCD_FLOP?}" 'tau()')"
+    seth call "${MCD_FLOP?}" 'tau()(uint48)'
   };;
   count) {
-    seth --to-dec "$(seth call "${MCD_FLOP?}" 'kicks()')"
+    seth call "${MCD_FLOP?}" 'kicks()(uint48)'
   };;
   +([[:digit:]]) ) {
     mcd-flops-cmd "${@}"
