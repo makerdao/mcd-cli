@@ -134,7 +134,7 @@ mcd-init() {
 if ! [[ $MCD_INIT ]]; then
   TESTNET="${TESTNET:-~/.dapp/testnet}"
   export MCD_INIT=1
-  mcd-init 1
+  mcd-init
 fi
 
 "${0##*/}-${1-help}" "${@:2}"
