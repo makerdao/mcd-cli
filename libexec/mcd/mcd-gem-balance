@@ -5,10 +5,9 @@ urn=$(mcd --get-urn gem)
 gem=$(mcd gem symbol)
 case $1 in
   vat) {
-    sig="gem(bytes32,address)(uint256)"
+    sig="gem(bytes32,address)"
     gem="$(seth call "${MCD_VAT?}" "$sig" "$ilk" "$urn")"
-    decimals=$(mcd gem decimals)
-    seth --to-fix "${decimals?18}" "$gem"
+    mcd --to-wad "$gem"
   };;
   ink) { mcd --ilk="${MCD_ILK}" urn ink; };;
   ext) {
