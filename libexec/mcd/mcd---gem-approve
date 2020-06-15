@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 gem=$(mcd gem address)
-dst=$(seth --to-address $1)
+dst=$(seth --to-address "$1")
 amt=$2
 
 approve() {
-  max="0x$(printf "f"'%.0s' {1..64})"
-  (set -x; seth send "$gem" "approve(address,uint)" $dst $max)
+  max="0x$(printf "f"'%.0s' {1..64})"  # uint(-1)
+  (set -x; seth send "$gem" "approve(address,uint)" "$dst" "$max")
 }
 
 prompt() {
@@ -21,9 +21,9 @@ prompt() {
   esac
 }
 
-sig="allowance(address,address)(uint)"
-wad=$(seth call "$gem" "$sig" $ETH_FROM $dst)
-wad=$(mcd --to-wad $(seth --to-dec $wad))
-if (( $(echo "$amt > $wad" | bc -l) )); then
+sig="allowance(address,address)(uint256)"
+allowance="$(seth call "$gem" "$sig" "$ETH_FROM" "$dst")"
+
+if (( $(echo "$amt > $allowance" | bc -l) )); then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi

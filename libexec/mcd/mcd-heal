@@ -21,4 +21,4 @@ if (( $(echo "$1 > $woe" | bc -l) )); then
 fi
 
 rad=$(seth --to-uint256 $(bc <<<"$1 * 10 ^ 45 / 1"))
-seth send "${MCD_VOW}" "heal(uint)" $rad
+seth send "${MCD_VOW}" "heal(uint)" "$rad"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
-dec=$(mcd --to-dec $1)
+dec=$(mcd --to-dec "$1")
 if [[ ${#dec} -lt 45 ]]; then
   dec=$(printf "%045s\\n" "$dec" | tr ' ' 0)
 fi
-seth --to-fix 45 $dec
+seth --to-fix 45 "$dec"

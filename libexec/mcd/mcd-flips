@@ -26,7 +26,8 @@ case $1 in
       while read -r log; do
         tx=$(jshon -e transactionHash -u <<<"$log")
         block=$(seth --to-dec "$(jshon -e blockNumber -u <<<"$log")")
-        topics=("$(jshon -e topics -a -u <<<"$log")")
+        topics=($(jshon -e topics -a -u <<<"$log"))  # no shellcheck
+
         data=$(jshon -e data -u <<<"$log")
 
         echo "id $(seth --to-dec "${data:2:64}")"
@@ -39,16 +40,16 @@ case $1 in
       done
   };;
   beg) {
-    mcd --to-wad "$(seth call "$FLIPPER" 'beg()(uint)')"
+    mcd --to-wad "$(seth call "$FLIPPER" 'beg()')"
   };;
   ttl) {
-    seth --to-dec "$(seth call "$FLIPPER" 'ttl()(uint48)')"
+    seth call "$FLIPPER" 'ttl()(uint48)'
   };;
   tau) {
-    seth --to-dec "$(seth call "$FLIPPER" 'tau()(uint48)')"
+    seth call "$FLIPPER" 'tau()(uint48)'
   };;
   count) {
-    seth --to-dec "$(seth call "$FLIPPER" 'kicks()(uint48)')"
+    seth call "$FLIPPER" 'kicks()(uint48)'
   };;
   +([[:digit:]]) ) {
     mcd-flips-cmd "$FLIPPER" "${@}"

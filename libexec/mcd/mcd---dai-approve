@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -e
 dst=$1
-max="0x$(printf "f"'%.0s' {1..64})"
+amt=$2
+max="0x$(printf "f"'%.0s' {1..64})" # uint(-1)
 
 approve() {
-  (set -x; seth send "$MCD_DAI" "approve(address,uint)" $dst $max)
+  (set -x; seth send "$MCD_DAI" "approve(address,uint)" "$dst" "$max")
 }
 
 prompt() {
@@ -18,8 +19,8 @@ prompt() {
   esac
 }
 
-sig="allowance(address,address)"
-wad=$(seth call "${MCD_DAI?}" "$sig" $ETH_FROM $dst)
-if [[ $wad != $max ]]; then
+sig="allowance(address,address)(uint256)"
+allowance="$(seth call "${MCD_DAI?}" "$sig" "$ETH_FROM" "$dst")"
+if (( $(echo "$amt > $allowance" | bc -l) )); then
   [[ $SETH_ASYNC != yes ]] && prompt || approve
 fi

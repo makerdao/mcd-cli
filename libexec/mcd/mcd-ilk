@@ -20,33 +20,33 @@ spot() { mcd --spot-ilk $id; }
 p() { printf "%-4s %-52s %-10s\n" "$1" "$2" "$3"; }
 
 mcd-ilk() {
-  p "Art"  $(mcd ilk Art)  "Total debt (DAI)"
-  p "rate" $(mcd ilk rate) "$(mcd gem symbol) DAI exchange rate"
-  p "spot" $(mcd ilk spot) "$(mcd gem symbol) price with safety mat (USD)"
-  p "line" $(mcd ilk line) "Debt ceiling (DAI)"
-  p "dust" $(mcd ilk dust) "Debt floor (DAI)"
-  p "flip" $(mcd ilk flip) "Flip auction contract"
-  p "chop" $(mcd ilk chop) "Liquidation penalty"
-  p "lump" $(mcd ilk lump) "Flip auction lot size"
-  p "duty" $(mcd ilk duty)  "Stability fee"
-  p "rho"  $(mcd ilk rho)  "Last drip timestamp"
-  p "pip"  $(mcd ilk pip)  "Price feed contract"
-  p "mat"  $(mcd ilk mat)  "Liquidation ratio"
+  p "Art"  "$(mcd ilk Art)"  "Total debt (DAI)"
+  p "rate" "$(mcd ilk rate)" "$(mcd gem symbol) DAI exchange rate"
+  p "spot" "$(mcd ilk spot)" "$(mcd gem symbol) price with safety mat (USD)"
+  p "line" "$(mcd ilk line)" "Debt ceiling (DAI)"
+  p "dust" "$(mcd ilk dust)" "Debt floor (DAI)"
+  p "flip" "$(mcd ilk flip)" "Flip auction contract"
+  p "chop" "$(mcd ilk chop)" "Liquidation penalty"
+  p "lump" "$(mcd ilk lump)" "Flip auction lot size"
+  p "duty" "$(mcd ilk duty)"  "Stability fee"
+  p "rho"  "$(mcd ilk rho)"  "Last drip timestamp"
+  p "pip"  "$(mcd ilk pip)"  "Price feed contract"
+  p "mat"  "$(mcd ilk mat)"  "Liquidation ratio"
 }
 
 case $1 in
-  Art|art) vat  | mcd --to-wad $(awk '{print $1}'); ;;
-  rate)    vat  | mcd --to-ray $(awk '{print $2}'); ;;
-  spot)    vat  | mcd --to-ray $(awk '{print $3}'); ;;
-  line)    vat  | mcd --to-rad $(awk '{print $4}'); ;;
-  dust)    vat  | mcd --to-rad $(awk '{print $5}'); ;;
-  flip)    cat  | echo 0x$(awk '{print $1}');       ;;
-  chop)    cat  | mcd --to-ray $(awk '{print $2}'); ;;
-  lump)    cat  | mcd --to-rad $(awk '{print $3}'); ;;
-  duty)    jug  | mcd --to-ray $(awk '{print $1}'); ;;
-  rho)     jug  | mcd --to-dec $(awk '{print $2}'); ;;
-  pip)     spot | echo 0x$(awk '{print $1}');       ;;
-  mat)     spot | mcd --to-ray $(awk '{print $2}'); ;;
+  Art|art) vat  | mcd --to-wad "$(seth --to-hex "$(awk '{print $1}')")"; ;;
+  rate)    vat  | mcd --to-ray "$(seth --to-hex "$(awk '{print $2}')")"; ;;
+  spot)    vat  | mcd --to-ray "$(seth --to-hex "$(awk '{print $3}')")"; ;;
+  line)    vat  | mcd --to-rad "$(seth --to-hex "$(awk '{print $4}')")"; ;;
+  dust)    vat  | mcd --to-rad "$(seth --to-hex "$(awk '{print $5}')")"; ;;
+  flip)    cat  | awk '{print $1}';       ;;
+  chop)    cat  | mcd --to-ray "$(seth --to-hex "$(awk '{print $2}')")"; ;;
+  lump)    cat  | mcd --to-wad "$(seth --to-hex "$(awk '{print $3}')")"; ;;
+  duty)    jug  | mcd --to-ray "$(seth --to-hex "$(awk '{print $1}')")"; ;;
+  rho)     jug  | mcd --to-dec "$(seth --to-hex "$(awk '{print $2}')")"; ;;
+  pip)     spot | awk '{print $1}';       ;;
+  mat)     spot | mcd --to-ray "$(seth --to-hex "$(awk '{print $2}')")"; ;;
   "")      mcd-ilk;                                 ;;
   *)       mcd help ilk;
 esac

@@ -2,8 +2,7 @@
 set -e
 
 cdp=$1; shift
-hex=0x$(seth --to-word "$(seth --to-hex "$cdp")")
-ilk=$(seth call "${CDP_MANAGER?}" 'ilks(uint)(bytes32)' "$hex")
+ilk=$(seth call "${CDP_MANAGER?}" 'ilks(uint)(bytes32)' "$cdp")
 act=$1; shift;
 
 MCD_ILK=$(mcd --to-ascii "$ilk")
@@ -11,7 +10,18 @@ export MCD_ILK
 
 require-wad() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
-  wad=$(seth --to-uint256 "$(seth --to-wei "$1" eth)")
+  wad="$(seth --to-uint256 "$(seth --to-wei "$1" eth)")"
+}
+
+require-amount() {
+  [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
+  decimals=$(mcd gem decimals)
+  amount="$(echo "$1 * 10^$decimals" | bc)"
+}
+
+require-dst() {
+  [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an address to $act"
+  dst="$(seth --to-address "$1")"
 }
 
 proxy=$(mcd --proxy-address)
@@ -19,27 +29,27 @@ proxy=$(mcd --proxy-address)
 case $act in
   lock) {
     export ETH_GAS=${ETH_GAS:-300000}
-    require-wad "$1"
-    mcd --gem-approve "$MCD_PROXY" "$1"
+    require-amount "$1"
+    mcd --gem-approve "$MCD_PROXY" "$amount"
     sig="lockGem(address,address,uint,uint,bool)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$hex" "$wad" 1
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount" 1
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-lock) {
     export ETH_GAS=${ETH_GAS:-300000}
-    require-wad "$1"
-    mcd --gem-approve "$MCD_PROXY" "$1"
+    require-amount "$1"
+    mcd --gem-approve "$MCD_PROXY" "$amount"
     sig="safeLockGem(address,address,uint,uint,bool,address)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$hex" "$wad" 1 "$proxy"
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount" 1 "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   free) {
     export ETH_GAS=${ETH_GAS:-200000}
-    require-wad "$1"
+    require-amount "$1"
     sig="freeGem(address,address,uint,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$(mcd gem adapter)" "$hex" "$wad"
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$(mcd gem adapter)" "$cdp" "$amount"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
@@ -47,7 +57,7 @@ case $act in
     export ETH_GAS=${ETH_GAS:-400000}
     require-wad "$1"
     sig="draw(address,address,address,uint,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JUG" "$MCD_JOIN_DAI" "$hex" "$wad"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JUG" "$MCD_JOIN_DAI" "$cdp" "$wad"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
@@ -55,37 +65,37 @@ case $act in
     export ETH_GAS=${ETH_GAS:-250000}
     require-wad "$1"
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="wipe(address,address,uint,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex" "$wad"
+    mcd --proxy-exec "$sig" "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-wipe) {
-    export ETH_GAS=${ETH_GAS:-250000}
+    export ETH_GAS="${ETH_GAS:-250000}"
     require-wad "$1"
-    export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    export MCD_TOKEN="$MCD_DAI"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="safeWipe(address,address,uint,uint,address)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex" "$wad" "$proxy"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$wad" "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   wipe-all) {
     export ETH_GAS=${ETH_GAS:-250000}
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="wipeAll(address,address,uint)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
   safe-wipe-all) {
     export ETH_GAS=${ETH_GAS:-250000}
     export MCD_TOKEN=$MCD_DAI
-    mcd --dai-approve "$MCD_PROXY"
+    mcd --dai-approve "$MCD_PROXY" "$wad"
     sig="safeWipeAll(address,address,uint,address)"
-    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$hex" "$proxy"
+    mcd --proxy-exec $sig "${CDP_MANAGER?}" "$MCD_JOIN_DAI" "$cdp" "$proxy"
 
     [[ $SETH_ASYNC != yes ]] && mcd cdp "$cdp" urn
   };;
@@ -98,7 +108,7 @@ case $act in
     case $response in
       [yY]) {
         sig="give(address,uint,address)"
-        mcd --proxy-exec $sig "${CDP_MANAGER?}" "$hex" "$lad"
+        mcd --proxy-exec $sig "${CDP_MANAGER?}" "$cdp" "$lad"
       };;
       *) { exit 1; };;
     esac
@@ -112,42 +122,42 @@ case $act in
     case $response in
       [yY]) {
         sig="giveToProxy(address,address,uint,address)"
-        mcd --proxy-exec $sig "${PROXY_REGISTRY?}" "${CDP_MANAGER?}" "$hex" "$lad"
+        mcd --proxy-exec $sig "${PROXY_REGISTRY?}" "${CDP_MANAGER?}" "$cdp" "$lad"
       };;
       *) { exit 1; };;
     esac
   };;
   quit) {
     export ETH_GAS=${ETH_GAS:-300000}
-    dst=$(seth --to-address "$1")
+    require-dst "$1"
     can=$(seth call "$MCD_VAT" "can(address,address)(uint)" "$dst" "${CDP_MANAGER?}")
-    if [[ $(seth --to-dec "$can") -eq 0 ]]; then
+    if [[ "$can" -eq 0 ]]; then
       echo >&2 "Error: Cdp Manager must be trusted for dst urn (in the Vat)"
       exit 1
     fi
     proxy=$(mcd --proxy-address)
     if [[ "$dst" != "$proxy" ]]; then
       canUrn=$(seth call "$CDP_MANAGER" "urnCan(address,address)(uint)" "$dst" "$proxy")
-      if [[ $(seth --to-dec "$canUrn") -eq 0 ]]; then
+      if [[ "$canUrn" -eq 0 ]]; then
         echo >&2 "Error: Sender must be trusted for dst urn (in the Cdp Manager)"
         exit 1
       fi
     fi
-    mcd --proxy-exec 'quit(address,uint,address)' "${CDP_MANAGER?}" "$hex" "$dst"
+    mcd --proxy-exec 'quit(address,uint,address)' "${CDP_MANAGER?}" "$cdp" "$dst"
   };;
   lad) {
     sig="owns(uint)(address)"
-    echo "0x$(seth call "${CDP_MANAGER?}" "$sig" "$hex")"
+    seth call "${CDP_MANAGER?}" "$sig" "$cdp"
   };;
   owner) {
     lad=$(mcd cdp "$cdp" lad)
     owner="$(seth call "$lad" 'owner()(address)')"
-    [[ ${#owner} -ne 40 ]] && owner=$lad
+    [[ ${#owner} -ne 40 ]] && owner="$lad"
     echo "$owner"
   };;
   urn) {
     sig="urns(uint)(address)"
-    MCD_URN=$(seth call "${CDP_MANAGER?}" $sig "$hex")
+    MCD_URN=$(seth call "${CDP_MANAGER?}" "$sig" "$cdp")
     export MCD_URN
     mcd urn
   };;

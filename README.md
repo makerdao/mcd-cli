@@ -49,7 +49,7 @@ $ dapp pkg install mcd
 
 ## Configuration
 
-Mcd is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
+`mcd` is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
 
 Similar to Seth, `mcd` also supports transaction signing with Ledger hardware wallets and can run against both local and remote nodes.
 
@@ -106,11 +106,12 @@ Ilks are collateral types with corresponding risk parameters which have been app
 
 ```sh
 $ mcd ilks
-ILK      GEM    DESC
+ILK      GEM    DEC   DESC
 
-ETH-A    WETH   Ethereum
-ETH-B    WETH   Ethereum
-REP-A    REP    Augur
+ETH-A    WETH   18    Ethereum
+BAT-A    BAT    18    Basic Attention Token
+WBTC-A   WBTC   8     Wrapped Bitcoin
+USDC-A   USDC   6     USD Coin
 ```
 
 Each Ilk has its own set of configuration parameters which can be viewed via the `ilk` command. The `I, --ilk=<id>` option is used to scope commands to a particular Ilk:
@@ -144,6 +145,7 @@ Gems are collateral tokens. Collateral is added and removed from the via adapter
 
 ```sh
 gem --ilk=<id> symbol             Gem symbol e.g. WETH
+gem --ilk=<id> decimals           Number of decimals on gem e.g. 18
 gem --ilk=<id> balance            Print balances for a given urn (default: ETH_FROM)
 gem --ilk=<id> join <wad>         Add collateral to a given Urn (default: ETH_FROM)
 gem --ilk=<id> exit <wad> [<guy>] Remove collateral from an Urn (default: ETH_FROM)
@@ -189,7 +191,7 @@ By default, `ETH_FROM` is used to determine which Urn to query. Use the `U, --ur
 Urn state (`urn.ink` and `urn.art`) is managed via the `frob <dink> <dart>` command, where `dink` and `dart` are delta amounts by which `ink` (Locked collateral) and `art` (Outstanding debt) should be changed. For example, to lock 100 WETH and draw 400 Dai on the ETH-A Ilk:
 
 ```sh
-$ mcd --ilk=ETH-A frob 100 400
+$ mcd --ilk=ETH-A frob -- 100 400
 ```
 
 To reduce outstanding debt by 200 Dai whilst keeping the amount of locked collateral constant:
@@ -288,38 +290,38 @@ vat 0.000060682318362511884962000000000000000000000 Vat balance
 ext 500.000000000000000000 ERC20 balance
 ```
 
-### 2. Managed Cdp - lock 100 REP & draw 50 Dai
+### 2. Managed Cdp - lock 100 BAT & draw 50 Dai
 
 ```sh
 # i) Open
-$ mcd --ilk=REP-A cdp open
+$ mcd --ilk=BAT-A cdp open
 mcd-cdp-open: Waiting for transaction receipt...
 0x800e5578d3ac4b77b7ada1aba48cf80d0d238d4392d2676d79159eac2c2cdd73
 Opened: cdp 19
 
 # ii) Lock
-$ mcd --ilk=REP-A cdp 19 lock 100
+$ mcd --ilk=BAT-A cdp 19 lock 100
 seth-send: Published transaction with 260 bytes of calldata.
 seth-send: 0x4d30cb4863ca997d24ff2346c9a92e86648369ce7b4a86ed004c73b8d4ef299a
 seth-send: Waiting for transaction receipt...
 seth-send: Transaction included in block 333.
-ilk  REP-A                                      Collateral type
+ilk  BAT-A                                      Collateral type
 urn  0x4518c4709a50C915b7996A0e6Dfb38c67248BBcF Urn handler
-ink  100.000000000000000000                     Locked collateral (REP)
+ink  100.000000000000000000                     Locked collateral (BAT)
 art  0.000000000000000000                       Issued debt (Dai)
 tab  0                                          Outstanding debt (Dai)
 rap  0                                          Accumulated stability fee (Dai)
 -->  0                                          Collateralization ratio
 
 # iii) Draw
-$ mcd --ilk=REP-A cdp 19 draw 500
+$ mcd --ilk=BAT-A cdp 19 draw 500
 seth-send: Published transaction with 260 bytes of calldata.
 seth-send: 0xd5fb7ddf94bb910fbba2af118ecde88a03a13129b2e1979238236afe672781c3
 seth-send: Waiting for transaction receipt...
 seth-send: Transaction included in block 335.
-ilk  REP-A                                      Collateral type
+ilk  BAT-A                                      Collateral type
 urn  0x4518c4709a50C915b7996A0e6Dfb38c67248BBcF Urn handler
-ink  100.000000000000000000                     Locked collateral (REP)
+ink  100.000000000000000000                     Locked collateral (BAT)
 art  49.999505439113270178                      Issued debt (Dai)
 tab  50.000000000000000000000000000             Outstanding debt (Dai)
 rap  0.000494560886729822000020743              Accumulated stability fee (Dai)

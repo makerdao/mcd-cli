@@ -41,9 +41,7 @@ case $1 in
     done
   };;
   count) {
-    sig="count(address)"
-    hex=$(seth call "${CDP_MANAGER?}" $sig "${2:-MCD_PROXY}")
-    seth --to-dec "$hex"
+    seth call "${CDP_MANAGER?}" "count(address)(uint256)" "${2:-$MCD_PROXY}"
   };;
   open) {
     mcd cdp-open "${@:2}";

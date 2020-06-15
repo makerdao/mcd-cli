@@ -4,13 +4,15 @@ set -e
 
 mcd --require-ilk
 
-gem=$(mcd gem address)
-join=$(mcd gem adapter)
+gem="$(mcd gem address)"
+join="$(mcd gem adapter)"
+decimals="$(mcd gem decimals)"
+amount="$(echo "$1 * 10^$decimals" | bc)"
 
-mcd --gem-approve $join $1
+mcd --gem-approve "$join" "$amount"
 
-urn=$(mcd --get-urn gem)
-wad=$(seth --to-uint256 $(seth --to-wei $1 eth))
-seth send "$join" "join(address, uint)" $urn $wad
+urn="$(mcd --get-urn "$gem")"
+
+seth send "$join" "join(address, uint256)" "$urn" "$amount"
 
 [[ $SETH_ASYNC != yes ]] && mcd gem balance

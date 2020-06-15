@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
-dec=$(mcd --to-dec $1)
+dec=$(mcd --to-dec "$1")
 if [[ ${#dec} -lt 27 ]]; then
   dec=$(printf "%027s\\n" "$dec" | tr ' ' 0)
 fi
-seth --to-fix 27 $dec
+seth --to-fix 27 "$dec"

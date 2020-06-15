@@ -2,4 +2,4 @@
 mcd --require-ilk
 rate=$(mcd ilk rate)
 wad=$(bc <<< "scale=18; $1 / $rate")
-mcd frob 0 $wad
+mcd frob 0 "$wad"

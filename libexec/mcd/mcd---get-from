@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 fail=$1
-mcd --require-from $fail
-echo $(seth --to-address $ETH_FROM)
+mcd --require-from "$fail"
+seth --to-address "$ETH_FROM"
