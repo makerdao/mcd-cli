@@ -1,7 +1,10 @@
-{ makerpkgs ? import (fetchGit {
-    url = "https://github.com/makerdao/makerpkgs";
-    rev = "524798094c6dc9b7bd58d2f88e12d457ca7e9d60";
+{ pkgs ? import <nixpkgs> {}
+, dappPkgs ? import (pkgs.fetchgit {
+    url = "https://github.com/dapphub/dapptools";
+    rev = "seth/0.9.0";
+    sha256 = "0axzqm035060agwja47plzr89r82pkzzqvd73w4j91dxxkrdvl7a";
+    fetchSubmodules = true;
   }) {}
 }:
 
-makerpkgs.callPackage ./mcd-cli.nix {}
+dappPkgs.callPackage ./mcd-cli.nix {}
