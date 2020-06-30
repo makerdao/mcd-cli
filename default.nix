@@ -1,28 +1,10 @@
-{ lib, stdenv, fetchFromGitHub, makeWrapper, glibcLocales, bc, coreutils
-, curl, ethabi, ethsign, git, go-ethereum, gnused, jshon, jq, nodejs, perl, solc }:
+{ pkgs ? import <nixpkgs> {}
+, dappPkgs ? import (pkgs.fetchgit {
+    url = "https://github.com/dapphub/dapptools";
+    rev = "seth/0.9.0";
+    sha256 = "0axzqm035060agwja47plzr89r82pkzzqvd73w4j91dxxkrdvl7a";
+    fetchSubmodules = true;
+  }) {}
+}:
 
-stdenv.mkDerivation rec {
-  name = "mcd-${version}";
-  version = lib.fileContents ./version;
-  src = ./.;
-
-  nativeBuildInputs = [makeWrapper];
-  buildPhase = "true";
-  makeFlags = ["prefix=$(out)"];
-  postInstall = let path = lib.makeBinPath [
-    bc coreutils curl ethabi ethsign git go-ethereum gnused jshon jq nodejs perl solc
-  ]; in ''
-    wrapProgram "$out/bin/mcd" --prefix PATH : "${path}" \
-      ${if glibcLocales != null then
-        "--set LOCALE_ARCHIVE \"${glibcLocales}\"/lib/locale/locale-archive"
-        else ""}
-  '';
-
-  meta = {
-    description = "Command-line client Multicollateral Dai";
-    homepage = https://github.com/makerdao/mcd-cli/;
-    maintainers = [stdenv.lib.maintainers.dbrock];
-    license = lib.licenses.gpl3;
-    inherit version;
-  };
-}
+dappPkgs.callPackage ./mcd-cli.nix {}
