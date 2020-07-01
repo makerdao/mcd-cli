@@ -35,17 +35,19 @@ Commands:
 
 ## Installation
 
-First install [dapp tools](https://dapp.tools):
+First clone mcd-cli(https://github.com/makerdao/mcd-cli/):
 
 ```sh
-$ curl https://dapp.tools/install | sh
+$ git clone https://github.com/makerdao/mcd-cli.git
 ```
 
-Then install the `mcd` package:
+Then run via the installer:
 
 ```sh
-$ dapp pkg install mcd
+$ cd mcd-cli
+$ ./install.sh
 ```
+
 
 ## Configuration
 
