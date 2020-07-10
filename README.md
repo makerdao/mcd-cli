@@ -35,23 +35,26 @@ Commands:
 
 ## Installation
 
-First clone mcd-cli(https://github.com/makerdao/mcd-cli/):
+Install Nix if you haven't already:
 
-```sh
-$ git clone https://github.com/makerdao/mcd-cli.git
+```
+# user must be in sudoers
+curl -L https://nixos.org/nix/install | sh
+
+# Run this or login again to use Nix
+. "$HOME/.nix-profile/etc/profile.d/nix.sh"
 ```
 
 Then run via the installer:
 
 ```sh
-$ cd mcd-cli
-$ ./install.sh
+$ curl https://raw.githubusercontent.com/makerdao/mcd-cli/master/install.sh | sh
 ```
 
 
 ## Configuration
 
-`mcd` is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/sethrc` initialisation file.
+`mcd` is built on [Seth](https://github.com/dapphub/dapptools/tree/master/src/seth) and uses the same network configuration options, which just like Seth, can be defined in the `~/.sethrc` initialisation file.
 
 Similar to Seth, `mcd` also supports transaction signing with Ledger hardware wallets and can run against both local and remote nodes.
 
@@ -62,7 +65,10 @@ Example `~/.sethrc`:
 ```sh
 #!/usr/bin/env bash
 export ETH_FROM=0x4Ffa8667Fe2db498DCb95A322b448eA688Ce430c
-export MCD_CHAIN=kovan
+export SETH_CHAIN=kovan
+export ETH_PASSWORD="/home/user/makerdao/pass.txt"
+export ETH_KEYSTORE="/home/user/.ethereum/keystore"
+export ETH_RPC_URL="https://kovan.infura.io/v3/c928d...."
 ```
 
 #### Kovan
