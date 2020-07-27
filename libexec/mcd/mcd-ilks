@@ -5,13 +5,13 @@ FILENAME="ilk-types.txt"
 FILEPATH="/tmp/$FILENAME"
 
 function writeData {
-    ILKS="$(seth call "$REGISTRY" "list()(bytes32[])")"
+    ILKS="$(seth call "$ILK_REGISTRY" "list()(bytes32[])")"
 
     ILK_LIST="ILK | GEM | DEC | DESC\n"
     ILK_LIST+=" | | | \n"
     for i in ${ILKS//,/ }
     do
-        ILK_INFO="$(seth call "${REGISTRY?}" 'info(bytes32)(string,string,uint256,address,address,address,address)' "${i}" | tr -d '\0')"
+        ILK_INFO="$(seth call "${ILK_REGISTRY?}" 'info(bytes32)(string,string,uint256,address,address,address,address)' "${i}" | tr -d '\0')"
         SAVEIFS=$IFS   # Save current IFS
         IFS=$'\n'      # Change IFS to new line
         INFO_ARR=($ILK_INFO) # split to array
