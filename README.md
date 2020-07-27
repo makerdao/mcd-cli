@@ -152,6 +152,7 @@ $ mcd --ilk=ETH-A ilk spot
 Gems are collateral tokens. Collateral is added and removed from the via adapters, which abstract away the differences between various token behaviours. Use `gem [<subcommand>]` to manage collateral balances for any given Ilk.
 
 ```sh
+gem --ilk=<id> name               Gem name e.g. Wrapped Ether
 gem --ilk=<id> symbol             Gem symbol e.g. WETH
 gem --ilk=<id> decimals           Number of decimals on gem e.g. 18
 gem --ilk=<id> balance            Print balances for a given urn (default: ETH_FROM)
