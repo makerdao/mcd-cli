@@ -1,3 +1,48 @@
 #!/usr/bin/env bash
 set -e
-awk -F'|' '{printf "%5s %5s %5s %5s\n", $1, $2, $3, $4}' "${0%/*}/conf/ilks"
+
+FILENAME="ilk-types.txt"
+FILEPATH="/tmp/$FILENAME"
+
+function writeData {
+    ILKS="$(seth call "$ILK_REGISTRY" "list()(bytes32[])")"
+
+    ILK_LIST="ILK | GEM | DEC | DESC\n"
+    ILK_LIST+=" | | | \n"
+    for i in ${ILKS//,/ }
+    do
+        ILK_INFO="$(seth call "${ILK_REGISTRY?}" 'info(bytes32)(string,string,uint256,address,address,address,address)' "${i}" | tr -d '\0')"
+        SAVEIFS=$IFS   # Save current IFS
+        IFS=$'\n'      # Change IFS to new line
+        INFO_ARR=($ILK_INFO) # split to array
+        IFS=$SAVEIFS   # Restore IFS
+
+        # Info Array from Registry:
+        #   0: Wrapped Ether                              (name)
+        #   1: WETH                                       (symbol)
+        #   2: 18                                         (decimals)
+        #   3: 0xd0A1E359811322d97991E03f863a0C30C2cF029C (gem)
+        #   4: 0x75dD74e8afE8110C8320eD397CcCff3B8134d981 (pip)
+        #   5: 0x775787933e92b709f2a3C70aa87999696e74A9F8 (join)
+        #   6: 0xB40139Ea36D35d0C9F6a2e62601B616F1FfbBD1b (flip)
+        ILK_TAG="$(mcd --to-ascii "$i")"
+        ILK_GEM="${INFO_ARR[1]}"
+        ILK_DEC="${INFO_ARR[2]}"
+        ILK_DSC="${INFO_ARR[0]}"
+
+        ILK_LIST+="$(printf "%s | %s | %s | %s" "$ILK_TAG" "$ILK_GEM" "$ILK_DEC" "$ILK_DSC")\n"
+    done
+
+    echo -e "$ILK_LIST" > "$FILEPATH"
+}
+
+# Cache the ilk data and only re-acquire every 10 minutes if not in active use
+if [[ -f "$FILEPATH" && $(($(date +%s)-$(date -r $FILEPATH +%s))) -lt "600" ]]; then
+    # Update modification time
+    touch -m $FILEPATH
+else
+    # File is stale, re-acquire and rewrite
+    writeData
+fi
+
+awk -F'|' '{printf "%-8s %8s %5s %s\n", $1, $2, $3, $4}' "$FILEPATH"

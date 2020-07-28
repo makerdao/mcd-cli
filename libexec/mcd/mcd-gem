@@ -2,7 +2,8 @@
 ### mcd-gem -- Collateral management
 ### Usage: mcd --ilk=<id> [--urn=<address>] gem [<command>]
 ###
-### Commands: gem symbol             Gem id e.g WETH
+### Commands: gem name               Gem name e.g Wrapped Ether
+###           gem symbol             Gem id e.g WETH
 ###           gem decimals           Number of decimals in gem
 ###           gem balance            Print balances for a given urn (default: ETH_FROM)
 ###           gem join <amt>         Add collateral to an urn
@@ -34,6 +35,9 @@ case $1 in
   gem|address)
     gem=$(seth call "$(mcd gem adapter)" 'gem()')
     seth --abi-decode 'f()(address)' "$gem"
+  ;;
+  name)
+    mcd ilks | sed -n "/$MCD_ILK/p" | awk '{$1=$2=$3=""; print $0}' | sed 's/^ *//g'
   ;;
   symbol)
     mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
