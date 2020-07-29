@@ -29,8 +29,9 @@ fi
 
 case $1 in
   adapter)
-    ilk=$(tr '-' '_' <<<"$MCD_ILK")
-    eval echo "\$MCD_JOIN_$ilk"
+    ilk="$(mcd --get-ilk)"
+    join="$(seth call "${ILK_REGISTRY?}" 'join(bytes32)(address)' "${ilk}")"
+    echo "$join"
   ;;
   gem|address)
     gem=$(seth call "$(mcd gem adapter)" 'gem()')
