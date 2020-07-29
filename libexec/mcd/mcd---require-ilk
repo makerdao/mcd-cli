@@ -41,7 +41,7 @@ exit 1
 }
 
 valid-ilks() {
-  echo $(mcd ilks | cut -d ' ' -f 1)
+  echo $(mcd ilks | cut -d ' ' -f 1)  # no shellcheck
 }
 
 [ -n "$MCD_ILK" ] || missing-ilk
