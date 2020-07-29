@@ -30,8 +30,7 @@ fi
 case $1 in
   adapter)
     ilk="$(mcd --get-ilk)"
-    join="$(seth call "${ILK_REGISTRY?}" 'join(bytes32)(address)' "${ilk}")"
-    echo "$join"
+    seth call "${ILK_REGISTRY?}" 'join(bytes32)(address)' "${ilk}"
   ;;
   gem|address)
     gem=$(seth call "$(mcd gem adapter)" 'gem()')
@@ -50,7 +49,7 @@ case $1 in
     mcd-gem-balance "$2";
   ;;
   supply)
-    ilk=$(mcd --get-ilk)
+    ilk="$(mcd --get-ilk)"
     case $2 in
       mcd) { mcd gem-supply; };;
       ext) { mcd gem-supply-ext; };;
