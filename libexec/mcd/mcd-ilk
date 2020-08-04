@@ -6,16 +6,26 @@
 ### With `<param>` get a specified Ilk parameter
 ###
 ### Example: mcd --ilk=ETH-A ilk
-###          mcd --ilk=ETH-A ilk spot
 ###          mcd --ilk=ETH-A ilk Art
+###          mcd --ilk=ETH-A ilk rate
+###          mcd --ilk=ETH-A ilk spot
+###          mcd --ilk=ETH-A ilk line
+###          mcd --ilk=ETH-A ilk dust
+###          mcd --ilk=ETH-A ilk flip
+###          mcd --ilk=ETH-A ilk chop
+###          mcd --ilk=ETH-A ilk lump
+###          mcd --ilk=ETH-A ilk duty
+###          mcd --ilk=ETH-A ilk rho
+###          mcd --ilk=ETH-A ilk pip
+###          mcd --ilk=ETH-A ilk mat
 set -e
 
-id=$(mcd --get-ilk)
+id="$(mcd --get-ilk)"
 
-vat()  { mcd --vat-ilk $id;  }
-cat()  { mcd --cat-ilk $id;  }
-jug()  { mcd --jug-ilk $id;  }
-spot() { mcd --spot-ilk $id; }
+vat()  { mcd --vat-ilk "$id";  }
+cat()  { mcd --cat-ilk "$id";  }
+jug()  { mcd --jug-ilk "$id";  }
+spot() { mcd --spot-ilk "$id"; }
 
 p() { printf "%-4s %-52s %-10s\n" "$1" "$2" "$3"; }
 

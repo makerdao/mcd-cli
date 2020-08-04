@@ -67,7 +67,7 @@ testnet-init() {
   conf="$dir/conf.json";
 
   if [[ ! -d "$dir" ]]; then
-    json=$(mcd testnet chain ${1} | jq '.')
+    json=$(mcd testnet chain "${1}" | jq '.')
     if [[ "$json" == "null" ]]; then
       echo "Error: chain config not found for $1"
       exit 1
