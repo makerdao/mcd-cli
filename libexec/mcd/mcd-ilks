@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-FILENAME="ilk-types.txt"
+FILENAME="org.makerdao.ilks.${SETH_CHAIN}"
 FILEPATH="/tmp/$FILENAME"
 
 function writeData {
@@ -39,7 +39,7 @@ function writeData {
 # Cache the ilk data and only re-acquire every 10 minutes if not in active use
 if [[ -f "$FILEPATH" && $(($(date +%s)-$(date -r $FILEPATH +%s))) -lt "600" ]]; then
     # Update modification time
-    touch -m $FILEPATH
+    touch -m "$FILEPATH"
 else
     # File is stale, re-acquire and rewrite
     writeData
