@@ -6,12 +6,12 @@
 ###           count [<owner>]                 Cdp count
 ###           open                            Open a new Cdp
 ###           <id> urn                        Cdp state
-###           <id> lock <wad>                 Join & lock standard gem collateral
-###           <id> safe-lock <wad>            Join & safely lock standard gem collateral (checks it is your CDP)
-###           <id> free <wad>                 Free & exit standard gem collateral
-###           <id> draw <wad>                 Draw & exit dai
-###           <id> wipe <wad>                 Join & wipe dai
-###           <id> safe-wipe <wad>            Join & wipe dai (checks it is your CDP)
+###           <id> lock <amt>                 Join & lock standard gem collateral (amt in currency units)
+###           <id> safe-lock <amt>            Join & safely lock standard gem collateral (checks it is your CDP)
+###           <id> free <amt>                 Free & exit standard gem collateral
+###           <id> draw <amt>                 Draw & exit dai
+###           <id> wipe <amt>                 Join & wipe dai
+###           <id> safe-wipe <amt>            Join & wipe dai (checks it is your CDP)
 ###           <id> wipe-all                   Join & wipe dai to leave debt=0
 ###           <id> safe-wipe-all              Join & wipe dai to leave debt=0 (checks it is your CDP)
 ###           <id> give <address>             Give a Cdp to another owner

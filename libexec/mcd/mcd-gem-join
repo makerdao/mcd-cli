@@ -7,7 +7,7 @@ mcd --require-ilk
 gem="$(mcd gem address)"
 join="$(mcd gem adapter)"
 decimals="$(mcd gem decimals)"
-amount="$(echo "$1 * 10^$decimals" | bc)"
+amount="$(printf "%.0f" "$(echo "$1 * 10^$decimals" | bc)")"
 
 mcd --gem-approve "$join" "$amount"
 
