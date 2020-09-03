@@ -27,7 +27,7 @@ calc() {
   if [ "${art:0:1}" -gt 0 ]; then
     tab=$(printf '%.27f\n' "$(bc <<< "$art*$rate")")
     rap=$(printf '%.27f\n' "$(bc <<< "$tab - $art")")
-    rat=$(bc <<< "scale=2; (($ink*$spot*$mat)/$tab)")
+    rat=$(bc <<< "scale=6; (($ink*$spot*$mat)/$tab)")
   fi
 }
 
