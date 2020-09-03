@@ -19,13 +19,15 @@ p() { printf "%-4s %-48s %-10s\n" "$1" "$2" "$3"; }
 calc() {
   exec 3< <(mcd ilk spot)
   exec 4< <(mcd ilk rate)
+  exec 5< <(mcd ilk mat)
   spot=$(cat <&3);
   rate=$(cat <&4);
+  mat=$(cat <&5);
   rat=0; rap=0; tab=0
   if [ "${art:0:1}" -gt 0 ]; then
     tab=$(printf '%.27f\n' "$(bc <<< "$art*$rate")")
     rap=$(printf '%.27f\n' "$(bc <<< "$tab - $art")")
-    rat=$(bc <<< "scale=2; (($ink*$spot)/$tab)")
+    rat=$(bc <<< "scale=2; (($ink*$spot*$mat)/$tab)")
   fi
 }
 
