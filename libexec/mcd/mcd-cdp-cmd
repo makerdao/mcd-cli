@@ -16,7 +16,7 @@ require-wad() {
 require-amount() {
   [ -n "$1" ] || mcd --fail "mcd-cdp: Please specify an amount to $act"
   decimals=$(mcd gem decimals)
-  amount="$(echo "$1 * 10^$decimals" | bc)"
+  amount="$(printf "%.0f" "$(echo "$1 * 10^$decimals" | bc)")"
 }
 
 require-dst() {

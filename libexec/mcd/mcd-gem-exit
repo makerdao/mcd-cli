@@ -8,7 +8,7 @@ gem="$(mcd gem address)"
 exit="$(mcd gem adapter)"
 decimals="$(mcd gem decimals)"
 
-amount="$(echo "$1 * 10^$decimals" | bc)"
+amount="$(printf "%.0f" "$(echo "$1 * 10^$decimals" | bc)")"
 
 urn="$(mcd --get-urn "$gem")"
 
