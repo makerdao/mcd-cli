@@ -137,4 +137,10 @@ if ! [[ $MCD_INIT ]]; then
   mcd-init
 fi
 
+if test -z "$ETH_RPC_URL"
+then
+  echo "Please set the ETH_RPC_URL to an ethereum endpoint."
+  exit 1
+fi
+
 "${0##*/}-${1-help}" "${@:2}"
