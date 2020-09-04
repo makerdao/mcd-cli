@@ -14,6 +14,7 @@ Commands:
    dai             Dai management
    debt            Total dai issuance
    drip            Trigger stability fee accumulation
+   duty            Calculate an annual rate accumulator value
    flap            Trigger a flap auction
    flips           View flips and kick-off auctions
    flog            Release queued bad-debt for auction

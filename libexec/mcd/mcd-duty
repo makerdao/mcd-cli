@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+### mcd-duty -- Calculate a system duty
+###
+### https://docs.makerdao.com/smart-contract-modules/rates-module
+###
+### Usage: mcd duty [<percent>]
+###
+### example:
+###
+### $ mcd duty 4
+### > 1000000001243680656318820312
+set -e
+
+[ -n "$1" ] || mcd --fail "mcd-duty: Please specify a percentage parameter (i.e. 4.25 == 4.25%)"
+
+re='^([0-9]+)?([.][0-9]+)?$'
+if ! [[ $1 =~ $re ]] ; then
+    mcd --fail "mcd-duty: Please enter a numeric value"
+fi
+
+basispoints=$(printf "%.0f" "$(echo "scale=0; $1*100" | bc)")
+
+[ "$basispoints" -le "10000" ] && [ "$basispoints" -ge "0" ] || mcd --fail "mcd-duty: Percentage must be between 0% and 100%"
+
+normalizedamount="$( echo "scale=4; $basispoints/10000 + 1" | bc)"
+
+rayte=$(bc -l <<< "scale=27; e( l($normalizedamount)/(60 * 60 * 24 * 365) ) * 10^27")
+echo "${rayte%.*}"
