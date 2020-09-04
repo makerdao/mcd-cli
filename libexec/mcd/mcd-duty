@@ -11,23 +11,18 @@
 ### > 1000000001243680656318820312
 set -e
 
-require-percent() {
-  [ -n "$1" ] || mcd --fail "mcd-duty: Please specify a percentage (i.e. 4.25 == 4.25%)"
-  amount=$(printf "%.0f" "$(echo "scale=0; $1*100" | bc)")
-  [ "$amount" -le "10000" ] && [ "$amount" -ge "0" ] || mcd --fail "mcd-duty: Percentage must be between 0% and 100%"
-}
+[ -n "$1" ] || mcd --fail "mcd-duty: Please specify a percentage parameter (i.e. 4.25 == 4.25%)"
 
-require-numeric() {
-    re='^[0-9]+([.][0-9]+)?$'
-    if ! [[ $1 =~ $re ]] ; then
-        mcd --fail "mcd-duty: Please enter a numeric value"
-    fi
-}
+re='^[0-9]+([.][0-9]+)?$'
+if ! [[ $1 =~ $re ]] ; then
+    mcd --fail "mcd-duty: Please enter a numeric value"
+fi
 
-require-numeric "$1"
-require-percent "$1"
+basispoints=$(printf "%.0f" "$(echo "scale=0; $1*100" | bc)")
 
-namount="$( echo "scale=4; $amount/10000 + 1" | bc)"
+[ "$basispoints" -le "10000" ] && [ "$basispoints" -ge "0" ] || mcd --fail "mcd-duty: Percentage must be between 0% and 100%"
 
-rayte=$(bc -l <<< "scale=27; e( l($namount)/(60 * 60 * 24 * 365) ) * 10^27")
+normalizedamount="$( echo "scale=4; $basispoints/10000 + 1" | bc)"
+
+rayte=$(bc -l <<< "scale=27; e( l($normalizedamount)/(60 * 60 * 24 * 365) ) * 10^27")
 echo "${rayte%.*}"
