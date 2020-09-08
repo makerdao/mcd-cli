@@ -45,4 +45,4 @@ else
     writeData
 fi
 
-awk -F'|' '{printf "%-8s %8s %5s %s\n", $1, $2, $3, $4}' "$FILEPATH"
+awk -F'|' '{printf "%-9s %7s %5s %s\n", $1, $2, $3, $4}' "$FILEPATH"
