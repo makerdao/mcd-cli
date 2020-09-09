@@ -92,6 +92,24 @@ config-init() {
   for e in $exports; do export "$e"; done
 }
 
+rpc-verify() {
+  if test -z "$ETH_RPC_URL"
+  then
+    echo "Please set the ETH_RPC_URL to an ethereum endpoint."
+    exit 1
+  fi
+}
+
+chain-verify() {
+  EXPECTED="$1"
+  ACTUAL="$(seth rpc net_version)"
+  if [ "$EXPECTED" != "$ACTUAL" ]; then
+    echo "Ethereum network version is incorrect."
+    echo "Verify ETH_RPC_URL is set to $MCD_CHAIN (Expected $EXPECTED, got $ACTUAL)"
+    exit 1
+  fi
+}
+
 mcd-init() {
   # If MCD_CHAIN is unset but SETH_CHAIN is, set to SETH_CHAIN
   if [ -z "$MCD_CHAIN" ]; then MCD_CHAIN="$SETH_CHAIN"; fi
@@ -100,10 +118,14 @@ mcd-init() {
     mainnet)
       config-init "${0%/*}/conf/mainnet.json";
       export SETH_CHAIN=mainnet
+      rpc-verify
+      chain-verify "1"
       ;;
     kovan)
       config-init "${0%/*}/conf/kovan.json";
       export SETH_CHAIN=kovan
+      rpc-verify
+      chain-verify "42"
       ;;
     testnet) # local dapp testnet
       config-init "${MCD_CONFIG:-$TESTNET/8545/config/addresses.json}"
@@ -135,12 +157,6 @@ if ! [[ $MCD_INIT ]]; then
   TESTNET="${TESTNET:-~/.dapp/testnet}"
   export MCD_INIT=1
   mcd-init
-fi
-
-if test -z "$ETH_RPC_URL"
-then
-  echo "Please set the ETH_RPC_URL to an ethereum endpoint."
-  exit 1
 fi
 
 "${0##*/}-${1-help}" "${@:2}"
