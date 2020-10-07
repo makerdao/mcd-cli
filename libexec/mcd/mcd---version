@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cat <<.
-mcd 1.0.7-rc1
+mcd 1.1.0-rc.1
 
 Copyright (C) 2018, 2019 dc <dc@dapp.org>
 
