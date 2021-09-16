@@ -37,13 +37,13 @@ case $1 in
     seth --abi-decode 'f()(address)' "$gem"
   ;;
   name)
-    mcd ilks | sed -n "/$MCD_ILK/p" | awk '{$1=$2=$3=""; print $0}' | sed 's/^ *//g'
+    mcd ilks | sed -n "/^$MCD_ILK/p" | awk '{$1=$2=$3=""; print $0}' | sed 's/^ *//g'
   ;;
   symbol)
-    mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $2}'
+    mcd ilks | sed -n "/^$MCD_ILK/p" | awk '{print $2}'
   ;;
   decimals)
-    mcd ilks | sed -n "/$MCD_ILK/p" | awk '{print $3}'
+    mcd ilks | sed -n "/^$MCD_ILK/p" | awk '{print $3}'
   ;;
   balance)
     mcd-gem-balance "$2";
