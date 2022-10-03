@@ -1,3 +1,11 @@
+# THIS PROJECT IS DEPRECATED
+
+## mcd-cli is no longer being actively maintained and is potentially dangerous to use.
+
+### If you are interested in maintaining this project reach out to a member of Protocol Engineering Services in the MakerDAO Discord [#protocol-engineering-public](https://discord.com/channels/893112320329396265/897479589171986434)
+
+-----------------------
+
 ## MCD Command-line interface
 
 ```
