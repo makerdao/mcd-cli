@@ -19,14 +19,16 @@ case $1 in
   "")   {
     exec 3< <(mcd gem balance vat)
     exec 4< <(mcd gem balance ink)
-    exec 5< <(mcd gem balance ext)
     echo "vat $(cat <&3) Unlocked collateral ($gem)"
     echo "ink $(cat <&4) Locked collateral ($gem)"
-    echo "ext $(cat <&5) External account balance ($gem)"
-    if [[ "$gem" == "WETH" ]]; then
-      eth=$(mcd --to-wad "$(seth --to-hex "$(seth balance "$ETH_FROM")")")
-      echo "eth $eth External account balance (ETH)"
-      echo
+    if [[ ! -z "$ETH_FROM" ]]; then
+      exec 5< <(mcd gem balance ext)
+      echo "ext $(cat <&5) External account balance ($gem)"
+      if [[ "$gem" == "WETH" ]]; then
+        eth=$(mcd --to-wad "$(seth --to-hex "$(seth balance "$ETH_FROM")")")
+        echo "eth $eth External account balance (ETH)"
+        echo
+      fi
     fi
   };;
   *)   { mcd gem balance; };;
